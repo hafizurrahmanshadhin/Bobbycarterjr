@@ -22,7 +22,7 @@
         <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
             <div class="card box-shadow-0">
                 <div class="card-body">
-                    <form method="post" action="{{ route('dynamic_page.update', ['id' => $data->id]) }}"
+                    <form method="post" action="{{ route('settings.dynamic_page.update', ['id' => $data->id]) }}"
                         enctype="multipart/form-data">
                         @csrf
                         @method('PATCH')
@@ -45,7 +45,7 @@
 
                         <div class="form-group">
                             <button class="btn btn-primary" type="submit">Submit</button>
-                            <a href="{{ route('dynamic_page.index') }}" class="btn btn-danger me-2">Cancel</a>
+                            <a href="{{ route('settings.dynamic_page.index') }}" class="btn btn-danger me-2">Cancel</a>
                         </div>
                     </form>
                 </div>

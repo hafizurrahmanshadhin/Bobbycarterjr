@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 
 class Helper {
@@ -35,5 +36,19 @@ class Helper {
             $slug         = Str::slug($title) . '-' . $randomString;
         }
         return $slug;
+    }
+
+    //! JSON Response
+    public static function jsonResponse(bool $status, string $message, int $code, $data = null): JsonResponse {
+        $response = [
+            'status'  => $status,
+            'message' => $message,
+            'code'    => $code,
+        ];
+
+        if ($data !== null) {
+            $response['data'] = $data;
+        }
+        return response()->json($response, $code);
     }
 }

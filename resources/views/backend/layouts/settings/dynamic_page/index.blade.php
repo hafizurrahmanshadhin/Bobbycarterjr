@@ -24,7 +24,7 @@
                 <div class="card-header border-bottom"
                     style="margin-bottom: 0; display: flex; justify-content: space-between;">
                     <h3 class="card-title">Dynamic Page Table</h3>
-                    <a href="{{ route('dynamic_page.create') }}" class="btn btn-primary">Add New Page</a>
+                    <a href="{{ route('settings.dynamic_page.create') }}" class="btn btn-primary">Add New Page</a>
                 </div>
 
                 <div class="card-body">
@@ -85,7 +85,7 @@
                     pagingType: "full_numbers",
                     dom: "<'row justify-content-between table-topbar'<'col-md-2 col-sm-4 px-0'l><'col-md-2 col-sm-4 px-0'f>>tipr",
                     ajax: {
-                        url: "{{ route('dynamic_page.index') }}",
+                        url: "{{ route('settings.dynamic_page.index') }}",
                         type: "GET",
                     },
 
@@ -148,7 +148,7 @@
         }
         // Status Change
         function statusChange(id) {
-            let url = '{{ route('dynamic_page.status', ':id') }}';
+            let url = '{{ route('settings.dynamic_page.status', ':id') }}';
             $.ajax({
                 type: "GET",
                 url: url.replace(':id', id),
@@ -191,7 +191,7 @@
 
         // Delete Button
         function deleteItem(id) {
-            let url = '{{ route('dynamic_page.destroy', ':id') }}';
+            let url = '{{ route('settings.dynamic_page.destroy', ':id') }}';
             let csrfToken = '{{ csrf_token() }}';
             $.ajax({
                 type: "DELETE",

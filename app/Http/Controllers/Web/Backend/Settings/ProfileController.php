@@ -33,8 +33,8 @@ class ProfileController extends Controller {
      */
     public function UpdateProfile(Request $request) {
         $validator = Validator::make($request->all(), [
-            'name'  => 'nullable|max:100|min:2',
-            'email' => 'nullable|email|unique:users,email,' . auth()->user()->id,
+            'name'  => 'required|max:100|min:2',
+            'email' => 'required|email|unique:users,email,' . auth()->user()->id,
         ]);
 
         if ($validator->fails()) {
