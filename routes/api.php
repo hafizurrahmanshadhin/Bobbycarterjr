@@ -1,0 +1,13 @@
+<?php
+
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\RegisterController;
+use Illuminate\Support\Facades\Route;
+
+//! Auth Routes
+Route::post('/register', [RegisterController::class, 'Register']);
+Route::post('/login', [LoginController::class, 'Login']);
+// Route::post('/logout', [LogoutController::class, 'logout']);
+// Route::post('/send-otp', [PasswordResetController::class, 'SendOtpToEmail']);
+// Route::post('/verify-otp', [PasswordResetController::class, 'VerifyOTP']);
+// Route::post('/reset-password', [PasswordResetController::class, 'ResetPassword']);
