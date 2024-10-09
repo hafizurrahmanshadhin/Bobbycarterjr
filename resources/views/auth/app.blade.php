@@ -38,7 +38,6 @@
             <div class="container-login100">
                 @yield('content')
             </div>
-            <!-- CONTAINER CLOSED -->
         </div>
     </div>
 

@@ -81,6 +81,10 @@ class PasswordResetController extends Controller {
                 $user = User::where('email', $email)->first();
 
                 if ($user) {
+                    $user->update([
+                        'otp_verified_at' => Carbon::now(),
+                    ]);
+
                     //! Delete the password reset entry
                     $passwordReset->delete();
 
@@ -113,14 +117,18 @@ class PasswordResetController extends Controller {
                 return Helper::jsonResponse(false, 'Email address is required', 400);
             }
 
-            $password = Hash::make($request->input('password'));
-
             $user = User::where('email', $email)->first();
-
             if ($user) {
+                if (is_null($user->otp_verified_at)) {
+                    return Helper::jsonResponse(false, 'OTP not verified', 403);
+                }
+
+                $password = Hash::make($request->input('password'));
                 $user->update([
-                    'password' => $password,
+                    'password'        => $password,
+                    'otp_verified_at' => null,
                 ]);
+
                 return Helper::jsonResponse(true, 'Password Reset Successfully', 200);
             } else {
                 return Helper::jsonResponse(false, 'Invalid Email Address', 401);

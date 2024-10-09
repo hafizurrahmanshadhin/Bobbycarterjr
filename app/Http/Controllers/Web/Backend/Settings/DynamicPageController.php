@@ -28,7 +28,7 @@ class DynamicPageController extends Controller {
                 ->addIndexColumn()
                 ->addColumn('page_content', function ($data) {
                     $page_content       = $data->page_content;
-                    $short_page_content = strlen($page_content) > 100 ? substr($page_content, 0, 10) . '...' : $page_content;
+                    $short_page_content = strlen($page_content) > 100 ? substr($page_content, 0, 200) . '...' : $page_content;
                     return '<p>' . $short_page_content . '</p>';
                 })
 
