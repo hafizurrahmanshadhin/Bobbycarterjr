@@ -59,8 +59,11 @@
                                     </span>
 
                                     <div class="text-center p-1 d-flex d-lg-none-max">
-                                        <h6 class="mb-0" id="profile-heading">{{ Auth::user()->name ?? 'N/A' }}<i
-                                                class="user-angle ms-1 fa fa-angle-down "></i></h6>
+                                        <h6 class="mb-0" id="profile-heading">
+                                            {{-- {{ Auth::user()->name ?? 'N/A' }} --}}
+                                            {{ ucfirst(Auth::user()->firstName) . ' ' . ucfirst(Auth::user()->lastName) ?? 'N/A' }}
+                                            <i class="user-angle ms-1 fa fa-angle-down "></i>
+                                        </h6>
                                     </div>
                                 </a>
 

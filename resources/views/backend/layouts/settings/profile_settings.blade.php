@@ -33,7 +33,9 @@
                                         style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                                 </div>
                                 <div class="ms-4">
-                                    <h4>{{ Auth::user()->name ?? 'N/A' }}</h4>
+                                    {{-- <h4>{{ Auth::user()->name ?? 'N/A' }}</h4> --}}
+                                    <h4>{{ ucfirst(Auth::user()->firstName) . ' ' . ucfirst(Auth::user()->lastName) ?? 'N/A' }}
+                                    </h4>
                                     <h4>{{ Auth::user()->email ?? 'N/A' }}</h4>
                                     <a href="#" class="btn btn-primary btn-sm" id="uploadImageBtn">
                                         <i class="fa fa-rss"></i> Update Profile

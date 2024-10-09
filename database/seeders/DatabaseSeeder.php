@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\DynamicPageSeeder;
+use Database\Seeders\SystemSettingSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Database\Seeder;
 
@@ -10,6 +12,8 @@ class DatabaseSeeder extends Seeder {
         $this->call([
             UserSeeder::class,
             SubscriptionSeeder::class,
+            SystemSettingSeeder::class,
+            DynamicPageSeeder::class,
         ]);
     }
 }
