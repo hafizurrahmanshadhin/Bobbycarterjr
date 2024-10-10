@@ -23,7 +23,8 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="mb-4">Edit Subscription</h2>
-                    <form action="{{ route('admin.subscription.update', $data->id) }}" method="POST">
+                    <form id="SubscriptionForm" action="{{ route('admin.subscription.update', $data->id) }}" method="POST">
+                        @csrf
                         <div class="row">
                             <div class="col-12">
                                 <label for="type" class="mb-2 text-bold">Type</label>
@@ -33,17 +34,13 @@
                                     <option value="premium" @if ($data->type == 'premium') selected @endif>Premium
                                     </option>
                                 </select>
-                                @error('type')
-                                    <span>{{ $message }}</span>
-                                @enderror
+                                <span class="text-danger error-text type_error"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="price" class="mb-2 mt-4 text-bold">Price</label>
                                 <input type="text" name="price" id="price" value="{{ $data->price }}"
                                     class="form-control @error('price') text-danger @enderror" placeholder="Enter Price">
-                                @error('price')
-                                    <span>{{ $message }}</span>
-                                @enderror
+                                <span class="text-danger error-text price_error"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="expire_date" class="mb-2 mt-4 text-bold">Expire Date</label>
@@ -51,36 +48,32 @@
                                     value="{{ $data->expire_at->format('Y-m-d') }}"
                                     class="form-control @error('expire_date') text-danger @enderror"
                                     placeholder="Enter Date">
-                                @error('expire_date')
-                                    <span>{{ $message }}</span>
-                                @enderror
+                                <span class="text-danger error-text expire_date_error"></span>
                             </div>
                             <div class="card mt-4">
                                 <div class="card-body">
                                     <h4>Subscription Details</h4>
                                     <div id="subscription_details_container">
-                                        @foreach ($data->details as $item)
-                                            <div class="card">
+                                        @forelse ($data->details as $item)
+                                            <div class="card subscription_details_card" id="subscription_details_card">
                                                 <div class="card-details pb-2">
                                                     <div class="col-md-12">
                                                         <label for="title" class="mb-2 mt-4 text-bold">Enter
                                                             Title</label>
-                                                        <input type="text" name="title" id="title"
+                                                        <input type="text" name="title[]" id="title"
                                                             value="{{ $item->title }}"
                                                             class="form-control @error('title') text-danger @enderror"
                                                             placeholder="Enter Title">
-                                                        @error('title')
-                                                            <span>{{ $message }}</span>
-                                                        @enderror
+                                                        <span class="text-danger error-text title_error"
+                                                            id="title_error"></span>
                                                     </div>
                                                     <div class="col-md-12">
                                                         <label for="description" class="mb-2 mt-4 text-bold">Enter
                                                             Description</label>
-                                                        <textarea name="description" id="description" class="form-control @error('description') text-danger @enderror"
+                                                        <textarea name="description[]" id="description" class="form-control @error('description') text-danger @enderror"
                                                             rows="5" placeholder="Enter Description">{{ $item->description }}</textarea>
-                                                        @error('description')
-                                                            <span>{{ $message }}</span>
-                                                        @enderror
+                                                        <span class="text-danger error-text description_error"
+                                                            id="description_error"></span>
                                                     </div>
                                                     <button type="button" id="subscription_details_remove"
                                                         class="btn btn-danger btn-sm mt-3 ms-2">
@@ -88,34 +81,33 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                        @endforeach
-                                        <div class="card" id="subscription_details_card">
-                                            <div class="card-details pb-2">
-                                                <div class="col-md-12">
-                                                    <label for="title" class="mb-2 mt-4 text-bold">Enter
-                                                        Title</label>
-                                                    <input type="text" name="title" id="title"
-                                                        class="form-control @error('title') text-danger @enderror"
-                                                        placeholder="Enter Title">
-                                                    @error('title')
-                                                        <span>{{ $message }}</span>
-                                                    @enderror
+                                        @empty
+                                            <div class="card subscription_details_card" id="subscription_details_card">
+                                                <div class="card-details pb-2">
+                                                    <div class="col-md-12">
+                                                        <label for="title" class="mb-2 mt-4 text-bold">Enter
+                                                            Title</label>
+                                                        <input type="text" name="title[]" id="title"
+                                                            class="form-control @error('title') text-danger @enderror"
+                                                            placeholder="Enter Title">
+                                                        <span class="text-danger error-text title_error"
+                                                            id="title_error"></span>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <label for="description" class="mb-2 mt-4 text-bold">Enter
+                                                            Description</label>
+                                                        <textarea name="description[]" id="description" class="form-control @error('description') text-danger @enderror"
+                                                            rows="5" placeholder="Enter Description"></textarea>
+                                                        <span class="text-danger error-text description_error"
+                                                            id="description_error"></span>
+                                                    </div>
+                                                    <button type="button" id="subscription_details_remove"
+                                                        class="btn btn-danger btn-sm mt-3 ms-2">
+                                                        Remove
+                                                    </button>
                                                 </div>
-                                                <div class="col-md-12">
-                                                    <label for="description" class="mb-2 mt-4 text-bold">Enter
-                                                        Description</label>
-                                                    <textarea name="description" id="description" class="form-control @error('description') text-danger @enderror"
-                                                        rows="5" placeholder="Enter Description"></textarea>
-                                                    @error('description')
-                                                        <span>{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                                <button type="button" id="subscription_details_remove"
-                                                    class="btn btn-danger btn-sm mt-3 ms-2">
-                                                    Remove
-                                                </button>
                                             </div>
-                                        </div>
+                                        @endforelse
                                     </div>
 
                                     <button type="button" class="btn btn-success" id="subscription_details_add">
@@ -133,7 +125,7 @@
                             </div>
                         </div>
                         <div class="mt-5">
-                            <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                            <button type="submit" id="SubscriptionSubmit" class="btn btn-primary btn-lg">Save</button>
                         </div>
                     </form>
                 </div>
@@ -145,14 +137,24 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            let index = 0; // Initialize counter
+
             // Function to add a new subscription detail card
             $('#subscription_details_add').click(function() {
                 // Clone the first card
-                var newCard = $('#subscription_details_card:first').clone();
+                let newCard = $('#subscription_details_card:first').clone();
 
                 // Clear the input fields in the cloned card
                 newCard.find('input').val('');
                 newCard.find('textarea').val('');
+
+                // Clear previous error messages
+                newCard.find('.error-text').text('');
+
+                // Update IDs for error messages
+                index++; // Increment the index for unique IDs
+                newCard.find('.title_error').attr('id', `title_error.${index}`);
+                newCard.find('.description_error').attr('id', `description_error.${index}`);
 
                 // Append the cloned card to the container
                 $('#subscription_details_container').append(newCard);
@@ -161,6 +163,55 @@
             // Function to remove a subscription detail card
             $(document).on('click', '#subscription_details_remove', function() {
                 $(this).closest('#subscription_details_card').remove();
+            });
+        });
+    </script>
+
+    <script>
+        $(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $("#SubscriptionForm").on('submit', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: $(this).attr('method'),
+                    data: new FormData(this),
+                    processData: false,
+                    dataType: 'json',
+                    contentType: false,
+                    beforeSend: function() {
+                        $(document).find('span.error-text').text('');
+                        $('#SubscriptionSubmit').attr('disabled', true).text('Loading...');
+                    },
+                    success: function(data) {
+                        if (data.status == 0) {
+
+                            $.each(data.error, function(prefix, val) {
+                                var id = prefix + '_error';
+                                var errorSpanTag = document.getElementById(id);
+                                errorSpanTag.innerHTML = val[0];
+                            });
+
+                            $('#SubscriptionSubmit').removeAttr('disabled').text('Save');
+
+                        } else {
+                            $('#SubscriptionForm')[0].reset();
+                            Swal.fire({
+                                icon: "success",
+                                title: "Apply Successfull For Demo Class",
+                                showConfirmButton: false,
+                                timer: 2500
+                            })
+                            $('#SubscriptionSubmit').removeAttr('disabled').text('Save');
+                        }
+                    }
+                });
+
             });
         });
     </script>
