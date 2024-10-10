@@ -40,7 +40,7 @@ class SocialLoginController extends Controller {
                 if (!$user) {
                     $password = Str::random(16);
                     $user     = User::create([
-                        'name'              => $socialUser->getName(),
+                        'firstName'         => $socialUser->getName(),
                         'email'             => $socialUser->getEmail(),
                         'password'          => bcrypt($password),
                         'email_verified_at' => now(),
