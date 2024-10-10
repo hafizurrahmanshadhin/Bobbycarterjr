@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Subscription;
 use App\Models\SubscriptionDetail;
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,7 +15,7 @@ class SubscriptionSeeder extends Seeder
      */
     public function run(): void
     {
-        $now = now(); // Store the current timestamp
+        $now = Carbon::now(); // Store the current timestamp
 
         // Seed subscriptions with timestamps
         $subscriptions = [

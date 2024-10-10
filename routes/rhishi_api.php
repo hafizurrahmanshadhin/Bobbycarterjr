@@ -5,6 +5,6 @@ use App\Http\Controllers\Api\SubscriptionController;
 
 
 Route::controller(SubscriptionController::class)->group(function () {
-    Route::post('/package/free', 'freePackage');
-    Route::post('/package/premium', 'premiumPackage');
+    Route::get('/package/free', 'freePackage');
+    Route::get('/package/premium', 'premiumPackage');
 });

@@ -16,4 +16,17 @@ class SubscriptionDetail extends Model
     {
         return $this->belongsTo(Subscription::class);
     }
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    protected function casts(): array {
+        return [
+            'id' => 'integer',
+            'subscription_id' => 'integer',
+        ];
+    }
 }

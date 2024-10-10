@@ -17,7 +17,16 @@ class Subscription extends Model
         return $this->hasMany(SubscriptionDetail::class);
     }
 
-    protected $casts = [
-        'expire_at' => 'datetime',
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
+
+    protected function casts(): array {
+        return [
+            'id' => 'integer',
+            'expire_at' => 'datetime',
+        ];
+    }
 }
