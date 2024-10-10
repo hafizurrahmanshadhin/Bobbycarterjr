@@ -2,19 +2,16 @@
 
 namespace App\Models;
 
-use App\Models\Course;
+use App\Models\CourseType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CourseType extends Model {
+class Course extends Model {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-        'name',
-        'status',
-    ];
+    protected $guarded = [];
 
     protected $hidden = [
         'created_at',
@@ -24,12 +21,13 @@ class CourseType extends Model {
 
     protected function casts(): array {
         return [
-            'name'   => 'string',
-            'status' => 'string',
+            'course_type_id' => 'integer',
+            'name'           => 'string',
+            'status'         => 'string',
         ];
     }
 
-    public function courses(): HasMany {
-        return $this->hasMany(Course::class);
+    public function courseTypos(): BelongsTo {
+        return $this->belongsTo(CourseType::class);
     }
 }
