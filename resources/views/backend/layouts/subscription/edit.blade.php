@@ -34,13 +34,13 @@
                                     <option value="premium" @if ($data->type == 'premium') selected @endif>Premium
                                     </option>
                                 </select>
-                                <span class="text-danger error-text type_error"></span>
+                                <span class="text-danger error-text type_error" id="type_error"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="price" class="mb-2 mt-4 text-bold">Price</label>
                                 <input type="text" name="price" id="price" value="{{ $data->price }}"
                                     class="form-control @error('price') text-danger @enderror" placeholder="Enter Price">
-                                <span class="text-danger error-text price_error"></span>
+                                <span class="text-danger error-text price_error" id="price_error"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="expire_date" class="mb-2 mt-4 text-bold">Expire Date</label>
@@ -48,7 +48,7 @@
                                     value="{{ $data->expire_at->format('Y-m-d') }}"
                                     class="form-control @error('expire_date') text-danger @enderror"
                                     placeholder="Enter Date">
-                                <span class="text-danger error-text expire_date_error"></span>
+                                <span class="text-danger error-text expire_date_error" id="expire_date_error"></span>
                             </div>
                             <div class="card mt-4">
                                 <div class="card-body">
@@ -76,7 +76,7 @@
                                                             id="description_error"></span>
                                                     </div>
                                                     <button type="button" id="subscription_details_remove"
-                                                        class="btn btn-danger btn-sm mt-3 ms-2">
+                                                        class="btn btn-danger btn-sm mt-3 ms-2 remove-item">
                                                         Remove
                                                     </button>
                                                 </div>
@@ -102,7 +102,7 @@
                                                             id="description_error"></span>
                                                     </div>
                                                     <button type="button" id="subscription_details_remove"
-                                                        class="btn btn-danger btn-sm mt-3 ms-2">
+                                                        class="btn btn-danger btn-sm mt-3 ms-2 remove-item">
                                                         Remove
                                                     </button>
                                                 </div>
@@ -126,6 +126,7 @@
                         </div>
                         <div class="mt-5">
                             <button type="submit" id="SubscriptionSubmit" class="btn btn-primary btn-lg">Save</button>
+                            <a href="{{ route('admin.subscription.index') }}" class="btn btn-danger btn-lg">Back</a>
                         </div>
                     </form>
                 </div>
@@ -137,8 +138,11 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            let index = 0; // Initialize counter
 
+            $('.subscription_details_card').each(function(index) {
+                $(this).find('.title_error').attr('id', `title.${index}_error`);
+                $(this).find('.description_error').attr('id', `description.${index}_error`);
+            });
             // Function to add a new subscription detail card
             $('#subscription_details_add').click(function() {
                 // Clone the first card
@@ -151,18 +155,15 @@
                 // Clear previous error messages
                 newCard.find('.error-text').text('');
 
-                // Update IDs for error messages
-                index++; // Increment the index for unique IDs
-                newCard.find('.title_error').attr('id', `title_error.${index}`);
-                newCard.find('.description_error').attr('id', `description_error.${index}`);
+                // Get the current number of subscription detail cards
+                const currentCount = $('.subscription_details_card').length;
+
+                // Update IDs for error messages with the new count
+                newCard.find('.title_error').attr('id', `title.${currentCount}_error`);
+                newCard.find('.description_error').attr('id', `description.${currentCount}_error`);
 
                 // Append the cloned card to the container
                 $('#subscription_details_container').append(newCard);
-            });
-
-            // Function to remove a subscription detail card
-            $(document).on('click', '#subscription_details_remove', function() {
-                $(this).closest('#subscription_details_card').remove();
             });
         });
     </script>
@@ -200,19 +201,47 @@
                             $('#SubscriptionSubmit').removeAttr('disabled').text('Save');
 
                         } else {
-                            $('#SubscriptionForm')[0].reset();
-                            Swal.fire({
-                                icon: "success",
-                                title: "Apply Successfull For Demo Class",
-                                showConfirmButton: false,
-                                timer: 2500
-                            })
+                            toastr.success(data.msg);
                             $('#SubscriptionSubmit').removeAttr('disabled').text('Save');
+
+                            setTimeout(function() {
+                                window.location.href =
+                                    "{{ route('admin.subscription.index') }}";
+                            }, 1000);
                         }
                     }
                 });
 
             });
+        });
+    </script>
+
+    <script>
+        // Remove Subscription Details with SweetAlert
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.closest('.remove-item')) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to recover this item!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        e.target.closest('.subscription_details_card').remove();
+                        Swal.fire({
+                            timer: 1500,
+                            icon: "success",
+                            title: "Your item has been Removed.",
+                            showConfirmButton: false,
+                        })
+                    }
+                });
+            }
         });
     </script>
 @endpush
