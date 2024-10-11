@@ -95,6 +95,20 @@
                     </a>
                 </li>
 
+                <li class="slide">
+                    <a class="side-menu__item has-link" data-bs-toggle="slide"
+                        href="{{ route('survay-questions.index') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M10.854 6.146a.5.5 0 1 0-.708.708l1 1a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L11 6.793 10.854 6.146z" />
+                            <path
+                                d="M1 2.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z" />
+                        </svg>
+                        <span class="side-menu__label">Survay Questions</span>
+                    </a>
+                </li>
+
 
                 <hr>
                 <li class="slide {{ request()->is('admin/settings*') ? 'active is-expanded' : '' }}">

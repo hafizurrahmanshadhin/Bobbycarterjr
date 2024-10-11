@@ -1,0 +1,417 @@
+@extends('backend.app')
+
+@section('title', 'Survey Questions')
+
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+@endpush
+
+@section('content')
+    {{-- PAGE-HEADER --}}
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Survey Questions</h1>
+        </div>
+        <div class="ms-auto pageheader-btn">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="javascript:void(0);">Settings</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Survey Question List</li>
+            </ol>
+        </div>
+    </div>
+    {{-- PAGE-HEADER --}}
+
+    <div class="row row-sm">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header border-bottom"
+                    style="margin-bottom: 0; display: flex; justify-content: space-between;">
+                    <h3 class="card-title">Survey Question List</h3>
+                    <a class="btn btn-primary" data-bs-target="#createModal" data-bs-toggle="modal"
+                        href="javascript:void(0)" onclick="showCreateModal()">Add New</a>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-nowrap border-bottom w-100" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th class="wd-15p border-bottom-0">#</th>
+                                    <th class="wd-15p border-bottom-0">Course</th>
+                                    <th class="wd-15p border-bottom-0">Question</th>
+                                    <th class="wd-15p border-bottom-0">Marks</th>
+                                    <th class="wd-15p border-bottom-0">Status</th>
+                                    <th class="wd-15p border-bottom-0">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{-- dynamic data --}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- CREATE MODAL --}}
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">
+                        <i class="bi bi-plus-circle"></i> Create Survey Question
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{-- Course Dropdown --}}
+                    <div class="form-group">
+                        <label for="course" class="form-label text-muted">Select Course:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-list-ul"></i></span>
+                            <select id="course" class="form-select">
+                                <option value="" disabled selected>Select a Course</option>
+                                {{-- Courses will be dynamically loaded here --}}
+                            </select>
+                        </div>
+                        <small id="courseHelp" class="form-text text-muted">Choose the course from the list.</small>
+                    </div>
+
+                    {{-- Question Input --}}
+                    <div class="form-group mt-3">
+                        <label for="question" class="form-label text-muted">Question:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-question-circle"></i></span>
+                            <input type="text" id="question" class="form-control" placeholder="Enter Question">
+                        </div>
+                        <small id="questionHelp" class="form-text text-muted">Enter the survey question.</small>
+                    </div>
+
+                    {{-- Marks Input --}}
+                    <div class="form-group mt-3">
+                        <label for="marks" class="form-label text-muted">Marks:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                            <input type="number" id="marks" class="form-control" placeholder="Enter Marks">
+                        </div>
+                        <small id="marksHelp" class="form-text text-muted">Enter the marks for the question.</small>
+                    </div>
+                    <div id="createFeedback" class="mt-2"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" onclick="storeQuestion()"><i class="bi bi-check-circle"></i>
+                        Save</button>
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i>
+                        Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- EDIT MODAL --}}
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">
+                        <i class="bi bi-pencil-square"></i> Edit Survey Question
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{-- Course Dropdown --}}
+                    <div class="form-group">
+                        <label for="editCourse" class="form-label text-muted">Select Course:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-list-ul"></i></span>
+                            <select id="editCourse" class="form-select">
+                                <option value="" disabled selected>Select a Course</option>
+                                {{-- Courses will be dynamically loaded here --}}
+                            </select>
+                        </div>
+                        <small id="editCourseHelp" class="form-text text-muted">Choose the course from the list.</small>
+                    </div>
+
+                    {{-- Question Input --}}
+                    <div class="form-group mt-3">
+                        <label for="editQuestion" class="form-label text-muted">Question:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-question-circle"></i></span>
+                            <input type="text" id="editQuestion" class="form-control" placeholder="Enter Question">
+                        </div>
+                        <small id="editQuestionHelp" class="form-text text-muted">Enter the survey question.</small>
+                    </div>
+
+                    {{-- Marks Input --}}
+                    <div class="form-group mt-3">
+                        <label for="editMarks" class="form-label text-muted">Marks:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                            <input type="number" id="editMarks" class="form-control" placeholder="Enter Marks">
+                        </div>
+                        <small id="editMarksHelp" class="form-text text-muted">Enter the marks for the question.</small>
+                    </div>
+                    <input type="hidden" id="editQuestionId">
+                    <div id="editFeedback" class="mt-2"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="updateQuestion()"><i class="bi bi-save"></i> Update</button>
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i>
+                        Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate course dropdown
+            function loadCourses(selectElementId, selectedValue = null) {
+                axios.get("{{ route('courses.list') }}")
+                    .then(function(response) {
+                        if (response.data.success) {
+                            let options = '<option value="" disabled selected>Select a Course</option>';
+                            response.data.data.forEach(function(course) {
+                                options += `<option value="${course.id}">${course.name}</option>`;
+                            });
+                            document.getElementById(selectElementId).innerHTML = options;
+                            if (selectedValue) {
+                                document.getElementById(selectElementId).value = selectedValue;
+                            }
+                        } else {
+                            toastr.error('Failed to load courses.');
+                        }
+                    })
+                    .catch(function() {
+                        toastr.error('An error occurred while loading courses.');
+                    });
+            }
+
+            // Show create modal and load courses
+            window.showCreateModal = function() {
+                document.getElementById('question').value = '';
+                document.getElementById('marks').value = '';
+                loadCourses('course');
+                $('#createModal').modal('show');
+            }
+
+            // Store survey question
+            window.storeQuestion = function() {
+                let courseId = document.getElementById('course').value;
+                let question = document.getElementById('question').value;
+                let marks = document.getElementById('marks').value;
+
+                axios.post("{{ route('survay-questions.store') }}", {
+                        course_id: courseId,
+                        questions: question,
+                        marks: marks
+                    })
+                    .then(function(response) {
+                        if (response.data.success) {
+                            $('#createModal').modal('hide');
+                            $('#datatable').DataTable().ajax.reload();
+                            toastr.success(response.data.message);
+                        } else {
+                            displayValidationErrors(response.data.data, 'createFeedback');
+                        }
+                    })
+                    .catch(function(error) {
+                        toastr.error('An error occurred while storing the data.');
+                    });
+            }
+
+            // Show edit modal and load survey question data
+            window.editQuestion = function(id) {
+                axios.get("{{ route('survay-questions.edit', ':id') }}".replace(':id', id))
+                    .then(function(response) {
+                        if (response.data.success) {
+                            let question = response.data.data;
+                            document.getElementById('editQuestion').value = question.questions;
+                            document.getElementById('editMarks').value = question.marks;
+                            loadCourses('editCourse', question
+                                .course_id); // Load courses and set selected value
+                            document.getElementById('editQuestionId').value = question.id;
+                            $('#editModal').modal('show');
+                        } else {
+                            toastr.error('Failed to load survey question data.');
+                        }
+                    })
+                    .catch(function() {
+                        toastr.error('An error occurred while loading survey question data.');
+                    });
+            }
+
+            // Update survey question
+            window.updateQuestion = function() {
+                let questionId = document.getElementById('editQuestionId').value;
+                let courseId = document.getElementById('editCourse').value;
+                let question = document.getElementById('editQuestion').value;
+                let marks = document.getElementById('editMarks').value;
+
+                axios.put("{{ route('survay-questions.update', ':id') }}".replace(':id', questionId), {
+                        course_id: courseId,
+                        questions: question,
+                        marks: marks
+                    })
+                    .then(function(response) {
+                        if (response.data.success) {
+                            $('#editModal').modal('hide');
+                            $('#datatable').DataTable().ajax.reload();
+                            toastr.success(response.data.message);
+                        } else {
+                            displayValidationErrors(response.data.data, 'editFeedback');
+                        }
+                    })
+                    .catch(function(error) {
+                        toastr.error('An error occurred while updating the data.');
+                    });
+            }
+
+            // Status Change Confirm Alert
+            window.showStatusChangeAlert = function(id) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You want to update the status?',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        statusChange(id);
+                    }
+                });
+            }
+
+            // Status Change
+            window.statusChange = function(id) {
+                axios.get("{{ route('survay-questions.status', ':id') }}".replace(':id', id))
+                    .then(function(response) {
+                        $('#datatable').DataTable().ajax.reload();
+                        if (response.data.success) {
+                            toastr.success(response.data.message);
+                        } else {
+                            toastr.error(response.data.message);
+                        }
+                    })
+                    .catch(function() {
+                        toastr.error('An error occurred while updating the status.');
+                    });
+            }
+
+            // Delete Confirmation Alert
+            window.showDeleteConfirm = function(id) {
+                Swal.fire({
+                    title: 'Are you sure you want to delete this record?',
+                    text: 'If you delete this, it will be gone forever.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        deleteQuestion(id);
+                    }
+                });
+            }
+
+            // Delete Data
+            window.deleteQuestion = function(id) {
+                axios.delete("{{ route('survay-questions.destroy', ':id') }}".replace(':id', id))
+                    .then(function(response) {
+                        if (response.data.success) {
+                            $('#datatable').DataTable().ajax.reload();
+                            toastr.success(response.data.message);
+                        } else {
+                            toastr.error(response.data.message);
+                        }
+                    })
+                    .catch(function() {
+                        toastr.error('An error occurred while deleting the data.');
+                    });
+            }
+
+            // Display validation errors
+            function displayValidationErrors(errors, feedbackElementId) {
+                let feedback = document.getElementById(feedbackElementId);
+                feedback.innerHTML = '';
+                for (let key in errors) {
+                    if (errors.hasOwnProperty(key)) {
+                        feedback.innerHTML += `<div class="alert alert-danger">${errors[key][0]}</div>`;
+                    }
+                }
+            }
+
+            // Initialize DataTable
+            $('#datatable').DataTable({
+                order: [],
+                lengthMenu: [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
+                processing: true,
+                responsive: true,
+                serverSide: true,
+                language: {
+                    processing: `<div class="text-center">
+                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                        </div>`
+                },
+                scroller: {
+                    loadingIndicator: false
+                },
+                pagingType: "full_numbers",
+                dom: "<'row justify-content-between table-topbar'<'col-md-2 col-sm-4 px-0'l><'col-md-2 col-sm-4 px-0'f>>tipr",
+                ajax: {
+                    url: "{{ route('survay-questions.index') }}",
+                    type: "GET",
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'course',
+                        name: 'course',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'questions',
+                        name: 'questions',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'marks',
+                        name: 'marks',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                ],
+            });
+        });
+    </script>
+@endpush
