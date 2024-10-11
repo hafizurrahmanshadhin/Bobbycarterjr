@@ -85,6 +85,16 @@
                     </a>
                 </li>
 
+                <li class="slide">
+                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('course.index') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2L1 8l11 6 9-4.9V14h2V9.1L12 2zm0 2.2L17.9 8 12 10.9 6.1 8 12 4.2zM1 10v2l4.5 2.5v3c0 1.7 2.9 3 6.5 3s6.5-1.3 6.5-3v-3L23 12v-2l-11 6L1 10zm6.5 4.6l4.5 2.5 4.5-2.5V17c0 .6-1.8 2-4.5 2s-4.5-1.4-4.5-2v-2.4z" />
+                        </svg>
+                        <span class="side-menu__label">Course</span>
+                    </a>
+                </li>
+
 
                 <hr>
                 <li class="slide {{ request()->is('admin/settings*') ? 'active is-expanded' : '' }}">

@@ -27,7 +27,7 @@ class Course extends Model {
         ];
     }
 
-    public function courseTypos(): BelongsTo {
+    public function courseType(): BelongsTo {
         return $this->belongsTo(CourseType::class);
     }
 }

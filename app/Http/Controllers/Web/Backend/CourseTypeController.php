@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\CourseType;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -15,6 +16,7 @@ class CourseTypeController extends Controller {
      *
      * @param Request $request
      * @return JsonResponse|View
+     * @throws Exception
      */
     public function index(Request $request): JsonResponse | View {
         if ($request->ajax()) {
@@ -46,7 +48,7 @@ class CourseTypeController extends Controller {
                             </div>';
                 })
                 ->rawColumns(['status', 'action'])
-                ->make(true);
+                ->make();
         }
         return view('backend.layouts.course-type.index');
     }

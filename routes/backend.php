@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 //! Route for Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-// !Route for CourseTypeController
+//! Route for CourseTypeController
 Route::controller(CourseTypeController::class)->group(function () {
     Route::get('/course-type', 'index')->name('course-type.index');
     Route::post('/course-type/store', 'store')->name('course-type.store');
@@ -18,9 +18,10 @@ Route::controller(CourseTypeController::class)->group(function () {
     Route::delete('/course-type/destroy/{id}', 'destroy')->name('course-type.destroy');
 });
 
-// !Route for CourseController
+//! Route for CourseController
 Route::controller(CourseController::class)->group(function () {
     Route::get('/course', 'index')->name('course.index');
+    Route::get('course-types/list', 'getCourseTypes')->name('course-types.list');
     Route::post('/course/store', 'store')->name('course.store');
     Route::get('/course/edit/{id}', 'edit')->name('course.edit');
     Route::put('/course/update/{id}', 'update')->name('course.update');

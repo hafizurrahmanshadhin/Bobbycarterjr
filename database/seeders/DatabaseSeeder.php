@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\CourseSeeder;
 use Database\Seeders\CourseTypeSeeder;
 use Database\Seeders\DynamicPageSeeder;
 use Database\Seeders\SubscriptionSeeder;
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder {
             SystemSettingSeeder::class,
             DynamicPageSeeder::class,
             CourseTypeSeeder::class,
+            CourseSeeder::class,
         ]);
     }
 }
