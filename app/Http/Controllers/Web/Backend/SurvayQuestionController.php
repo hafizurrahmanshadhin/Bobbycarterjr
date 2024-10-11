@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Option;
 use App\Models\SurvayQuestion;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -66,16 +67,27 @@ class SurvayQuestionController extends Controller {
     public function store(Request $request): JsonResponse {
         try {
             $validated = $request->validate([
-                'course_id' => 'required|exists:courses,id',
-                'questions' => 'required|string|max:255',
-                'marks'     => 'required|integer',
+                'course_id'            => 'required|exists:courses,id',
+                'questions'            => 'required|string|max:255',
+                'marks'                => 'required|integer',
+                'options'              => 'required|array',
+                'options.*.option'     => 'required|string|max:255',
+                'options.*.is_correct' => 'required|boolean',
             ]);
 
-            SurvayQuestion::create([
+            $question = SurvayQuestion::create([
                 'course_id' => $validated['course_id'],
                 'questions' => $validated['questions'],
                 'marks'     => $validated['marks'],
             ]);
+
+            foreach ($validated['options'] as $option) {
+                Option::create([
+                    'survay_question_id' => $question->id,
+                    'options'            => $option['option'],
+                    'is_correct'         => $option['is_correct'],
+                ]);
+            }
 
             return response()->json(['success' => true, 'message' => 'Survey question created successfully']);
         } catch (Exception $e) {
@@ -105,7 +117,7 @@ class SurvayQuestionController extends Controller {
      */
     public function edit(int $id): JsonResponse {
         try {
-            $question = SurvayQuestion::with('course')->findOrFail($id);
+            $question = SurvayQuestion::with(['course', 'options'])->findOrFail($id);
             return response()->json(['success' => true, 'data' => $question]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
@@ -122,9 +134,12 @@ class SurvayQuestionController extends Controller {
     public function update(Request $request, int $id): JsonResponse {
         try {
             $validated = $request->validate([
-                'course_id' => 'required|exists:courses,id',
-                'questions' => 'required|string|max:255',
-                'marks'     => 'required|integer',
+                'course_id'            => 'required|exists:courses,id',
+                'questions'            => 'required|string|max:255',
+                'marks'                => 'required|integer',
+                'options'              => 'required|array',
+                'options.*.option'     => 'required|string|max:255',
+                'options.*.is_correct' => 'required|boolean',
             ]);
 
             $question = SurvayQuestion::findOrFail($id);
@@ -133,6 +148,18 @@ class SurvayQuestionController extends Controller {
                 'questions' => $validated['questions'],
                 'marks'     => $validated['marks'],
             ]);
+
+            // Delete existing options
+            $question->options()->delete();
+
+            // Create new options
+            foreach ($validated['options'] as $option) {
+                Option::create([
+                    'survay_question_id' => $question->id,
+                    'options'            => $option['option'],
+                    'is_correct'         => $option['is_correct'],
+                ]);
+            }
 
             return response()->json(['success' => true, 'message' => 'Survey question updated successfully']);
         } catch (Exception $e) {

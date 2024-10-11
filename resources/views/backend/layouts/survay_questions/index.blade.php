@@ -97,6 +97,24 @@
                         </div>
                         <small id="marksHelp" class="form-text text-muted">Enter the marks for the question.</small>
                     </div>
+
+                    {{-- Options Input --}}
+                    <div class="form-group mt-3">
+                        <label for="options" class="form-label text-muted">Options:</label>
+                        <div id="optionsContainer">
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                                <input type="text" class="form-control option-input" placeholder="Enter Option">
+                                <div class="input-group-text">
+                                    <input type="checkbox" class="is-correct-checkbox"> Correct
+                                </div>
+                                <button class="btn btn-danger remove-option" type="button"><i
+                                        class="bi bi-x-circle"></i></button>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary mt-2" type="button" id="addOption"><i
+                                class="bi bi-plus-circle"></i> Add Option</button>
+                    </div>
                     <div id="createFeedback" class="mt-2"></div>
                 </div>
                 <div class="modal-footer">
@@ -152,6 +170,16 @@
                         </div>
                         <small id="editMarksHelp" class="form-text text-muted">Enter the marks for the question.</small>
                     </div>
+
+                    {{-- Options Input --}}
+                    <div class="form-group mt-3">
+                        <label for="editOptions" class="form-label text-muted">Options:</label>
+                        <div id="editOptionsContainer">
+                            {{-- Options will be dynamically loaded here --}}
+                        </div>
+                        <button class="btn btn-secondary mt-2" type="button" id="addEditOption"><i
+                                class="bi bi-plus-circle"></i> Add Option</button>
+                    </div>
                     <input type="hidden" id="editQuestionId">
                     <div id="editFeedback" class="mt-2"></div>
                 </div>
@@ -199,16 +227,49 @@
                 $('#createModal').modal('show');
             }
 
+            // Add new option input
+            document.getElementById('addOption').addEventListener('click', function() {
+                let optionsContainer = document.getElementById('optionsContainer');
+                let optionInput = `
+            <div class="input-group mb-2">
+                <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                <input type="text" class="form-control option-input" placeholder="Enter Option">
+                <div class="input-group-text">
+                    <input type="checkbox" class="is-correct-checkbox"> Correct
+                </div>
+                <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
+            </div>`;
+                optionsContainer.insertAdjacentHTML('beforeend', optionInput);
+            });
+
+            // Remove option input
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-option')) {
+                    event.target.closest('.input-group').remove();
+                }
+            });
+
             // Store survey question
             window.storeQuestion = function() {
                 let courseId = document.getElementById('course').value;
                 let question = document.getElementById('question').value;
                 let marks = document.getElementById('marks').value;
 
+                let options = [];
+                document.querySelectorAll('#optionsContainer .input-group').forEach(function(optionGroup) {
+                    let optionInput = optionGroup.querySelector('.option-input').value;
+                    let isCorrect = optionGroup.querySelector('.is-correct-checkbox').checked;
+                    options.push({
+                        option: optionInput,
+                        is_correct: isCorrect
+                    });
+                });
+
                 axios.post("{{ route('survay-questions.store') }}", {
                         course_id: courseId,
                         questions: question,
-                        marks: marks
+                        marks: marks,
+                        options: options
                     })
                     .then(function(response) {
                         if (response.data.success) {
@@ -235,6 +296,23 @@
                             loadCourses('editCourse', question
                                 .course_id); // Load courses and set selected value
                             document.getElementById('editQuestionId').value = question.id;
+
+                            // Load options
+                            let editOptionsContainer = document.getElementById('editOptionsContainer');
+                            editOptionsContainer.innerHTML = '';
+                            question.options.forEach(function(option) {
+                                let optionInput = `
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                                <input type="text" class="form-control option-input" value="${option.options}" placeholder="Enter Option">
+                                <div class="input-group-text">
+                                    <input type="checkbox" class="is-correct-checkbox" ${option.is_correct ? 'checked' : ''}> Correct
+                                </div>
+                                <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
+                            </div>`;
+                                editOptionsContainer.insertAdjacentHTML('beforeend', optionInput);
+                            });
+
                             $('#editModal').modal('show');
                         } else {
                             toastr.error('Failed to load survey question data.');
@@ -245,6 +323,21 @@
                     });
             }
 
+            // Add new option input in edit modal
+            document.getElementById('addEditOption').addEventListener('click', function() {
+                let editOptionsContainer = document.getElementById('editOptionsContainer');
+                let optionInput = `
+            <div class="input-group mb-2">
+                <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                <input type="text" class="form-control option-input" placeholder="Enter Option">
+                <div class="input-group-text">
+                    <input type="checkbox" class="is-correct-checkbox"> Correct
+                </div>
+                <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
+            </div>`;
+                editOptionsContainer.insertAdjacentHTML('beforeend', optionInput);
+            });
+
             // Update survey question
             window.updateQuestion = function() {
                 let questionId = document.getElementById('editQuestionId').value;
@@ -252,10 +345,21 @@
                 let question = document.getElementById('editQuestion').value;
                 let marks = document.getElementById('editMarks').value;
 
+                let options = [];
+                document.querySelectorAll('#editOptionsContainer .input-group').forEach(function(optionGroup) {
+                    let optionInput = optionGroup.querySelector('.option-input').value;
+                    let isCorrect = optionGroup.querySelector('.is-correct-checkbox').checked;
+                    options.push({
+                        option: optionInput,
+                        is_correct: isCorrect
+                    });
+                });
+
                 axios.put("{{ route('survay-questions.update', ':id') }}".replace(':id', questionId), {
                         course_id: courseId,
                         questions: question,
-                        marks: marks
+                        marks: marks,
+                        options: options
                     })
                     .then(function(response) {
                         if (response.data.success) {
@@ -360,10 +464,10 @@
                 serverSide: true,
                 language: {
                     processing: `<div class="text-center">
-                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                      </div>
-                        </div>`
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+                </div>`
                 },
                 scroller: {
                     loadingIndicator: false
