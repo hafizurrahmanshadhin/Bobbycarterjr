@@ -223,6 +223,7 @@
             window.showCreateModal = function() {
                 document.getElementById('question').value = '';
                 document.getElementById('marks').value = '';
+                document.getElementById('optionsContainer').innerHTML = ''; // Clear options container
                 loadCourses('course');
                 $('#createModal').modal('show');
             }
@@ -231,14 +232,14 @@
             document.getElementById('addOption').addEventListener('click', function() {
                 let optionsContainer = document.getElementById('optionsContainer');
                 let optionInput = `
-            <div class="input-group mb-2">
-                <span class="input-group-text"><i class="bi bi-list-check"></i></span>
-                <input type="text" class="form-control option-input" placeholder="Enter Option">
-                <div class="input-group-text">
-                    <input type="checkbox" class="is-correct-checkbox"> Correct
-                </div>
-                <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
-            </div>`;
+                    <div class="input-group mb-2">
+                        <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                        <input type="text" class="form-control option-input" placeholder="Enter Option">
+                        <div class="input-group-text">
+                            <input type="checkbox" class="is-correct-checkbox"> Correct
+                        </div>
+                        <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
+                    </div>`;
                 optionsContainer.insertAdjacentHTML('beforeend', optionInput);
             });
 
@@ -276,6 +277,10 @@
                             $('#createModal').modal('hide');
                             $('#datatable').DataTable().ajax.reload();
                             toastr.success(response.data.message);
+                            // Clear form fields and options container
+                            document.getElementById('question').value = '';
+                            document.getElementById('marks').value = '';
+                            document.getElementById('optionsContainer').innerHTML = '';
                         } else {
                             displayValidationErrors(response.data.data, 'createFeedback');
                         }
@@ -302,14 +307,14 @@
                             editOptionsContainer.innerHTML = '';
                             question.options.forEach(function(option) {
                                 let optionInput = `
-                            <div class="input-group mb-2">
-                                <span class="input-group-text"><i class="bi bi-list-check"></i></span>
-                                <input type="text" class="form-control option-input" value="${option.options}" placeholder="Enter Option">
-                                <div class="input-group-text">
-                                    <input type="checkbox" class="is-correct-checkbox" ${option.is_correct ? 'checked' : ''}> Correct
-                                </div>
-                                <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
-                            </div>`;
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                                        <input type="text" class="form-control option-input" value="${option.options}" placeholder="Enter Option">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" class="is-correct-checkbox" ${option.is_correct ? 'checked' : ''}> Correct
+                                        </div>
+                                        <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
+                                    </div>`;
                                 editOptionsContainer.insertAdjacentHTML('beforeend', optionInput);
                             });
 
@@ -327,14 +332,14 @@
             document.getElementById('addEditOption').addEventListener('click', function() {
                 let editOptionsContainer = document.getElementById('editOptionsContainer');
                 let optionInput = `
-            <div class="input-group mb-2">
-                <span class="input-group-text"><i class="bi bi-list-check"></i></span>
-                <input type="text" class="form-control option-input" placeholder="Enter Option">
-                <div class="input-group-text">
-                    <input type="checkbox" class="is-correct-checkbox"> Correct
-                </div>
-                <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
-            </div>`;
+                    <div class="input-group mb-2">
+                        <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                        <input type="text" class="form-control option-input" placeholder="Enter Option">
+                        <div class="input-group-text">
+                            <input type="checkbox" class="is-correct-checkbox"> Correct
+                        </div>
+                        <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
+                    </div>`;
                 editOptionsContainer.insertAdjacentHTML('beforeend', optionInput);
             });
 

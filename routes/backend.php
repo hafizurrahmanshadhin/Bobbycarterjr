@@ -31,25 +31,14 @@ Route::controller(CourseController::class)->group(function () {
 });
 
 //! Route for SurvayQuestionController
-// Route::controller(SurvayQuestionController::class)->group(function () {
-//     Route::get('/survay-questions', 'index')->name('survay-questions.index');
-//     Route::post('/survay-questions/store', 'store')->name('survay-questions.store');
-//     Route::get('/survay-questions/edit/{id}', 'edit')->name('survay-questions.edit');
-//     Route::put('/survay-questions/update/{id}', 'update')->name('survay-questions.update');
-//     Route::get('/survay-questions/status/{id}', 'status')->name('survay-questions.status');
-//     Route::delete('/survay-questions/destroy/{id}', 'destroy')->name('survay-questions.destroy');
-// });
+Route::controller(SurvayQuestionController::class)->prefix('survay-questions')->group(function () {
+    Route::get('/', 'index')->name('survay-questions.index');
+    Route::post('/', 'store')->name('survay-questions.store');
+    Route::get('/{id}', 'edit')->name('survay-questions.edit');
+    Route::put('/{id}', 'update')->name('survay-questions.update');
+    Route::delete('/{id}', 'destroy')->name('survay-questions.destroy');
+    Route::get('/status/{id}', 'status')->name('survay-questions.status');
 
-
-// Survey Questions Routes
-Route::prefix('survay-questions')->group(function () {
-    Route::get('/', [SurvayQuestionController::class, 'index'])->name('survay-questions.index');
-    Route::post('/', [SurvayQuestionController::class, 'store'])->name('survay-questions.store');
-    Route::get('/{id}', [SurvayQuestionController::class, 'edit'])->name('survay-questions.edit');
-    Route::put('/{id}', [SurvayQuestionController::class, 'update'])->name('survay-questions.update');
-    Route::delete('/{id}', [SurvayQuestionController::class, 'destroy'])->name('survay-questions.destroy');
-    Route::get('/status/{id}', [SurvayQuestionController::class, 'status'])->name('survay-questions.status');
+    //* Courses List Route for Dropdown
+    Route::get('/courses/list', 'getCourses')->name('courses.list');
 });
-
-// Courses List Route for Dropdown
-Route::get('/courses/list', [SurvayQuestionController::class, 'getCourses'])->name('courses.list');
