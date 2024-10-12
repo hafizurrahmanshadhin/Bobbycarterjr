@@ -51,14 +51,32 @@ class SurvayQuestionController extends Controller
 
     public function SurvayQuestionAnswer_store(Request $request) {
 
-        $amenitiesData = [];
-        $amenities     = $request->input('amenities', []);
+        // $question = [];
+        // $question_ids     = $request->input('question_id', []);
 
+        // //! Convert arrays to comma-separated strings
+        // $formattedQuestion_ids = str_replace(["[", "]"], '', implode(',', $question_ids));
+
+        // $questionArray = explode(',', $formattedQuestion_ids);
+
+
+        // $answer = [];
+        // $answer_ids     = $request->input('answer_id', []);
+
+        // //! Convert arrays to comma-separated strings
+        // $formatetted_answer_ids = str_replace(["[", "]"], '', implode(',', $answer_ids));
+
+        // $answerArray = explode(',', $formatetted_answer_ids);
+
+        // // Initialize an empty array to store the user responses
+        // $userResponses = [];
+
+         // Validate the input
+        //  dd($request->all());
         $validator = Validator::make($request->all(), [
-            'question_id' => 'required|array',
-            'question_id.*' => 'integer|exists:survay_questions,id', // Validate each question_id
-            'answer_id' => 'required|array',
-            'answer_id.*' => 'integer|exists:options,id' // Validate each answer_id
+            'answers' => 'required|array',
+            'answers.*.question_id' => 'required|integer|exists:survay_questions,id',
+            'answers.*.answer_id' => 'required|integer|exists:options,id',
         ]);
 
         if ($validator->fails()) {
@@ -67,7 +85,8 @@ class SurvayQuestionController extends Controller
 
         $userResponses = [];
 
-        foreach ($request->answer_id as $answer) {
+        // Loop through each answer pair and store them
+        foreach ($request->answers as $answer) {
             $userResponses[] = UserResponse::create([
                 'user_id' => auth()->user()->id,
                 'survay_question_id' => $answer['question_id'],
@@ -75,6 +94,8 @@ class SurvayQuestionController extends Controller
             ]);
         }
 
+
+        // Return a JSON response with the user responses
         return Helper::jsonResponse(true, 'Answers stored successfully', 200, $userResponses);
     }
 }
