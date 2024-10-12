@@ -265,10 +265,27 @@
                     }
                 });
 
+                // Clear previous feedback
+                document.getElementById('createFeedback').innerHTML = '';
+
+                // Validate fields
+                let errors = {};
+                if (!courseId) {
+                    errors.course_id = ['Please select a course.'];
+                }
+                if (!question) {
+                    errors.questions = ['Please enter a question.'];
+                }
+                if (options.length === 0) {
+                    errors.options = ['Please add at least one option.'];
+                }
                 if (!isCorrectSelected) {
-                    displayValidationErrors({
-                        correct_option: ['At least one option must be marked as correct.']
-                    }, 'createFeedback');
+                    errors.correct_option = ['At least one option must be marked as correct.'];
+                }
+
+                // Display validation errors if any
+                if (Object.keys(errors).length > 0) {
+                    displayValidationErrors(errors, 'createFeedback');
                     return;
                 }
 
