@@ -13,7 +13,7 @@
     <link rel="shortcut icon" type="image/x-icon"
         href="{{ isset($systemSetting->favicon) && !empty($systemSetting->favicon) ? asset($systemSetting->favicon) : asset('frontend/eVento_Favicon.png') }}" />
 
-    <title>Events & Concerts</title>
+    <title>Poswell</title>
     <style>
         * {
             margin: 0;
@@ -30,7 +30,7 @@
         body {
             background-image: url('{{ asset('frontend/mockup_image.png') }}');
             background-size: cover;
-            background-position: top center;
+            background-position: center;
             background-repeat: no-repeat;
             display: flex;
             justify-content: center;

@@ -4,6 +4,18 @@
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
+    <style>
+        #viewOptions .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -86,6 +98,7 @@
             </div>
         </div>
     </div>
+
 
     {{-- CREATE MODAL --}}
     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
@@ -250,7 +263,8 @@
                             question.options.forEach(function(option) {
                                 let optionItem = `
                                     <li class="list-group-item">
-                                        ${option.options} ${option.is_correct ? '<span class="badge bg-success">Correct</span>' : ''}
+                                        <span>${option.options}</span>
+                                        ${option.is_correct ? '<span class="badge bg-success">Correct</span>' : ''}
                                     </li>`;
                                 viewOptionsContainer.insertAdjacentHTML('beforeend', optionItem);
                             });
@@ -264,6 +278,7 @@
                         toastr.error('An error occurred while loading survey question data.');
                     });
             }
+
 
             // Show create modal and load courses
             window.showCreateModal = function() {

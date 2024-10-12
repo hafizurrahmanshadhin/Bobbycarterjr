@@ -164,10 +164,10 @@ class SurvayQuestionController extends Controller {
                 'questions' => $validated['questions'],
             ]);
 
-            // Delete existing options
+            //! Delete existing options
             $question->options()->delete();
 
-            // Create new options
+            //* Create new options
             foreach ($validated['options'] as $option) {
                 Option::create([
                     'survay_question_id' => $question->id,
