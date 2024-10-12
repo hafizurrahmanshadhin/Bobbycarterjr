@@ -53,6 +53,40 @@
         </div>
     </div>
 
+    {{-- VIEW MODAL --}}
+    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewModalLabel">
+                        <i class="bi bi-eye"></i> View Survey Question
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="viewCourse" class="form-label text-muted">Course:</label>
+                        <input type="text" id="viewCourse" class="form-control" readonly>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="viewQuestion" class="form-label text-muted">Question:</label>
+                        <input type="text" id="viewQuestion" class="form-control" readonly>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="viewOptions" class="form-label text-muted">Options:</label>
+                        <ul id="viewOptions" class="list-group">
+                            {{-- Options will be dynamically loaded here --}}
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i>
+                        Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- CREATE MODAL --}}
     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -199,6 +233,35 @@
                     })
                     .catch(function() {
                         toastr.error('An error occurred while loading courses.');
+                    });
+            }
+
+            // Function to view survey question details
+            window.viewQuestion = function(id) {
+                axios.get("{{ route('survay-questions.view', ':id') }}".replace(':id', id))
+                    .then(function(response) {
+                        if (response.data.success) {
+                            let question = response.data.data;
+                            document.getElementById('viewCourse').value = question.course.name;
+                            document.getElementById('viewQuestion').value = question.questions;
+
+                            let viewOptionsContainer = document.getElementById('viewOptions');
+                            viewOptionsContainer.innerHTML = '';
+                            question.options.forEach(function(option) {
+                                let optionItem = `
+                                    <li class="list-group-item">
+                                        ${option.options} ${option.is_correct ? '<span class="badge bg-success">Correct</span>' : ''}
+                                    </li>`;
+                                viewOptionsContainer.insertAdjacentHTML('beforeend', optionItem);
+                            });
+
+                            $('#viewModal').modal('show');
+                        } else {
+                            toastr.error('Failed to load survey question data.');
+                        }
+                    })
+                    .catch(function() {
+                        toastr.error('An error occurred while loading survey question data.');
                     });
             }
 
