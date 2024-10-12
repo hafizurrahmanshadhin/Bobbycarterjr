@@ -20,33 +20,40 @@ class RegisterController extends Controller {
      */
     public function Register(RegisterRequest $request): JsonResponse {
         try {
-            //* Create a new user record in the database
-            $user = User::create([
-                'firstName' => $request->input('firstName'),
-                'lastName'  => $request->input('lastName'),
-                'email'     => $request->input('email'),
-                'password'  => Hash::make($request->input('password')),
-            ]);
+            // Check if a user with the given email already exists
+            $existingUser = User::withTrashed()->where('email', $request->input('email'))->first();
 
-            //? Check if user creation was successful
-            if (!$user) {
-                return Helper::jsonResponse(false, 'User registration failed.', 500);
+            if ($existingUser) {
+                // If the user is found and is soft-deleted, restore the user
+                if ($existingUser->trashed()) {
+                    $existingUser->restore(); // Restore the soft-deleted user
+                } else {
+                    return Helper::jsonResponse(false, 'Email already registered.', 409);
+                }
+            } else {
+                // If the user does not exist, create a new user record
+                $existingUser = User::create([
+                    'firstName' => $request->input('firstName'),
+                    'lastName'  => $request->input('lastName'),
+                    'email'     => $request->input('email'),
+                    'password'  => Hash::make($request->input('password')),
+                ]);
             }
 
-            //* Generate a Sanctum token for the registered user
-            $token = $user->createToken('auth_token')->plainTextToken;
+            // Generate a Sanctum token for the registered (or restored) user
+            $token = $existingUser->createToken('auth_token')->plainTextToken;
 
-            //! Return a JSON response with user details and the generated token
+            // Return a JSON response with user details and the generated token
             return response()->json([
                 'status'     => true,
                 'message'    => 'User registered successfully.',
                 'code'       => 200,
                 'token_type' => 'bearer',
                 'token'      => $token,
-                'data'       => new RegisterResource($user),
+                'data'       => new RegisterResource($existingUser),
             ]);
         } catch (Exception $e) {
-            //! Handle any errors that occur during the registration process
+            // Handle any errors that occur during the registration process
             return Helper::jsonResponse(false, 'An error occurred during registration.', 500, [
                 'error' => $e->getMessage(),
             ]);
