@@ -69,7 +69,6 @@ class SurvayQuestionController extends Controller {
             $validated = $request->validate([
                 'course_id'            => 'required|exists:courses,id',
                 'questions'            => 'required|string|max:255',
-                'marks'                => 'required|integer',
                 'options'              => 'required|array',
                 'options.*.option'     => 'required|string|max:255',
                 'options.*.is_correct' => 'required|boolean',
@@ -78,7 +77,6 @@ class SurvayQuestionController extends Controller {
             $question = SurvayQuestion::create([
                 'course_id' => $validated['course_id'],
                 'questions' => $validated['questions'],
-                'marks'     => $validated['marks'],
             ]);
 
             foreach ($validated['options'] as $option) {
@@ -136,7 +134,6 @@ class SurvayQuestionController extends Controller {
             $validated = $request->validate([
                 'course_id'            => 'required|exists:courses,id',
                 'questions'            => 'required|string|max:255',
-                'marks'                => 'required|integer',
                 'options'              => 'required|array',
                 'options.*.option'     => 'required|string|max:255',
                 'options.*.is_correct' => 'required|boolean',
@@ -146,7 +143,6 @@ class SurvayQuestionController extends Controller {
             $question->update([
                 'course_id' => $validated['course_id'],
                 'questions' => $validated['questions'],
-                'marks'     => $validated['marks'],
             ]);
 
             // Delete existing options

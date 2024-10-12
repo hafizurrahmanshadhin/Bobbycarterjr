@@ -14,7 +14,7 @@
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="javascript:void(0);">Settings</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Survey Question List</li>
             </ol>
         </div>
@@ -39,7 +39,6 @@
                                     <th class="wd-15p border-bottom-0">#</th>
                                     <th class="wd-15p border-bottom-0">Course</th>
                                     <th class="wd-15p border-bottom-0">Question</th>
-                                    <th class="wd-15p border-bottom-0">Marks</th>
                                     <th class="wd-15p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -86,16 +85,6 @@
                             <input type="text" id="question" class="form-control" placeholder="Enter Question">
                         </div>
                         <small id="questionHelp" class="form-text text-muted">Enter the survey question.</small>
-                    </div>
-
-                    {{-- Marks Input --}}
-                    <div class="form-group mt-3">
-                        <label for="marks" class="form-label text-muted">Marks:</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-pencil"></i></span>
-                            <input type="number" id="marks" class="form-control" placeholder="Enter Marks">
-                        </div>
-                        <small id="marksHelp" class="form-text text-muted">Enter the marks for the question.</small>
                     </div>
 
                     {{-- Options Input --}}
@@ -161,16 +150,6 @@
                         <small id="editQuestionHelp" class="form-text text-muted">Enter the survey question.</small>
                     </div>
 
-                    {{-- Marks Input --}}
-                    <div class="form-group mt-3">
-                        <label for="editMarks" class="form-label text-muted">Marks:</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-pencil"></i></span>
-                            <input type="number" id="editMarks" class="form-control" placeholder="Enter Marks">
-                        </div>
-                        <small id="editMarksHelp" class="form-text text-muted">Enter the marks for the question.</small>
-                    </div>
-
                     {{-- Options Input --}}
                     <div class="form-group mt-3">
                         <label for="editOptions" class="form-label text-muted">Options:</label>
@@ -221,9 +200,26 @@
 
             // Show create modal and load courses
             window.showCreateModal = function() {
+                // Clear form fields
+                document.getElementById('course').value = '';
                 document.getElementById('question').value = '';
-                document.getElementById('marks').value = '';
                 document.getElementById('optionsContainer').innerHTML = ''; // Clear options container
+                document.getElementById('createFeedback').innerHTML = ''; // Clear feedback
+
+                // Add a default option input
+                let optionsContainer = document.getElementById('optionsContainer');
+                let optionInput = `
+                    <div class="input-group mb-2">
+                        <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                        <input type="text" class="form-control option-input" placeholder="Enter Option">
+                        <div class="input-group-text">
+                            <input type="checkbox" class="is-correct-checkbox"> Correct
+                        </div>
+                        <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
+                    </div>`;
+                optionsContainer.insertAdjacentHTML('beforeend', optionInput);
+
+                // Load courses
                 loadCourses('course');
                 $('#createModal').modal('show');
             }
@@ -254,9 +250,9 @@
             window.storeQuestion = function() {
                 let courseId = document.getElementById('course').value;
                 let question = document.getElementById('question').value;
-                let marks = document.getElementById('marks').value;
 
                 let options = [];
+                let isCorrectSelected = false;
                 document.querySelectorAll('#optionsContainer .input-group').forEach(function(optionGroup) {
                     let optionInput = optionGroup.querySelector('.option-input').value;
                     let isCorrect = optionGroup.querySelector('.is-correct-checkbox').checked;
@@ -264,12 +260,21 @@
                         option: optionInput,
                         is_correct: isCorrect
                     });
+                    if (isCorrect) {
+                        isCorrectSelected = true;
+                    }
                 });
+
+                if (!isCorrectSelected) {
+                    displayValidationErrors({
+                        correct_option: ['At least one option must be marked as correct.']
+                    }, 'createFeedback');
+                    return;
+                }
 
                 axios.post("{{ route('survay-questions.store') }}", {
                         course_id: courseId,
                         questions: question,
-                        marks: marks,
                         options: options
                     })
                     .then(function(response) {
@@ -278,15 +283,20 @@
                             $('#datatable').DataTable().ajax.reload();
                             toastr.success(response.data.message);
                             // Clear form fields and options container
+                            document.getElementById('course').value = '';
                             document.getElementById('question').value = '';
-                            document.getElementById('marks').value = '';
                             document.getElementById('optionsContainer').innerHTML = '';
+                            document.getElementById('createFeedback').innerHTML = '';
                         } else {
                             displayValidationErrors(response.data.data, 'createFeedback');
                         }
                     })
                     .catch(function(error) {
-                        toastr.error('An error occurred while storing the data.');
+                        if (error.response && error.response.data && error.response.data.errors) {
+                            displayValidationErrors(error.response.data.errors, 'createFeedback');
+                        } else {
+                            toastr.error('An error occurred while storing the data.');
+                        }
                     });
             }
 
@@ -297,7 +307,6 @@
                         if (response.data.success) {
                             let question = response.data.data;
                             document.getElementById('editQuestion').value = question.questions;
-                            document.getElementById('editMarks').value = question.marks;
                             loadCourses('editCourse', question
                                 .course_id); // Load courses and set selected value
                             document.getElementById('editQuestionId').value = question.id;
@@ -348,9 +357,9 @@
                 let questionId = document.getElementById('editQuestionId').value;
                 let courseId = document.getElementById('editCourse').value;
                 let question = document.getElementById('editQuestion').value;
-                let marks = document.getElementById('editMarks').value;
 
                 let options = [];
+                let isCorrectSelected = false;
                 document.querySelectorAll('#editOptionsContainer .input-group').forEach(function(optionGroup) {
                     let optionInput = optionGroup.querySelector('.option-input').value;
                     let isCorrect = optionGroup.querySelector('.is-correct-checkbox').checked;
@@ -358,12 +367,21 @@
                         option: optionInput,
                         is_correct: isCorrect
                     });
+                    if (isCorrect) {
+                        isCorrectSelected = true;
+                    }
                 });
+
+                if (!isCorrectSelected) {
+                    displayValidationErrors({
+                        correct_option: ['At least one option must be marked as correct.']
+                    }, 'editFeedback');
+                    return;
+                }
 
                 axios.put("{{ route('survay-questions.update', ':id') }}".replace(':id', questionId), {
                         course_id: courseId,
                         questions: question,
-                        marks: marks,
                         options: options
                     })
                     .then(function(response) {
@@ -376,7 +394,11 @@
                         }
                     })
                     .catch(function(error) {
-                        toastr.error('An error occurred while updating the data.');
+                        if (error.response && error.response.data && error.response.data.errors) {
+                            displayValidationErrors(error.response.data.errors, 'editFeedback');
+                        } else {
+                            toastr.error('An error occurred while updating the data.');
+                        }
                     });
             }
 
@@ -450,9 +472,10 @@
             function displayValidationErrors(errors, feedbackElementId) {
                 let feedback = document.getElementById(feedbackElementId);
                 feedback.innerHTML = '';
+                feedback.classList.add('alert', 'alert-danger');
                 for (let key in errors) {
                     if (errors.hasOwnProperty(key)) {
-                        feedback.innerHTML += `<div class="alert alert-danger">${errors[key][0]}</div>`;
+                        feedback.innerHTML += `<div>${errors[key][0]}</div>`;
                     }
                 }
             }
@@ -498,12 +521,6 @@
                     {
                         data: 'questions',
                         name: 'questions',
-                        orderable: true,
-                        searchable: true
-                    },
-                    {
-                        data: 'marks',
-                        name: 'marks',
                         orderable: true,
                         searchable: true
                     },

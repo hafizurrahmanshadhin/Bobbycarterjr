@@ -17,7 +17,6 @@ class SurvayQuestion extends Model {
     protected $fillable = [
         'course_id',
         'questions',
-        'marks',
         'status',
     ];
 
@@ -31,7 +30,6 @@ class SurvayQuestion extends Model {
         return [
             'course_id' => 'integer',
             'questions' => 'string',
-            'marks'     => 'integer',
             'status'    => 'string',
         ];
     }
