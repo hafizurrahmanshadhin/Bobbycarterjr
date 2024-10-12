@@ -14,7 +14,7 @@
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="javascript:void(0);">Settings</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Survey Question List</li>
             </ol>
         </div>
@@ -39,7 +39,6 @@
                                     <th class="wd-15p border-bottom-0">#</th>
                                     <th class="wd-15p border-bottom-0">Course</th>
                                     <th class="wd-15p border-bottom-0">Question</th>
-                                    <th class="wd-15p border-bottom-0">Marks</th>
                                     <th class="wd-15p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -49,6 +48,40 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- VIEW MODAL --}}
+    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewModalLabel">
+                        <i class="bi bi-eye"></i> View Survey Question
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="viewCourse" class="form-label text-muted">Course:</label>
+                        <input type="text" id="viewCourse" class="form-control" readonly>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="viewQuestion" class="form-label text-muted">Question:</label>
+                        <input type="text" id="viewQuestion" class="form-control" readonly>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="viewOptions" class="form-label text-muted">Options:</label>
+                        <ul id="viewOptions" class="list-group">
+                            {{-- Options will be dynamically loaded here --}}
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i>
+                        Close</button>
                 </div>
             </div>
         </div>
@@ -76,6 +109,7 @@
                             </select>
                         </div>
                         <small id="courseHelp" class="form-text text-muted">Choose the course from the list.</small>
+                        <div id="courseError" class="text-danger"></div>
                     </div>
 
                     {{-- Question Input --}}
@@ -86,16 +120,7 @@
                             <input type="text" id="question" class="form-control" placeholder="Enter Question">
                         </div>
                         <small id="questionHelp" class="form-text text-muted">Enter the survey question.</small>
-                    </div>
-
-                    {{-- Marks Input --}}
-                    <div class="form-group mt-3">
-                        <label for="marks" class="form-label text-muted">Marks:</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-pencil"></i></span>
-                            <input type="number" id="marks" class="form-control" placeholder="Enter Marks">
-                        </div>
-                        <small id="marksHelp" class="form-text text-muted">Enter the marks for the question.</small>
+                        <div id="questionError" class="text-danger"></div>
                     </div>
 
                     {{-- Options Input --}}
@@ -106,7 +131,9 @@
                                 <span class="input-group-text"><i class="bi bi-list-check"></i></span>
                                 <input type="text" class="form-control option-input" placeholder="Enter Option">
                                 <div class="input-group-text">
-                                    <input type="checkbox" class="is-correct-checkbox"> Correct
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="is-correct-checkbox"> Correct
+                                    </label>
                                 </div>
                                 <button class="btn btn-danger remove-option" type="button"><i
                                         class="bi bi-x-circle"></i></button>
@@ -114,6 +141,8 @@
                         </div>
                         <button class="btn btn-secondary mt-2" type="button" id="addOption"><i
                                 class="bi bi-plus-circle"></i> Add Option</button>
+                        <div id="optionsError" class="text-danger"></div>
+                        <div id="correctOptionError" class="text-danger"></div>
                     </div>
                     <div id="createFeedback" class="mt-2"></div>
                 </div>
@@ -161,16 +190,6 @@
                         <small id="editQuestionHelp" class="form-text text-muted">Enter the survey question.</small>
                     </div>
 
-                    {{-- Marks Input --}}
-                    <div class="form-group mt-3">
-                        <label for="editMarks" class="form-label text-muted">Marks:</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-pencil"></i></span>
-                            <input type="number" id="editMarks" class="form-control" placeholder="Enter Marks">
-                        </div>
-                        <small id="editMarksHelp" class="form-text text-muted">Enter the marks for the question.</small>
-                    </div>
-
                     {{-- Options Input --}}
                     <div class="form-group mt-3">
                         <label for="editOptions" class="form-label text-muted">Options:</label>
@@ -194,10 +213,8 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Populate course dropdown
             function loadCourses(selectElementId, selectedValue = null) {
                 axios.get("{{ route('courses.list') }}")
                     .then(function(response) {
@@ -219,11 +236,62 @@
                     });
             }
 
+            // Function to view survey question details
+            window.viewQuestion = function(id) {
+                axios.get("{{ route('survay-questions.view', ':id') }}".replace(':id', id))
+                    .then(function(response) {
+                        if (response.data.success) {
+                            let question = response.data.data;
+                            document.getElementById('viewCourse').value = question.course.name;
+                            document.getElementById('viewQuestion').value = question.questions;
+
+                            let viewOptionsContainer = document.getElementById('viewOptions');
+                            viewOptionsContainer.innerHTML = '';
+                            question.options.forEach(function(option) {
+                                let optionItem = `
+                                    <li class="list-group-item">
+                                        ${option.options} ${option.is_correct ? '<span class="badge bg-success">Correct</span>' : ''}
+                                    </li>`;
+                                viewOptionsContainer.insertAdjacentHTML('beforeend', optionItem);
+                            });
+
+                            $('#viewModal').modal('show');
+                        } else {
+                            toastr.error('Failed to load survey question data.');
+                        }
+                    })
+                    .catch(function() {
+                        toastr.error('An error occurred while loading survey question data.');
+                    });
+            }
+
             // Show create modal and load courses
             window.showCreateModal = function() {
+                document.getElementById('course').value = '';
                 document.getElementById('question').value = '';
-                document.getElementById('marks').value = '';
-                document.getElementById('optionsContainer').innerHTML = ''; // Clear options container
+                document.getElementById('optionsContainer').innerHTML = '';
+                document.getElementById('createFeedback').innerHTML = '';
+                document.getElementById('courseError').innerHTML = '';
+                document.getElementById('questionError').innerHTML = '';
+                document.getElementById('optionsError').innerHTML = '';
+                document.getElementById('correctOptionError').innerHTML = '';
+
+                // Add a default option input
+                let optionsContainer = document.getElementById('optionsContainer');
+                let optionInput = `
+                    <div class="input-group mb-2">
+                        <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                        <input type="text" class="form-control option-input" placeholder="Enter Option">
+                        <div class="input-group-text">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="is-correct-checkbox"> Correct
+                            </label>
+                        </div>
+                        <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
+                    </div>`;
+                optionsContainer.insertAdjacentHTML('beforeend', optionInput);
+
+                // Load courses
                 loadCourses('course');
                 $('#createModal').modal('show');
             }
@@ -236,7 +304,9 @@
                         <span class="input-group-text"><i class="bi bi-list-check"></i></span>
                         <input type="text" class="form-control option-input" placeholder="Enter Option">
                         <div class="input-group-text">
-                            <input type="checkbox" class="is-correct-checkbox"> Correct
+                            <label class="form-check-label">
+                                <input type="checkbox" class="is-correct-checkbox"> Correct
+                            </label>
                         </div>
                         <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
                     </div>`;
@@ -245,7 +315,7 @@
 
             // Remove option input
             document.addEventListener('click', function(event) {
-                if (event.target.classList.contains('remove-option')) {
+                if (event.target.closest('.remove-option')) {
                     event.target.closest('.input-group').remove();
                 }
             });
@@ -254,9 +324,9 @@
             window.storeQuestion = function() {
                 let courseId = document.getElementById('course').value;
                 let question = document.getElementById('question').value;
-                let marks = document.getElementById('marks').value;
 
                 let options = [];
+                let isCorrectSelected = false;
                 document.querySelectorAll('#optionsContainer .input-group').forEach(function(optionGroup) {
                     let optionInput = optionGroup.querySelector('.option-input').value;
                     let isCorrect = optionGroup.querySelector('.is-correct-checkbox').checked;
@@ -264,12 +334,42 @@
                         option: optionInput,
                         is_correct: isCorrect
                     });
+                    if (isCorrect) {
+                        isCorrectSelected = true;
+                    }
                 });
+
+                // Clear previous feedback
+                document.getElementById('createFeedback').innerHTML = '';
+                document.getElementById('courseError').innerHTML = '';
+                document.getElementById('questionError').innerHTML = '';
+                document.getElementById('optionsError').innerHTML = '';
+                document.getElementById('correctOptionError').innerHTML = '';
+
+                // Validate fields
+                let errors = {};
+                if (!courseId) {
+                    errors.course_id = ['Please select a course.'];
+                }
+                if (!question) {
+                    errors.questions = ['Please enter a question.'];
+                }
+                if (options.length === 0) {
+                    errors.options = ['Please add at least one option.'];
+                }
+                if (!isCorrectSelected) {
+                    errors.correct_option = ['At least one option must be marked as correct.'];
+                }
+
+                // Display validation errors if any
+                if (Object.keys(errors).length > 0) {
+                    displayValidationErrors(errors);
+                    return;
+                }
 
                 axios.post("{{ route('survay-questions.store') }}", {
                         course_id: courseId,
                         questions: question,
-                        marks: marks,
                         options: options
                     })
                     .then(function(response) {
@@ -278,15 +378,20 @@
                             $('#datatable').DataTable().ajax.reload();
                             toastr.success(response.data.message);
                             // Clear form fields and options container
+                            document.getElementById('course').value = '';
                             document.getElementById('question').value = '';
-                            document.getElementById('marks').value = '';
                             document.getElementById('optionsContainer').innerHTML = '';
+                            document.getElementById('createFeedback').innerHTML = '';
                         } else {
-                            displayValidationErrors(response.data.data, 'createFeedback');
+                            displayValidationErrors(response.data.data);
                         }
                     })
                     .catch(function(error) {
-                        toastr.error('An error occurred while storing the data.');
+                        if (error.response && error.response.data && error.response.data.errors) {
+                            displayValidationErrors(error.response.data.errors);
+                        } else {
+                            toastr.error('An error occurred while storing the data.');
+                        }
                     });
             }
 
@@ -297,9 +402,8 @@
                         if (response.data.success) {
                             let question = response.data.data;
                             document.getElementById('editQuestion').value = question.questions;
-                            document.getElementById('editMarks').value = question.marks;
                             loadCourses('editCourse', question
-                                .course_id); // Load courses and set selected value
+                                .course_id);
                             document.getElementById('editQuestionId').value = question.id;
 
                             // Load options
@@ -307,14 +411,16 @@
                             editOptionsContainer.innerHTML = '';
                             question.options.forEach(function(option) {
                                 let optionInput = `
-                                    <div class="input-group mb-2">
-                                        <span class="input-group-text"><i class="bi bi-list-check"></i></span>
-                                        <input type="text" class="form-control option-input" value="${option.options}" placeholder="Enter Option">
-                                        <div class="input-group-text">
-                                            <input type="checkbox" class="is-correct-checkbox" ${option.is_correct ? 'checked' : ''}> Correct
-                                        </div>
-                                        <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
-                                    </div>`;
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                                <input type="text" class="form-control option-input" value="${option.options}" placeholder="Enter Option">
+                                <div class="input-group-text">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="is-correct-checkbox" ${option.is_correct ? 'checked' : ''}> Correct
+                                    </label>
+                                </div>
+                                <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
+                            </div>`;
                                 editOptionsContainer.insertAdjacentHTML('beforeend', optionInput);
                             });
 
@@ -336,7 +442,9 @@
                         <span class="input-group-text"><i class="bi bi-list-check"></i></span>
                         <input type="text" class="form-control option-input" placeholder="Enter Option">
                         <div class="input-group-text">
-                            <input type="checkbox" class="is-correct-checkbox"> Correct
+                            <label class="form-check-label">
+                                <input type="checkbox" class="is-correct-checkbox"> Correct
+                            </label>
                         </div>
                         <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
                     </div>`;
@@ -348,9 +456,9 @@
                 let questionId = document.getElementById('editQuestionId').value;
                 let courseId = document.getElementById('editCourse').value;
                 let question = document.getElementById('editQuestion').value;
-                let marks = document.getElementById('editMarks').value;
 
                 let options = [];
+                let isCorrectSelected = false;
                 document.querySelectorAll('#editOptionsContainer .input-group').forEach(function(optionGroup) {
                     let optionInput = optionGroup.querySelector('.option-input').value;
                     let isCorrect = optionGroup.querySelector('.is-correct-checkbox').checked;
@@ -358,12 +466,42 @@
                         option: optionInput,
                         is_correct: isCorrect
                     });
+                    if (isCorrect) {
+                        isCorrectSelected = true;
+                    }
                 });
+
+                // Clear previous feedback
+                document.getElementById('editFeedback').innerHTML = '';
+                document.getElementById('courseError').innerHTML = '';
+                document.getElementById('questionError').innerHTML = '';
+                document.getElementById('optionsError').innerHTML = '';
+                document.getElementById('correctOptionError').innerHTML = '';
+
+                // Validate fields
+                let errors = {};
+                if (!courseId) {
+                    errors.course_id = ['Please select a course.'];
+                }
+                if (!question) {
+                    errors.questions = ['Please enter a question.'];
+                }
+                if (options.length === 0) {
+                    errors.options = ['Please add at least one option.'];
+                }
+                if (!isCorrectSelected) {
+                    errors.correct_option = ['At least one option must be marked as correct.'];
+                }
+
+                // Display validation errors if any
+                if (Object.keys(errors).length > 0) {
+                    displayValidationErrors(errors);
+                    return;
+                }
 
                 axios.put("{{ route('survay-questions.update', ':id') }}".replace(':id', questionId), {
                         course_id: courseId,
                         questions: question,
-                        marks: marks,
                         options: options
                     })
                     .then(function(response) {
@@ -372,11 +510,15 @@
                             $('#datatable').DataTable().ajax.reload();
                             toastr.success(response.data.message);
                         } else {
-                            displayValidationErrors(response.data.data, 'editFeedback');
+                            displayValidationErrors(response.data.data);
                         }
                     })
                     .catch(function(error) {
-                        toastr.error('An error occurred while updating the data.');
+                        if (error.response && error.response.data && error.response.data.errors) {
+                            displayValidationErrors(error.response.data.errors);
+                        } else {
+                            toastr.error('An error occurred while updating the data.');
+                        }
                     });
             }
 
@@ -447,13 +589,25 @@
             }
 
             // Display validation errors
-            function displayValidationErrors(errors, feedbackElementId) {
-                let feedback = document.getElementById(feedbackElementId);
-                feedback.innerHTML = '';
-                for (let key in errors) {
-                    if (errors.hasOwnProperty(key)) {
-                        feedback.innerHTML += `<div class="alert alert-danger">${errors[key][0]}</div>`;
-                    }
+            function displayValidationErrors(errors) {
+                // Clear previous errors
+                document.getElementById('courseError').innerHTML = '';
+                document.getElementById('questionError').innerHTML = '';
+                document.getElementById('optionsError').innerHTML = '';
+                document.getElementById('correctOptionError').innerHTML = '';
+
+                // Display new errors
+                if (errors.course_id) {
+                    document.getElementById('courseError').innerHTML = errors.course_id[0];
+                }
+                if (errors.questions) {
+                    document.getElementById('questionError').innerHTML = errors.questions[0];
+                }
+                if (errors.options) {
+                    document.getElementById('optionsError').innerHTML = errors.options[0];
+                }
+                if (errors.correct_option) {
+                    document.getElementById('correctOptionError').innerHTML = errors.correct_option[0];
                 }
             }
 
@@ -468,11 +622,12 @@
                 responsive: true,
                 serverSide: true,
                 language: {
-                    processing: `<div class="text-center">
-                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-                </div>`
+                    processing: `
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>`
                 },
                 scroller: {
                     loadingIndicator: false
@@ -498,12 +653,6 @@
                     {
                         data: 'questions',
                         name: 'questions',
-                        orderable: true,
-                        searchable: true
-                    },
-                    {
-                        data: 'marks',
-                        name: 'marks',
                         orderable: true,
                         searchable: true
                     },

@@ -47,6 +47,10 @@ class SurvayQuestionController extends Controller {
                                     <i class="fe fe-edit"></i>
                                 </a>
 
+                                <a href="#" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal" onclick="viewQuestion(' . $data->id . ')">
+                                    <i class="fe fe-eye"></i>
+                                </a>
+
                                 <a href="#" type="button" onclick="showDeleteConfirm(' . $data->id . ')" class="btn btn-danger fs-14 text-white delete-icn" title="Delete">
                                     <i class="fe fe-trash"></i>
                                 </a>
@@ -56,6 +60,21 @@ class SurvayQuestionController extends Controller {
                 ->make(true);
         }
         return view('backend.layouts.survay_questions.index');
+    }
+
+    /**
+     * Display the specified survey question.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function view(int $id): JsonResponse {
+        try {
+            $question = SurvayQuestion::with(['course', 'options'])->findOrFail($id);
+            return response()->json(['success' => true, 'data' => $question]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -69,7 +88,6 @@ class SurvayQuestionController extends Controller {
             $validated = $request->validate([
                 'course_id'            => 'required|exists:courses,id',
                 'questions'            => 'required|string|max:255',
-                'marks'                => 'required|integer',
                 'options'              => 'required|array',
                 'options.*.option'     => 'required|string|max:255',
                 'options.*.is_correct' => 'required|boolean',
@@ -78,7 +96,6 @@ class SurvayQuestionController extends Controller {
             $question = SurvayQuestion::create([
                 'course_id' => $validated['course_id'],
                 'questions' => $validated['questions'],
-                'marks'     => $validated['marks'],
             ]);
 
             foreach ($validated['options'] as $option) {
@@ -136,7 +153,6 @@ class SurvayQuestionController extends Controller {
             $validated = $request->validate([
                 'course_id'            => 'required|exists:courses,id',
                 'questions'            => 'required|string|max:255',
-                'marks'                => 'required|integer',
                 'options'              => 'required|array',
                 'options.*.option'     => 'required|string|max:255',
                 'options.*.is_correct' => 'required|boolean',
@@ -146,7 +162,6 @@ class SurvayQuestionController extends Controller {
             $question->update([
                 'course_id' => $validated['course_id'],
                 'questions' => $validated['questions'],
-                'marks'     => $validated['marks'],
             ]);
 
             // Delete existing options

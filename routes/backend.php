@@ -38,6 +38,7 @@ Route::controller(SurvayQuestionController::class)->prefix('survay-questions')->
     Route::put('/{id}', 'update')->name('survay-questions.update');
     Route::delete('/{id}', 'destroy')->name('survay-questions.destroy');
     Route::get('/status/{id}', 'status')->name('survay-questions.status');
+    Route::get('/view/{id}', 'view')->name('survay-questions.view');
 
     //* Courses List Route for Dropdown
     Route::get('/courses/list', 'getCourses')->name('courses.list');

@@ -18,7 +18,6 @@ return new class extends Migration {
                 ->onUpdate('cascade');
 
             $table->string('questions')->nullable(false);
-            $table->integer('marks')->nullable(false);
 
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamp('created_at')->useCurrent();
