@@ -17,16 +17,6 @@ return new class extends Migration {
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
 
-            $table->unsignedBigInteger('task_id')->nullable();
-            $table->foreign('task_id')->references('id')->on('tasks')
-                ->onDelete('restrict')
-                ->onUpdate('cascade');
-
-            $table->unsignedBigInteger('answer_id')->nullable();
-            $table->foreign('answer_id')->references('id')->on('answers')
-                ->onDelete('restrict')
-                ->onUpdate('cascade');
-
             $table->unsignedBigInteger('survay_question_id')->nullable();
             $table->foreign('survay_question_id')->references('id')->on('survay_questions')
                 ->onDelete('restrict')

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseTypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SubscriptionController;
+use App\Http\Controllers\Api\SurvayQuestionController;
 use App\Http\Controllers\Api\UserController;
 
 Route::controller(SubscriptionController::class)->group(function () {
@@ -28,7 +29,9 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
         Route::get('/courses', 'Course');
     });
 
-    Route::controller(CourseController::class)->group(function () {
-        Route::get('/courses', 'Course');
+    Route::controller(SurvayQuestionController::class)->group(function () {
+        Route::get('/survay/questions/{course_type_id}', 'SurvayQuestion');
+        Route::post('/survay/questions/answer/store', 'SurvayQuestionAnswer_store');
     });
+
 });
