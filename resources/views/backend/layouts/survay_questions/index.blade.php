@@ -75,6 +75,7 @@
                             </select>
                         </div>
                         <small id="courseHelp" class="form-text text-muted">Choose the course from the list.</small>
+                        <div id="courseError" class="text-danger"></div>
                     </div>
 
                     {{-- Question Input --}}
@@ -85,6 +86,7 @@
                             <input type="text" id="question" class="form-control" placeholder="Enter Question">
                         </div>
                         <small id="questionHelp" class="form-text text-muted">Enter the survey question.</small>
+                        <div id="questionError" class="text-danger"></div>
                     </div>
 
                     {{-- Options Input --}}
@@ -103,6 +105,8 @@
                         </div>
                         <button class="btn btn-secondary mt-2" type="button" id="addOption"><i
                                 class="bi bi-plus-circle"></i> Add Option</button>
+                        <div id="optionsError" class="text-danger"></div>
+                        <div id="correctOptionError" class="text-danger"></div>
                     </div>
                     <div id="createFeedback" class="mt-2"></div>
                 </div>
@@ -173,7 +177,6 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Populate course dropdown
@@ -205,6 +208,10 @@
                 document.getElementById('question').value = '';
                 document.getElementById('optionsContainer').innerHTML = ''; // Clear options container
                 document.getElementById('createFeedback').innerHTML = ''; // Clear feedback
+                document.getElementById('courseError').innerHTML = ''; // Clear course error
+                document.getElementById('questionError').innerHTML = ''; // Clear question error
+                document.getElementById('optionsError').innerHTML = ''; // Clear options error
+                document.getElementById('correctOptionError').innerHTML = ''; // Clear correct option error
 
                 // Add a default option input
                 let optionsContainer = document.getElementById('optionsContainer');
@@ -267,6 +274,10 @@
 
                 // Clear previous feedback
                 document.getElementById('createFeedback').innerHTML = '';
+                document.getElementById('courseError').innerHTML = ''; // Clear course error
+                document.getElementById('questionError').innerHTML = ''; // Clear question error
+                document.getElementById('optionsError').innerHTML = ''; // Clear options error
+                document.getElementById('correctOptionError').innerHTML = ''; // Clear correct option error
 
                 // Validate fields
                 let errors = {};
@@ -285,7 +296,7 @@
 
                 // Display validation errors if any
                 if (Object.keys(errors).length > 0) {
-                    displayValidationErrors(errors, 'createFeedback');
+                    displayValidationErrors(errors);
                     return;
                 }
 
@@ -305,12 +316,12 @@
                             document.getElementById('optionsContainer').innerHTML = '';
                             document.getElementById('createFeedback').innerHTML = '';
                         } else {
-                            displayValidationErrors(response.data.data, 'createFeedback');
+                            displayValidationErrors(response.data.data);
                         }
                     })
                     .catch(function(error) {
                         if (error.response && error.response.data && error.response.data.errors) {
-                            displayValidationErrors(error.response.data.errors, 'createFeedback');
+                            displayValidationErrors(error.response.data.errors);
                         } else {
                             toastr.error('An error occurred while storing the data.');
                         }
@@ -389,10 +400,31 @@
                     }
                 });
 
+                // Clear previous feedback
+                document.getElementById('editFeedback').innerHTML = '';
+                document.getElementById('courseError').innerHTML = ''; // Clear course error
+                document.getElementById('questionError').innerHTML = ''; // Clear question error
+                document.getElementById('optionsError').innerHTML = ''; // Clear options error
+                document.getElementById('correctOptionError').innerHTML = ''; // Clear correct option error
+
+                // Validate fields
+                let errors = {};
+                if (!courseId) {
+                    errors.course_id = ['Please select a course.'];
+                }
+                if (!question) {
+                    errors.questions = ['Please enter a question.'];
+                }
+                if (options.length === 0) {
+                    errors.options = ['Please add at least one option.'];
+                }
                 if (!isCorrectSelected) {
-                    displayValidationErrors({
-                        correct_option: ['At least one option must be marked as correct.']
-                    }, 'editFeedback');
+                    errors.correct_option = ['At least one option must be marked as correct.'];
+                }
+
+                // Display validation errors if any
+                if (Object.keys(errors).length > 0) {
+                    displayValidationErrors(errors);
                     return;
                 }
 
@@ -407,12 +439,12 @@
                             $('#datatable').DataTable().ajax.reload();
                             toastr.success(response.data.message);
                         } else {
-                            displayValidationErrors(response.data.data, 'editFeedback');
+                            displayValidationErrors(response.data.data);
                         }
                     })
                     .catch(function(error) {
                         if (error.response && error.response.data && error.response.data.errors) {
-                            displayValidationErrors(error.response.data.errors, 'editFeedback');
+                            displayValidationErrors(error.response.data.errors);
                         } else {
                             toastr.error('An error occurred while updating the data.');
                         }
@@ -486,14 +518,25 @@
             }
 
             // Display validation errors
-            function displayValidationErrors(errors, feedbackElementId) {
-                let feedback = document.getElementById(feedbackElementId);
-                feedback.innerHTML = '';
-                feedback.classList.add('alert', 'alert-danger');
-                for (let key in errors) {
-                    if (errors.hasOwnProperty(key)) {
-                        feedback.innerHTML += `<div>${errors[key][0]}</div>`;
-                    }
+            function displayValidationErrors(errors) {
+                // Clear previous errors
+                document.getElementById('courseError').innerHTML = '';
+                document.getElementById('questionError').innerHTML = '';
+                document.getElementById('optionsError').innerHTML = '';
+                document.getElementById('correctOptionError').innerHTML = '';
+
+                // Display new errors
+                if (errors.course_id) {
+                    document.getElementById('courseError').innerHTML = errors.course_id[0];
+                }
+                if (errors.questions) {
+                    document.getElementById('questionError').innerHTML = errors.questions[0];
+                }
+                if (errors.options) {
+                    document.getElementById('optionsError').innerHTML = errors.options[0];
+                }
+                if (errors.correct_option) {
+                    document.getElementById('correctOptionError').innerHTML = errors.correct_option[0];
                 }
             }
 
