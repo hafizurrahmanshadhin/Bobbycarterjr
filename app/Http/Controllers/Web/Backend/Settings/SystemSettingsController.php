@@ -51,8 +51,6 @@ class SystemSettingsController extends Controller {
             $setting = SystemSetting::firstOrNew();
 
             $setting->title          = $request->title;
-            $setting->address        = $request->address;
-            $setting->phone_number   = $request->phone_number;
             $setting->email          = $request->email;
             $setting->system_name    = $request->system_name;
             $setting->copyright_text = $request->copyright_text;
@@ -87,7 +85,7 @@ class SystemSettingsController extends Controller {
             $setting->save();
             return back()->with('t-success', 'Updated successfully');
         } catch (Exception $e) {
-            return back()->with('t-error', 'Failed to update');
+            return back()->with('t-error', $e->getMessage());
         }
     }
 }

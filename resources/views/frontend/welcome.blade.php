@@ -30,7 +30,7 @@
         body {
             background-image: url('{{ asset('frontend/mockup_image.png') }}');
             background-size: cover;
-            background-position: top center;
+            background-position: center;
             background-repeat: no-repeat;
             display: flex;
             justify-content: center;
