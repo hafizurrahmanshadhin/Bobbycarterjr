@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder {
             DynamicPageSeeder::class,
             CourseTypeSeeder::class,
             CourseSeeder::class,
+            SurvayQuestionSeeder::class,
+            OptionSeeder::class,
         ]);
     }
 }
