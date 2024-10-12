@@ -97,7 +97,9 @@
                                 <span class="input-group-text"><i class="bi bi-list-check"></i></span>
                                 <input type="text" class="form-control option-input" placeholder="Enter Option">
                                 <div class="input-group-text">
-                                    <input type="checkbox" class="is-correct-checkbox"> Correct
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="is-correct-checkbox"> Correct
+                                    </label>
                                 </div>
                                 <button class="btn btn-danger remove-option" type="button"><i
                                         class="bi bi-x-circle"></i></button>
@@ -179,7 +181,6 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Populate course dropdown
             function loadCourses(selectElementId, selectedValue = null) {
                 axios.get("{{ route('courses.list') }}")
                     .then(function(response) {
@@ -203,15 +204,14 @@
 
             // Show create modal and load courses
             window.showCreateModal = function() {
-                // Clear form fields
                 document.getElementById('course').value = '';
                 document.getElementById('question').value = '';
-                document.getElementById('optionsContainer').innerHTML = ''; // Clear options container
-                document.getElementById('createFeedback').innerHTML = ''; // Clear feedback
-                document.getElementById('courseError').innerHTML = ''; // Clear course error
-                document.getElementById('questionError').innerHTML = ''; // Clear question error
-                document.getElementById('optionsError').innerHTML = ''; // Clear options error
-                document.getElementById('correctOptionError').innerHTML = ''; // Clear correct option error
+                document.getElementById('optionsContainer').innerHTML = '';
+                document.getElementById('createFeedback').innerHTML = '';
+                document.getElementById('courseError').innerHTML = '';
+                document.getElementById('questionError').innerHTML = '';
+                document.getElementById('optionsError').innerHTML = '';
+                document.getElementById('correctOptionError').innerHTML = '';
 
                 // Add a default option input
                 let optionsContainer = document.getElementById('optionsContainer');
@@ -220,7 +220,9 @@
                         <span class="input-group-text"><i class="bi bi-list-check"></i></span>
                         <input type="text" class="form-control option-input" placeholder="Enter Option">
                         <div class="input-group-text">
-                            <input type="checkbox" class="is-correct-checkbox"> Correct
+                            <label class="form-check-label">
+                                <input type="checkbox" class="is-correct-checkbox"> Correct
+                            </label>
                         </div>
                         <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
                     </div>`;
@@ -239,7 +241,9 @@
                         <span class="input-group-text"><i class="bi bi-list-check"></i></span>
                         <input type="text" class="form-control option-input" placeholder="Enter Option">
                         <div class="input-group-text">
-                            <input type="checkbox" class="is-correct-checkbox"> Correct
+                            <label class="form-check-label">
+                                <input type="checkbox" class="is-correct-checkbox"> Correct
+                            </label>
                         </div>
                         <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
                     </div>`;
@@ -248,7 +252,7 @@
 
             // Remove option input
             document.addEventListener('click', function(event) {
-                if (event.target.classList.contains('remove-option')) {
+                if (event.target.closest('.remove-option')) {
                     event.target.closest('.input-group').remove();
                 }
             });
@@ -274,10 +278,10 @@
 
                 // Clear previous feedback
                 document.getElementById('createFeedback').innerHTML = '';
-                document.getElementById('courseError').innerHTML = ''; // Clear course error
-                document.getElementById('questionError').innerHTML = ''; // Clear question error
-                document.getElementById('optionsError').innerHTML = ''; // Clear options error
-                document.getElementById('correctOptionError').innerHTML = ''; // Clear correct option error
+                document.getElementById('courseError').innerHTML = '';
+                document.getElementById('questionError').innerHTML = '';
+                document.getElementById('optionsError').innerHTML = '';
+                document.getElementById('correctOptionError').innerHTML = '';
 
                 // Validate fields
                 let errors = {};
@@ -336,7 +340,7 @@
                             let question = response.data.data;
                             document.getElementById('editQuestion').value = question.questions;
                             loadCourses('editCourse', question
-                                .course_id); // Load courses and set selected value
+                                .course_id);
                             document.getElementById('editQuestionId').value = question.id;
 
                             // Load options
@@ -344,14 +348,16 @@
                             editOptionsContainer.innerHTML = '';
                             question.options.forEach(function(option) {
                                 let optionInput = `
-                                    <div class="input-group mb-2">
-                                        <span class="input-group-text"><i class="bi bi-list-check"></i></span>
-                                        <input type="text" class="form-control option-input" value="${option.options}" placeholder="Enter Option">
-                                        <div class="input-group-text">
-                                            <input type="checkbox" class="is-correct-checkbox" ${option.is_correct ? 'checked' : ''}> Correct
-                                        </div>
-                                        <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
-                                    </div>`;
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="bi bi-list-check"></i></span>
+                                <input type="text" class="form-control option-input" value="${option.options}" placeholder="Enter Option">
+                                <div class="input-group-text">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="is-correct-checkbox" ${option.is_correct ? 'checked' : ''}> Correct
+                                    </label>
+                                </div>
+                                <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
+                            </div>`;
                                 editOptionsContainer.insertAdjacentHTML('beforeend', optionInput);
                             });
 
@@ -373,7 +379,9 @@
                         <span class="input-group-text"><i class="bi bi-list-check"></i></span>
                         <input type="text" class="form-control option-input" placeholder="Enter Option">
                         <div class="input-group-text">
-                            <input type="checkbox" class="is-correct-checkbox"> Correct
+                            <label class="form-check-label">
+                                <input type="checkbox" class="is-correct-checkbox"> Correct
+                            </label>
                         </div>
                         <button class="btn btn-danger remove-option" type="button"><i class="bi bi-x-circle"></i></button>
                     </div>`;
@@ -402,10 +410,10 @@
 
                 // Clear previous feedback
                 document.getElementById('editFeedback').innerHTML = '';
-                document.getElementById('courseError').innerHTML = ''; // Clear course error
-                document.getElementById('questionError').innerHTML = ''; // Clear question error
-                document.getElementById('optionsError').innerHTML = ''; // Clear options error
-                document.getElementById('correctOptionError').innerHTML = ''; // Clear correct option error
+                document.getElementById('courseError').innerHTML = '';
+                document.getElementById('questionError').innerHTML = '';
+                document.getElementById('optionsError').innerHTML = '';
+                document.getElementById('correctOptionError').innerHTML = '';
 
                 // Validate fields
                 let errors = {};
@@ -551,11 +559,12 @@
                 responsive: true,
                 serverSide: true,
                 language: {
-                    processing: `<div class="text-center">
-                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-                </div>`
+                    processing: `
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>`
                 },
                 scroller: {
                     loadingIndicator: false
