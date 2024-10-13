@@ -51,32 +51,14 @@ class SurvayQuestionController extends Controller
 
     public function SurvayQuestionAnswer_store(Request $request) {
 
-        // $question = [];
-        // $question_ids     = $request->input('question_id', []);
-
-        // //! Convert arrays to comma-separated strings
-        // $formattedQuestion_ids = str_replace(["[", "]"], '', implode(',', $question_ids));
-
-        // $questionArray = explode(',', $formattedQuestion_ids);
-
-
-        // $answer = [];
-        // $answer_ids     = $request->input('answer_id', []);
-
-        // //! Convert arrays to comma-separated strings
-        // $formatetted_answer_ids = str_replace(["[", "]"], '', implode(',', $answer_ids));
-
-        // $answerArray = explode(',', $formatetted_answer_ids);
-
-        // // Initialize an empty array to store the user responses
-        // $userResponses = [];
-
-         // Validate the input
-        //  dd($request->all());
         $validator = Validator::make($request->all(), [
-            'answers' => 'required|array',
+            'answers' => 'required|array|min:1',
             'answers.*.question_id' => 'required|integer|exists:survay_questions,id',
             'answers.*.answer_id' => 'required|integer|exists:options,id',
+        ], [
+            'answers.required' => 'The answers field is required.',
+            'answers.*.question_id.required' => 'The question field is required.',
+            'answers.*.answer_id.required' => 'The answer field is required.',
         ]);
 
         if ($validator->fails()) {
@@ -93,7 +75,6 @@ class SurvayQuestionController extends Controller
                 'option_id' => $answer['answer_id'],
             ]);
         }
-
 
         // Return a JSON response with the user responses
         return Helper::jsonResponse(true, 'Answers stored successfully', 200, $userResponses);
