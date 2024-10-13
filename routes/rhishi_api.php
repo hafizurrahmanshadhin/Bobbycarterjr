@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
 
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses', 'Course');
+        Route::get('/recommend/course/{course_type_id}', 'recommendCourse');
     });
 
     Route::controller(SurvayQuestionController::class)->group(function () {

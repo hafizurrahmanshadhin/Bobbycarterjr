@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class SurvayMarksController extends Controller
 {
+    /**
+     * Return Survay Marks Data.
+     *
+     * @param  RegisterRequest  $request
+     * @return JsonResponse
+     */
+
     public function SurvayMarks(int $courseTypeId)
     {
         $query = Course::with(['survayQuestions.options', 'survayQuestions.userResponses' => function($query) {

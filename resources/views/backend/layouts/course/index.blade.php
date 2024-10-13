@@ -39,6 +39,7 @@
                                     <th class="wd-15p border-bottom-0">#</th>
                                     <th class="wd-15p border-bottom-0">Course Type</th>
                                     <th class="wd-15p border-bottom-0">Course Name</th>
+                                    <th class="wd-15p border-bottom-0">Course Image</th>
                                     <th class="wd-15p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -87,6 +88,16 @@
                         </div>
                         <small id="courseNameHelp" class="form-text text-muted">Enter the name of the course.</small>
                     </div>
+
+                    {{-- Course Image Input --}}
+                    <div class="form-group mt-3">
+                        <label for="CourseImage" class="form-label text-muted">Course Image:</label>
+                        <div class="input-group">
+                            <input type="file" id="CourseImage" class="form-control">
+                        </div>
+                        <small id="editCourseNameHelp" class="form-text text-muted">Select course image.</small>
+                    </div>
+
                     <div id="createFeedback" class="mt-2"></div>
                 </div>
                 <div class="modal-footer">
@@ -133,6 +144,16 @@
                         </div>
                         <small id="editCourseNameHelp" class="form-text text-muted">Enter the name of the course.</small>
                     </div>
+
+                    {{-- Course Image Input --}}
+                    <div class="form-group mt-3">
+                        <label for="updateCourseImage" class="form-label text-muted">Course Image:</label>
+                        <div class="input-group">
+                            <input type="file" id="updateCourseImage" class="form-control">
+                        </div>
+                        <small id="editCourseNameHelp" class="form-text text-muted">Select course image.</small>
+                        <img src="" alt="Preview" width="100" id="editPreviewImage" class="mt-2">
+                    </div>
                     <input type="hidden" id="editCourseId">
                     <div id="editFeedback" class="mt-2"></div>
                 </div>
@@ -148,6 +169,10 @@
 
 @push('scripts')
     <script>
+        // Get the CSRF token from the meta tag
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute(
+            'content');
+
         document.addEventListener('DOMContentLoaded', function() {
             // Populate course type dropdown
             function loadCourseTypes(selectElementId, selectedValue = null) {
@@ -183,29 +208,51 @@
             window.storeCourse = function() {
                 let courseTypeId = document.getElementById('courseType').value;
                 let courseName = document.getElementById('courseName').value;
+                let courseImage = document.getElementById('CourseImage').files[0];
 
+                // Validate input
                 if (!courseTypeId || !courseName.trim()) {
                     toastr.error('Please select a course type and enter a course name.');
                     return;
                 }
 
-                axios.post("{{ route('course.store') }}", {
-                        course_type_id: courseTypeId,
-                        name: courseName
-                    })
+                // Create FormData object
+                let formData = new FormData();
+                formData.append('course_type_id', courseTypeId);
+                formData.append('name', courseName);
+
+                // Append the image file if it exists
+                if (courseImage) {
+                    formData.append('image', courseImage);
+                }
+
+                // Make the POST request
+                axios.post("{{ route('course.store') }}", formData)
                     .then(function(response) {
                         if (response.data.success) {
+                            // Hide modal and refresh the datatable
                             $('#createModal').modal('hide');
                             $('#datatable').DataTable().ajax.reload();
+
+                            // Show success message
                             toastr.success(response.data.message);
+
+                            // Reset the form fields
+                            document.getElementById('courseType').value = '';
+                            document.getElementById('courseName').value = '';
+                            document.getElementById('CourseImage').value = '';
                         } else {
+                            // Handle any error messages returned from the server
                             toastr.error(response.data.message);
                         }
                     })
-                    .catch(function() {
-                        toastr.error('An error occurred while storing the data.');
+                    .catch(function(error) {
+                        // Extract error message or set a default one
+                        let errorMessage = error.response?.data?.message ||
+                            'An error occurred while storing the data.';
+                        toastr.error(errorMessage);
                     });
-            }
+            };
 
             // Show edit modal and load course data
             window.editCourse = function(id) {
@@ -214,6 +261,8 @@
                         if (response.data.success) {
                             let course = response.data.data;
                             document.getElementById('editCourseName').value = course.name;
+                            document.getElementById('editPreviewImage').src = course
+                                .image_url; // Set image preview
                             loadCourseTypes('editCourseType', course
                                 .course_type_id); // Load course types and set selected value
                             document.getElementById('editCourseId').value = course.id;
@@ -232,15 +281,29 @@
                 let courseId = document.getElementById('editCourseId').value;
                 let courseTypeId = document.getElementById('editCourseType').value;
                 let courseName = document.getElementById('editCourseName').value;
+                let courseImage = document.getElementById('updateCourseImage').files[0];
 
+                // Validate input
                 if (!courseTypeId || !courseName.trim()) {
                     toastr.error('Please select a course type and enter a course name.');
                     return;
                 }
 
-                axios.put("{{ route('course.update', ':id') }}".replace(':id', courseId), {
-                        course_type_id: courseTypeId,
-                        name: courseName
+                // Create FormData object
+                let formData = new FormData();
+                formData.append('course_type_id', courseTypeId);
+                formData.append('name', courseName);
+
+                // Append the image file if it exists
+                if (courseImage) {
+                    formData.append('image', courseImage);
+                }
+
+                // Make the PUT request
+                axios.put("{{ route('course.update', ':id') }}".replace(':id', courseId), formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data' // Ensure correct content type
+                        }
                     })
                     .then(function(response) {
                         if (response.data.success) {
@@ -251,10 +314,13 @@
                             toastr.error(response.data.message);
                         }
                     })
-                    .catch(function() {
-                        toastr.error('An error occurred while updating the data.');
+                    .catch(function(error) {
+                        let errorMessage = error.response?.data?.message ||
+                            'An error occurred while updating the data.';
+                        toastr.error(errorMessage);
                     });
             }
+
 
             // Status Change Confirm Alert
             window.showStatusChangeAlert = function(id) {
@@ -363,6 +429,12 @@
                     {
                         data: 'name',
                         name: 'name',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'image',
+                        name: 'image',
                         orderable: true,
                         searchable: true
                     },

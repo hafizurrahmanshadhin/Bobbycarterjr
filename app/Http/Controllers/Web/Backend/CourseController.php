@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web\Backend;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\CourseType;
@@ -40,6 +41,10 @@ class CourseController extends Controller {
 
                     return $status;
                 })
+                ->addColumn('image', function ($data) {
+                    $url = asset($data->image_url);
+                    return "<img src='$url' width='100'>";
+                })
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
                                 <a href="#" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" onclick="editCourse(' . $data->id . ')">
@@ -51,7 +56,7 @@ class CourseController extends Controller {
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['courseType', 'status', 'action'])
+                ->rawColumns(['courseType', 'status', 'image', 'action'])
                 ->make(true);
         }
         return view('backend.layouts.course.index');
@@ -65,15 +70,25 @@ class CourseController extends Controller {
      */
     public function store(Request $request): JsonResponse {
         try {
+            // Validate incoming request
             $validated = $request->validate([
                 'course_type_id' => 'required|exists:course_types,id',
                 'name'           => 'required|string|max:255',
+                'image'          => 'required|image|mimes:jpeg,png,jpg|max:2048', // Add image validation
             ]);
 
-            Course::create([
-                'course_type_id' => $validated['course_type_id'],
-                'name'           => $validated['name'],
-            ]);
+            // Create the course
+            $course = new Course();
+            $course->course_type_id = $validated['course_type_id'];
+            $course->name = $validated['name'];
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $imagePath = Helper::fileUpload($request->file('image'), 'Course', $request->file('image')->getClientOriginalExtension());
+                $course->image_url = $imagePath; // Save the image path to the database
+            }
+
+            $course->save(); // Save the course to the database
 
             return response()->json(['success' => true, 'message' => 'Course created successfully']);
         } catch (Exception $e) {
@@ -122,13 +137,27 @@ class CourseController extends Controller {
             $validated = $request->validate([
                 'course_type_id' => 'required|exists:course_types,id',
                 'name'           => 'required|string|max:255',
+                'image'          => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
             $course = Course::findOrFail($id);
-            $course->update([
-                'course_type_id' => $validated['course_type_id'],
-                'name'           => $validated['name'],
-            ]);
+            $course->course_type_id = $validated['course_type_id'];
+            $course->name = $validated['name'];
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                // Delete old image if it exists
+                if ($course->image_url) {
+                    $previousImagePath = public_path($course->image_url);
+                    if (file_exists($previousImagePath)) {
+                        unlink($previousImagePath);
+                    }
+                }
+                $imagePath = Helper::fileUpload($request->file('image'), 'Course', $request->file('image')->getClientOriginalExtension());
+                $course->image_url = $imagePath;
+            }
+
+            $course->save(); // Save the updated course
 
             return response()->json(['success' => true, 'message' => 'Course updated successfully']);
         } catch (Exception $e) {
