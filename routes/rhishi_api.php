@@ -7,10 +7,15 @@ use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\SurvayMarksController;
 use App\Http\Controllers\Api\SurvayQuestionController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\VoiceController;
 
 Route::controller(SubscriptionController::class)->group(function () {
     Route::get('/package/free', 'freePackage');
     Route::get('/package/premium', 'premiumPackage');
+});
+
+Route::controller(VoiceController::class)->group(function () {
+    Route::get('rrr/{text}', 'rrr');
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function() {
