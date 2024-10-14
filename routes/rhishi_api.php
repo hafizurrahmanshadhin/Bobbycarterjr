@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\api\CourseModuleController;
 use App\Http\Controllers\Api\CourseTypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SubscriptionController;
@@ -43,6 +44,11 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
 
     Route::controller(SurvayMarksController::class)->group(function () {
         Route::get('/survay/marks/{course_type_id}', 'SurvayMarks');
+    });
+
+    Route::controller(CourseModuleController::class)->group(function () {
+        Route::get('/course/module/{id}', 'courseModule');
+        Route::get('/course/single-module/{id}', 'courseSingleModule');
     });
 
 });

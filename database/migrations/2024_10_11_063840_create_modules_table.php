@@ -17,7 +17,10 @@ return new class extends Migration {
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
 
-            $table->text('content')->nullable(false);
+            $table->string('title')->nullable();
+            $table->text('content')->nullable();
+            $table->boolean('is_exam')->default(false);
+            $table->text('question')->nullable();
 
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamp('created_at')->useCurrent();

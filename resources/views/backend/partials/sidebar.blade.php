@@ -76,7 +76,8 @@
                 </li>
 
                 <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="{{ route('course-type.index') }}">
+                    <a class="side-menu__item has-link @activeRoute('course-type.index.*')" data-bs-toggle="slide"
+                        href="{{ route('course-type.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
                             <path
                                 d="M6 2C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V4C20 2.89543 19.1046 2 18 2H6ZM6 4H18V20H6V4ZM8 6H16V8H8V6ZM8 10H16V12H8V10Z" />
@@ -106,6 +107,22 @@
                                 d="M1 2.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z" />
                         </svg>
                         <span class="side-menu__label">Survay Questions</span>
+                    </a>
+                </li>
+
+                <li class="slide">
+                    <a class="side-menu__item has-link @activeRoute('admin.course.module.*')" data-bs-toggle="slide"
+                        href="{{ route('admin.course.module.index') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-hexagons">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M4 18v-5l4 -2l4 2v5l-4 2z" />
+                            <path d="M8 11v-5l4 -2l4 2v5" />
+                            <path d="M12 13l4 -2l4 2v5l-4 2l-4 -2" />
+                        </svg>
+                        <span class="side-menu__label">Course Module</span>
                     </a>
                 </li>
 

@@ -27,6 +27,11 @@
                 <div class="card-header border-bottom"
                     style="margin-bottom: 0; display: flex; justify-content: space-between;">
                     <h3 class="card-title">Course List</h3>
+
+                    <div class="d-flex justify-content-start align-items-center gap-2">
+                        <a class="btn btn-primary" href="">Add Module</a>
+                    </div>
+
                     <a class="btn btn-primary" data-bs-target="#createModal" data-bs-toggle="modal"
                         href="javascript:void(0)" onclick="showCreateModal()">Add New</a>
                 </div>
