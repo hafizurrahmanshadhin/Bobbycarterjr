@@ -4,6 +4,7 @@ use App\Http\Controllers\api\ArticleController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\api\CourseModuleController;
 use App\Http\Controllers\Api\CourseTypeController;
+use App\Http\Controllers\api\JournalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\SurvayMarksController;
@@ -57,6 +58,14 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
         Route::get('/course/article/{course_id}', 'courseArticle');
         Route::get('/course/daily-read/article/{course_id}', 'courseDailyReadArticle');
         Route::get('/course/single-article/{id}', 'courseSingleArticle');
+    });
+
+    Route::controller(JournalController::class)->group(function () {
+        Route::get('/journals', 'getAllJournals');
+        Route::get('/single-journal/{id}', 'SingleJournal');
+        Route::post('/journal/store', 'journalStore');
+        Route::delete('/journal/delete/{id}', 'journalDelete');
+        Route::post('/journal/update/{id}', 'journalUpdate');
     });
 
 });

@@ -18,7 +18,7 @@ class ArticleController extends Controller
 
     public function courseArticle(int $course_id) {
 
-        $data = Article::where('course_id', $course_id)->get();
+        $data = Article::where('course_id', $course_id)->where('status', 'active')->get();
 
         // Check if the Course Types was found
         if ($data->isEmpty()) {

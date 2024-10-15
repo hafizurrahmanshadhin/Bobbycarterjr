@@ -56,4 +56,9 @@ class User extends Authenticatable {
                     ->withPivot('is_read')
                     ->withTimestamps();
     }
+
+    public function journals()
+    {
+        return $this->hasMany(Journal::class);
+    }
 }

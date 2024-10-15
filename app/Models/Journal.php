@@ -4,23 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Article extends Model
+class Journal extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'course_id',
+        'user_id',
         'title',
-        'description',
         'image_url',
+        'description',
         'status',
     ];
 
     protected $hidden = [
-        'created_at',
         'updated_at',
         'deleted_at',
         'status',
@@ -28,7 +26,7 @@ class Article extends Model
 
     protected function casts(): array {
         return [
-            'course_id' => 'integer',
+            'user_id' => 'integer',
             'title'     => 'string',
             'description'  => 'string',
             'image_url'  => 'string',
@@ -36,14 +34,8 @@ class Article extends Model
         ];
     }
 
-    public function course(): BelongsTo {
-        return $this->belongsTo(Course::class);
-    }
-
-    public function users()
+    public function user()
     {
-        return $this->belongsToMany(User::class, 'article_users')
-                    ->withPivot('is_read')
-                    ->withTimestamps();
+        return $this->belongsTo(User::class);
     }
 }
