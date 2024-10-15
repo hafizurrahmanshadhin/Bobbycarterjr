@@ -24,11 +24,12 @@ class Answer extends Model {
         'created_at',
         'updated_at',
         'deleted_at',
+        'status',
     ];
 
     protected function casts(): array {
         return [
-            'task_id' => 'integer',
+            'module_id' => 'integer',
             'url'     => 'string',
             'answer'  => 'string',
             'status'  => 'string',

@@ -84,7 +84,9 @@ class CourseController extends Controller {
 
             // Handle image upload
             if ($request->hasFile('image')) {
-                $imagePath = Helper::fileUpload($request->file('image'), 'Course', $request->file('image')->getClientOriginalExtension());
+                $image                        = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $imagePath = Helper::fileUpload($image, 'Course', $imageName);
                 $course->image_url = $imagePath; // Save the image path to the database
             }
 
@@ -153,7 +155,9 @@ class CourseController extends Controller {
                         unlink($previousImagePath);
                     }
                 }
-                $imagePath = Helper::fileUpload($request->file('image'), 'Course', $request->file('image')->getClientOriginalExtension());
+                $image                        = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $imagePath = Helper::fileUpload($image, 'Course', $imageName);
                 $course->image_url = $imagePath;
             }
 

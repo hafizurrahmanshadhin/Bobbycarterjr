@@ -50,7 +50,7 @@
                             viewBox="0 0 64 64" style="enable-background:new 0 0 512 512" xml:space="preserve">
                             <g>
                                 <path fill="#e6e6e6" d="M40 44H24a2 2 0 0 1-2-2V24a2 2 0 0 1 2-2h19a2 2 0 0 1 2 2v15z"
-                                    opacity="1" data-original="#e6e6e6" class=""></path>
+                                    opacity="1" data-original="#e6e6e6"></path>
                                 <path fill="#f2f2f2" d="M40 44v-5h5z" opacity="1" data-original="#f2f2f2"></path>
                                 <path fill="#86a1bf" d="M45 24v2H22v-2a2.006 2.006 0 0 1 2-2h19a2.006 2.006 0 0 1 2 2z"
                                     opacity="1" data-original="#86a1bf"></path>
@@ -78,9 +78,16 @@
                 <li class="slide">
                     <a class="side-menu__item has-link @activeRoute('course-type.index.*')" data-bs-toggle="slide"
                         href="{{ route('course-type.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
-                            <path
-                                d="M6 2C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V4C20 2.89543 19.1046 2 18 2H6ZM6 4H18V20H6V4ZM8 6H16V8H8V6ZM8 10H16V12H8V10Z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-olympics">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M6 9m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                            <path d="M18 9m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                            <path d="M12 9m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                            <path d="M9 15m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                            <path d="M15 15m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
                         </svg>
                         <span class="side-menu__label">Course Type</span>
                     </a>
@@ -123,6 +130,23 @@
                             <path d="M12 13l4 -2l4 2v5l-4 2l-4 -2" />
                         </svg>
                         <span class="side-menu__label">Course Module</span>
+                    </a>
+                </li>
+
+                <li class="slide">
+                    <a class="side-menu__item has-link @activeRoute('admin.article.*')" data-bs-toggle="slide"
+                        href="{{ route('admin.article.index') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-news">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11" />
+                            <path d="M8 8l4 0" />
+                            <path d="M8 12l4 0" />
+                            <path d="M8 16l4 0" />
+                        </svg>
+                        <span class="side-menu__label">Course Article</span>
                     </a>
                 </li>
 
