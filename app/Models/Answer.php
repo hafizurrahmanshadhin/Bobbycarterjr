@@ -14,7 +14,7 @@ class Answer extends Model {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'task_id',
+        'module_id',
         'url',
         'answer',
         'status',

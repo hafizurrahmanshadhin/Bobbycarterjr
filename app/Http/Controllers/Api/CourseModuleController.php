@@ -4,8 +4,12 @@ namespace App\Http\Controllers\api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Models\Answer;
 use App\Models\Module;
+use App\Rules\AtLeastOneRequired;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CourseModuleController extends Controller
 {
@@ -46,5 +50,36 @@ class CourseModuleController extends Controller
         }
 
         return Helper::jsonResponse(true, 'Course Module retrieved successfully', 200, $data);
+    }
+
+    /**
+     * Store Module question answer.
+     *
+     * @param  RegisterRequest  $request
+     * @return JsonResponse
+     */
+
+     public function courseModuleAnswerStore(Request $request, int $id) {
+
+        $validator = Validator::make($request->all(), [
+            'url' => $request->input('answer') ? 'nullable|url' : 'required|url',
+            'answer' => $request->input('url') ? 'nullable|string' : 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return Helper::jsonResponse(false, 'Validation Failed', 422, $validator->errors()->first());
+        }
+
+        try {
+            $data = Answer::create([
+                'module_id' => $id,
+                'url' => $request->url,
+                'answer' => $request->answer,
+            ]);
+
+            return Helper::jsonResponse(true, 'Course Module Answer Store Successful', 200, $data);
+        } catch (Exception $e) {
+            return Helper::jsonResponse(false, 'Error occurred: ' . $e->getMessage(), 500);
+        }
     }
 }

@@ -12,8 +12,8 @@ return new class extends Migration {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('task_id')->nullable(false);
-            $table->foreign('task_id')->references('id')->on('tasks')
+            $table->unsignedBigInteger('module_id')->nullable(false);
+            $table->foreign('module_id')->references('id')->on('modules')
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
 

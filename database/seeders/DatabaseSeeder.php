@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder {
             CourseSeeder::class,
             SurvayQuestionSeeder::class,
             OptionSeeder::class,
+            ModuleSeeder::class,
         ]);
     }
 }

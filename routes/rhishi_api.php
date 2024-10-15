@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::controller(CourseModuleController::class)->group(function () {
         Route::get('/course/module/{id}', 'courseModule');
         Route::get('/course/single-module/{id}', 'courseSingleModule');
+        Route::post('/course/module/answer/store/{module_id}', 'courseModuleAnswerStore');
     });
 
 });
