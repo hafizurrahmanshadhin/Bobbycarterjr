@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\ArticleController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\api\CourseModuleController;
 use App\Http\Controllers\Api\CourseTypeController;
@@ -50,6 +51,12 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
         Route::get('/course/module/{id}', 'courseModule');
         Route::get('/course/single-module/{id}', 'courseSingleModule');
         Route::post('/course/module/answer/store/{module_id}', 'courseModuleAnswerStore');
+    });
+
+    Route::controller(ArticleController::class)->group(function () {
+        Route::get('/course/article/{course_id}', 'courseArticle');
+        Route::get('/course/daily-read/article/{course_id}', 'courseDailyReadArticle');
+        Route::get('/course/single-article/{id}', 'courseSingleArticle');
     });
 
 });

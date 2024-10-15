@@ -49,4 +49,11 @@ class User extends Authenticatable {
     public function userResponses(): HasMany {
         return $this->hasMany(UserResponse::class);
     }
+
+    public function articles()
+    {
+        return $this->belongsToMany(Article::class, 'article_users')
+                    ->withPivot('is_read')
+                    ->withTimestamps();
+    }
 }
