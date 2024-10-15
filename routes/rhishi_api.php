@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\ArticleController;
+use App\Http\Controllers\api\BookmarkController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\api\CourseModuleController;
 use App\Http\Controllers\Api\CourseTypeController;
@@ -66,6 +67,11 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
         Route::post('/journal/store', 'journalStore');
         Route::delete('/journal/delete/{id}', 'journalDelete');
         Route::post('/journal/update/{id}', 'journalUpdate');
+    });
+
+    Route::controller(BookmarkController::class)->group(function () {
+        Route::post('/bookmark/toggle', 'toggleBookmark');
+        Route::get('/bookmarks', 'getBookmarks');
     });
 
 });

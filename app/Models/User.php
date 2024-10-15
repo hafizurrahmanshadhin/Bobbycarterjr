@@ -61,4 +61,16 @@ class User extends Authenticatable {
     {
         return $this->hasMany(Journal::class);
     }
+
+     // Define the relationship with the Bookmark model
+     public function bookmarks()
+     {
+         return $this->hasMany(Bookmark::class);
+     }
+
+     // Optional: Relationship to get bookmarked articles directly
+     public function bookmarkedArticles()
+     {
+         return $this->belongsToMany(Article::class, 'bookmarks')->withTimestamps();
+     }
 }

@@ -46,4 +46,16 @@ class Article extends Model
                     ->withPivot('is_read')
                     ->withTimestamps();
     }
+
+    // Define the relationship with the Bookmark model
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    // Optional: Relationship to get users who bookmarked this article
+    public function bookmarkedBy()
+    {
+        return $this->belongsToMany(User::class, 'bookmarks')->withTimestamps();
+    }
 }
