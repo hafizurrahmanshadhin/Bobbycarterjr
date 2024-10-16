@@ -45,31 +45,13 @@
                 <li class="slide">
                     <a class="side-menu__item has-link @activeRoute('admin.subscription.*')" data-bs-toggle="slide"
                         href="{{ route('admin.subscription.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-                            xmlns:xlink="http://www.w3.org/1999/xlink" class="side-menu__icon" x="0" y="0"
-                            viewBox="0 0 64 64" style="enable-background:new 0 0 512 512" xml:space="preserve">
-                            <g>
-                                <path fill="#e6e6e6" d="M40 44H24a2 2 0 0 1-2-2V24a2 2 0 0 1 2-2h19a2 2 0 0 1 2 2v15z"
-                                    opacity="1" data-original="#e6e6e6"></path>
-                                <path fill="#f2f2f2" d="M40 44v-5h5z" opacity="1" data-original="#f2f2f2"></path>
-                                <path fill="#86a1bf" d="M45 24v2H22v-2a2.006 2.006 0 0 1 2-2h19a2.006 2.006 0 0 1 2 2z"
-                                    opacity="1" data-original="#86a1bf"></path>
-                                <path fill="#7d97b3" d="M35 8V2l5 3zM29 56v6l-5-3z" opacity="1"
-                                    data-original="#7d97b3"></path>
-                                <circle cx="54" cy="10" r="8" fill="#8fccc0" opacity="1"
-                                    data-original="#8fccc0"></circle>
-                                <circle cx="10" cy="54" r="8" fill="#ffd98c" opacity="1"
-                                    data-original="#ffd98c"></circle>
-                                <path
-                                    d="M43 21H24a3 3 0 0 0-3 3v18a3 3 0 0 0 3 3h16a1 1 0 0 0 .707-.293l5-5A1 1 0 0 0 46 39V24a3 3 0 0 0-3-3zm-2 20.586V40h1.586zM44 38h-4a1 1 0 0 0-1 1v4H24a1 1 0 0 1-1-1V27h21zm0-13H23v-1a1 1 0 0 1 1-1h19a1 1 0 0 1 1 1z"
-                                    fill="#000000" opacity="1" data-original="#000000" class=""></path>
-                                <path
-                                    d="M30 30h2v2h-2zM35 30h2v2h-2zM40 30h2v2h-2zM30 34h2v2h-2zM25 34h2v2h-2zM35 34h2v2h-2zM30 38h2v2h-2zM25 38h2v2h-2zM35 38h2v2h-2zM40 34h2v2h-2zM54 1a9 9 0 1 0 9 9 9.01 9.01 0 0 0-9-9zm0 16a7 7 0 1 1 7-7 7.009 7.009 0 0 1-7 7zM10 63a9 9 0 1 0-9-9 9.01 9.01 0 0 0 9 9zm0-16a7 7 0 1 1-7 7 7.009 7.009 0 0 1 7-7z"
-                                    fill="#000000" opacity="1" data-original="#000000" class=""></path>
-                                <path
-                                    d="M52.232 11.414 50.818 10 49.4 11.414l2.121 2.121a1 1 0 0 0 1.414 0L58.6 7.879l-1.418-1.414zM10.5 56h-1a.5.5 0 0 1-.5-.5H7a2.5 2.5 0 0 0 2 2.449V59h2v-1.051A2.5 2.5 0 0 0 10.5 53h-1a.5.5 0 0 1 0-1h1a.5.5 0 0 1 .5.5h2a2.5 2.5 0 0 0-2-2.449V49H9v1.051A2.5 2.5 0 0 0 9.5 55h1a.5.5 0 0 1 0 1zM32 58a25.65 25.65 0 0 1-2-.089V56a1 1 0 0 0-1.515-.857l-5 3a1 1 0 0 0 0 1.714l5 3A1 1 0 0 0 30 62v-2.083c.674.049 1.344.083 2 .083a28.01 28.01 0 0 0 26.4-37.335l-1.884.67A26.011 26.011 0 0 1 32 58zm-4 2.233L25.943 59 28 57.767zM32 6c.65 0 1.317.034 2 .084V8a1 1 0 0 0 1.515.857l5-3a1 1 0 0 0 0-1.714l-5-3A1 1 0 0 0 34 2v2.078A29.686 29.686 0 0 0 32 4 28.01 28.01 0 0 0 5.6 41.335l1.884-.67A26.011 26.011 0 0 1 32 6zm4-2.233L38.057 5 36 6.233z"
-                                    fill="#000000" opacity="1" data-original="#000000" class=""></path>
-                            </g>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="icon icon-tabler icons-tabler-filled icon-tabler-trophy side-menu__icon">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M17 3a1 1 0 0 1 .993 .883l.007 .117v2.17a3 3 0 1 1 0 5.659v.171a6.002 6.002 0 0 1 -5 5.917v2.083h3a1 1 0 0 1 .117 1.993l-.117 .007h-8a1 1 0 0 1 -.117 -1.993l.117 -.007h3v-2.083a6.002 6.002 0 0 1 -4.996 -5.692l-.004 -.225v-.171a3 3 0 0 1 -3.996 -2.653l-.003 -.176l.005 -.176a3 3 0 0 1 3.995 -2.654l-.001 -2.17a1 1 0 0 1 1 -1h10zm-12 5a1 1 0 1 0 0 2a1 1 0 0 0 0 -2zm14 0a1 1 0 1 0 0 2a1 1 0 0 0 0 -2z"
+                                fill="#000000" />
                         </svg>
                         <span class="side-menu__label">Subscription</span>
                     </a>
@@ -80,8 +62,7 @@
                         href="{{ route('course-type.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="icon icon-tabler icons-tabler-outline icon-tabler-olympics">
+                            stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-olympics">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                             <path d="M6 9m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
                             <path d="M18 9m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />

@@ -43,9 +43,9 @@
                                 <span class="text-danger error-text price_error" id="price_error"></span>
                             </div>
                             <div class="col-md-6">
-                                <label for="expire_date" class="mb-2 mt-4 text-bold">Expire Date</label>
-                                <input type="date" name="expire_date" id="expire_date"
-                                    value="{{ $data->expire_at->format('Y-m-d') }}"
+                                <label for="expire_date" class="mb-2 mt-4 text-bold">Expire Date (<span
+                                        id="typeDayMonthChange"></span>)</label>
+                                <input type="text" name="expire_date" id="expire_date" value="{{ $data->expire_at }}"
                                     class="form-control @error('expire_date') text-danger @enderror"
                                     placeholder="Enter Date">
                                 <span class="text-danger error-text expire_date_error" id="expire_date_error"></span>
@@ -243,5 +243,25 @@
                 });
             }
         });
+    </script>
+
+    <script>
+        // Function to update the span based on selected type
+        function updateTypeText() {
+            const selectElement = document.getElementById('type');
+            const displaySpan = document.getElementById('typeDayMonthChange');
+
+            if (selectElement.value === 'free') {
+                displaySpan.textContent = 'Day'; // Change text to "Day"
+            } else if (selectElement.value === 'premium') {
+                displaySpan.textContent = 'Month'; // Change text to "Month"
+            }
+        }
+
+        // Add event listener to the select element
+        document.getElementById('type').addEventListener('change', updateTypeText);
+
+        // Call the function initially to set the correct text based on the pre-selected value
+        updateTypeText();
     </script>
 @endpush

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum('type', ['free', 'premium']);
             $table->decimal('price', 8, 2)->nullable();
-            $table->timestamp('expire_at');
+            $table->integer('expire_at');
             $table->timestamps();
             $table->softDeletes();
         });

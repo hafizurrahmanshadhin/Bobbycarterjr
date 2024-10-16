@@ -22,14 +22,14 @@ class SubscriptionSeeder extends Seeder
             [
                 'type' => 'free',
                 'price' => null,
-                'expire_at' => $now->copy()->addYear(),
+                'expire_at' => 7,
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             [
                 'type' => 'premium',
                 'price' => 9.99,
-                'expire_at' => $now->copy()->addYear(),
+                'expire_at' => 6,
                 'created_at' => $now,
                 'updated_at' => $now,
             ],

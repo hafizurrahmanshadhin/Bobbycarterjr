@@ -9,26 +9,48 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
+use Exception;
 
 class SubscriptionController extends Controller
 {
+    /**
+     * Index Page Subscription.
+     *
+     * @param int $id
+     * @return JsonResponse
+    */
+
     public function index() {
         $data = Subscription::get();
         return view('backend.layouts.subscription.index', compact('data'));
     }
+
+    /**
+     * Show Edit Subscription Page with Data.
+     *
+     * @param int $id
+     * @return JsonResponse
+    */
 
     public function edit($id) {
         $data = Subscription::with('details')->where('id', $id)->first();
         return view('backend.layouts.subscription.edit', compact('data'));
     }
 
-    public function update(Request $request, $id)
-    {
+    /**
+     * Update Subscription.
+     *
+     * @param int $id
+     * @return JsonResponse
+    */
+
+    public function update(Request $request, $id) {
         // Validation
         $validator = Validator::make($request->all(), [
             'type' => 'required|in:free,premium',
             'price' => 'nullable|numeric',
-            'expire_date' => 'required|date',
+            'expire_date' => 'required|integer',
             'title.*' => 'required|string',
             'description.*' => 'required|string',
         ], [
@@ -72,6 +94,22 @@ class SubscriptionController extends Controller
             DB::rollBack();
 
             return response()->json(['status' => 1, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Display the specified Subscription.
+     *
+     * @param int $id
+     * @return JsonResponse
+    */
+
+    public function single(int $id): JsonResponse {
+        try {
+            $data = Subscription::with(['details'])->findOrFail($id);
+            return response()->json(['success' => true, 'data' => $data]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
 }

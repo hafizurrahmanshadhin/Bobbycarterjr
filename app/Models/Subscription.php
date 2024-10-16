@@ -12,11 +12,6 @@ class Subscription extends Model
 
     protected $guarded = [];
 
-    public function details()
-    {
-        return $this->hasMany(SubscriptionDetail::class);
-    }
-
     protected $hidden = [
         'created_at',
         'updated_at',
@@ -26,7 +21,12 @@ class Subscription extends Model
     protected function casts(): array {
         return [
             'id' => 'integer',
-            'expire_at' => 'datetime',
+            'expire_at' => 'integer',
         ];
+    }
+
+    public function details()
+    {
+        return $this->hasMany(SubscriptionDetail::class);
     }
 }
