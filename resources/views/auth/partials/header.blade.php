@@ -5,6 +5,6 @@
 <div class="col col-login mx-auto text-center">
     <a href="{{ route('welcome') }}">
         <img src="{{ isset($systemSetting->logo) && !empty($systemSetting->logo) ? asset($systemSetting->logo) : asset('backend/images/logo/logo.png') }}"
-            class="header-brand-img" alt="" style="width: 100px;height: 100%;">
+            class="header-brand-img" alt="" style="width: 150px;height: 100%;">
     </a>
 </div>
