@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\Course;
 use App\Models\SurvayQuestion;
+use App\Models\UserRecommended;
 use App\Models\UserResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class SurvayQuestionController extends Controller
 {
@@ -49,7 +51,7 @@ class SurvayQuestionController extends Controller
      * @return JsonResponse
      */
 
-    public function SurvayQuestionAnswer_store(Request $request) {
+    public function SurvayQuestionAnswer_store(Request $request, $courseTypeId) {
 
         $validator = Validator::make($request->all(), [
             'answers' => 'required|array|min:1',
@@ -65,18 +67,70 @@ class SurvayQuestionController extends Controller
             return Helper::jsonResponse(false, 'Validation Failed', 422, $validator->errors()->first());
         }
 
-        $userResponses = [];
+        DB::beginTransaction();
 
-        // Loop through each answer pair and store them
-        foreach ($request->answers as $answer) {
-            $userResponses[] = UserResponse::create([
-                'user_id' => auth()->user()->id,
-                'survay_question_id' => $answer['question_id'],
-                'option_id' => $answer['answer_id'],
-            ]);
+        try {
+
+            $userResponses = [];
+
+            // Loop through each answer pair and store them
+            foreach ($request->answers as $answer) {
+                $userResponses[] = UserResponse::create([
+                    'user_id' => auth()->user()->id,
+                    'survay_question_id' => $answer['question_id'],
+                    'option_id' => $answer['answer_id'],
+                ]);
+            }
+
+            $courseWithMarks = $this->calculateCourseMarks($courseTypeId);
+
+            // Get the 2 courses with the lowest marks
+            $lowestMarkCourses = $courseWithMarks->sortBy('mark')->take(2);
+
+            $lowestCourseMark = [];
+
+            foreach($lowestMarkCourses as $item) {
+
+                $lowestCourseMark[] = UserRecommended::create([
+                    'user_id' => auth()->id(),
+                    'course_id' => $item['course_id']
+                ]);
+            }
+
+            DB::commit();
+            return Helper::jsonResponse(true, 'Answers stored successfully', 200, $userResponses);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Helper::jsonResponse(false, 'An error occurred while processing your request.', 500, $e->getMessage());
+        }
+    }
+
+    private function calculateCourseMarks(int $courseTypeId) {
+        $query = Course::with(['survayQuestions.options', 'survayQuestions.userResponses' => function($query) {
+            $query->where('user_id', auth()->user()->id);
+        }]);
+
+        if ($courseTypeId) {
+            $query->where('course_type_id', $courseTypeId);
         }
 
-        // Return a JSON response with the user responses
-        return Helper::jsonResponse(true, 'Answers stored successfully', 200, $userResponses);
+        $courses = $query->get();
+
+        $coursesWithMarks = $courses->map(function ($course) {
+            $correctAnswers = $course->survayQuestions->flatMap(function ($question) {
+                return $question->userResponses->map(function ($response) {
+                    return $response->option->is_correct;
+                });
+            })->filter()->count();
+
+            return [
+                'course_name' => $course->name,
+                'mark' => $correctAnswers,
+                'course_id' => $course->id
+            ];
+
+        });
+
+        return $coursesWithMarks;
     }
 }

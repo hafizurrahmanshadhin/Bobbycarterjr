@@ -42,4 +42,10 @@ class Course extends Model {
     public function modules(): HasMany {
         return $this->hasMany(Module::class);
     }
+
+    // Relationship with UserRecommended
+    public function recommendedBy()
+    {
+        return $this->hasMany(UserRecommended::class);
+    }
 }

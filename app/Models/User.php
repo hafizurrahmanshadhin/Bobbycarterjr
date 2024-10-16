@@ -70,7 +70,13 @@ class User extends Authenticatable {
 
      // Optional: Relationship to get bookmarked articles directly
      public function bookmarkedArticles()
-     {
+    {
          return $this->belongsToMany(Article::class, 'bookmarks')->withTimestamps();
-     }
+    }
+
+     // Relationship with UserRecommended
+    public function recommendations()
+    {
+        return $this->hasMany(UserRecommended::class);
+    }
 }

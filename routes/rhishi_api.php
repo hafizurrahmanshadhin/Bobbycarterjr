@@ -37,12 +37,12 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
 
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses', 'Course');
-        Route::get('/recommend/course/{course_type_id}', 'recommendCourse');
+        Route::get('/recommend/course', 'recommendCourse');
     });
 
     Route::controller(SurvayQuestionController::class)->group(function () {
         Route::get('/survay/questions/{course_type_id}', 'SurvayQuestion');
-        Route::post('/survay/questions/answer/store', 'SurvayQuestionAnswer_store');
+        Route::post('/survay/questions/answer/store/{course_type_id}', 'SurvayQuestionAnswer_store');
     });
 
     Route::controller(SurvayMarksController::class)->group(function () {

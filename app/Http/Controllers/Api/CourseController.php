@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\UserRecommended;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -35,39 +36,15 @@ class CourseController extends Controller
      * @return JsonResponse
      */
 
-    public function recommendCourse(int $courseTypeId) {
-        $query = Course::with(['survayQuestions.options', 'survayQuestions.userResponses' => function($query) {
-            $query->where('user_id', auth()->user()->id);
-        }]);
+    public function recommendCourse() {
 
-        if ($courseTypeId) {
-            $query->where('course_type_id', $courseTypeId);
+        $data = UserRecommended::with('course')->where('user_id', auth()->id())->get();
+
+        // Check if the Course Types was found
+        if ($data->isEmpty()) {
+            return Helper::jsonResponse(true, 'Recommend Course Not found', 200, []);
         }
 
-        $courses = $query->get();
-
-        $coursesWithMarks = $courses->map(function ($course) {
-            $correctAnswers = $course->survayQuestions->flatMap(function ($question) {
-                return $question->userResponses->map(function ($response) {
-                    return $response->option->is_correct;
-                });
-            })->filter()->count();
-
-            return [
-                'course_name' => $course->name,
-                'mark' => $correctAnswers,
-                'course_id' => $course->id, // Include course_id if needed for details
-            ];
-        });
-
-        // Get the 2 courses with the lowest marks
-        $lowestMarkCourses = $coursesWithMarks->sortBy('mark')->take(2);
-
-        // Convert to array if needed
-        $lowestMarkCoursesArray = $lowestMarkCourses->values()->toArray();
-
-        // Return or use $lowestMarkCoursesArray as needed
-        return $lowestMarkCoursesArray;
-
+        return Helper::jsonResponse(true, 'Recommend Course retrieved successfully', 200, $data);
     }
 }
