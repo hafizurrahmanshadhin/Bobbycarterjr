@@ -28,12 +28,14 @@
                             <div class="d-flex flex-wrap align-items-center">
                                 <div class="profile-img-main rounded"
                                     style="width: 125px; height: 125px; overflow: hidden;">
-                                    <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('backend/images/faces/6.jpg') }}"
+                                    <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('frontend/avatar.jpg') }}"
                                         alt="Profile Picture" class="m-0 p-1"
                                         style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                                 </div>
                                 <div class="ms-4">
-                                    <h4>{{ Auth::user()->name ?? 'N/A' }}</h4>
+                                    {{-- <h4>{{ Auth::user()->name ?? 'N/A' }}</h4> --}}
+                                    <h4>{{ ucfirst(Auth::user()->firstName) . ' ' . ucfirst(Auth::user()->lastName) ?? 'N/A' }}
+                                    </h4>
                                     <h4>{{ Auth::user()->email ?? 'N/A' }}</h4>
                                     <a href="#" class="btn btn-primary btn-sm" id="uploadImageBtn">
                                         <i class="fa fa-rss"></i> Update Profile

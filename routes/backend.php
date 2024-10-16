@@ -1,49 +1,45 @@
 <?php
 
+use App\Http\Controllers\Web\Backend\CourseController;
+use App\Http\Controllers\Web\Backend\CourseTypeController;
 use App\Http\Controllers\Web\Backend\DashboardController;
-use App\Http\Controllers\Web\Backend\Settings\DynamicPageController;
-use App\Http\Controllers\Web\Backend\Settings\MailSettingController;
-use App\Http\Controllers\Web\Backend\Settings\ProfileController;
-use App\Http\Controllers\Web\Backend\Settings\StripeSettingController;
-use App\Http\Controllers\Web\Backend\Settings\SystemSettingController;
+use App\Http\Controllers\Web\Backend\SurvayQuestionController;
 use Illuminate\Support\Facades\Route;
 
 //! Route for Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-//! Route for Profile Settings
-Route::controller(ProfileController::class)->group(function () {
-    Route::get('/profile', 'index')->name('profile.setting');
-    Route::patch('/update-profile', 'UpdateProfile')->name('update.profile');
-    Route::put('/update-profile-password', 'UpdatePassword')->name('update.Password');
-    Route::post('/update-profile-picture', 'UpdateProfilePicture')->name('update.profile.picture');
+//! Route for CourseTypeController
+Route::controller(CourseTypeController::class)->group(function () {
+    Route::get('/course-type', 'index')->name('course-type.index');
+    Route::post('/course-type/store', 'store')->name('course-type.store');
+    Route::get('/course-type/edit/{id}', 'edit')->name('course-type.edit');
+    Route::put('/course-type/update/{id}', 'update')->name('course-type.update');
+    Route::get('/course-type/status/{id}', 'status')->name('course-type.status');
+    Route::delete('/course-type/destroy/{id}', 'destroy')->name('course-type.destroy');
 });
 
-//! Route for System Settings
-Route::controller(SystemSettingController::class)->group(function () {
-    Route::get('/system-setting', 'index')->name('system.index');
-    Route::patch('/system-setting', 'update')->name('system.update');
+//! Route for CourseController
+Route::controller(CourseController::class)->group(function () {
+    Route::get('/course', 'index')->name('course.index');
+    Route::get('course-types/list', 'getCourseTypes')->name('course-types.list');
+    Route::post('/course/store', 'store')->name('course.store');
+    Route::get('/course/edit/{id}', 'edit')->name('course.edit');
+    Route::put('/course/update/{id}', 'update')->name('course.update');
+    Route::get('/course/status/{id}', 'status')->name('course.status');
+    Route::delete('/course/destroy/{id}', 'destroy')->name('course.destroy');
 });
 
-//! Route for Mail Settings
-Route::controller(MailSettingController::class)->group(function () {
-    Route::get('/mail-setting', 'index')->name('mail.setting');
-    Route::patch('/mail-setting', 'update')->name('mail.update');
-});
+//! Route for SurvayQuestionController
+Route::controller(SurvayQuestionController::class)->prefix('survay-questions')->group(function () {
+    Route::get('/', 'index')->name('survay-questions.index');
+    Route::post('/', 'store')->name('survay-questions.store');
+    Route::get('/{id}', 'edit')->name('survay-questions.edit');
+    Route::put('/{id}', 'update')->name('survay-questions.update');
+    Route::delete('/{id}', 'destroy')->name('survay-questions.destroy');
+    Route::get('/status/{id}', 'status')->name('survay-questions.status');
+    Route::get('/view/{id}', 'view')->name('survay-questions.view');
 
-//! Route for Stripe Settings
-Route::controller(StripeSettingController::class)->group(function () {
-    Route::get('/stripe-setting', 'index')->name('stripe.index');
-    Route::patch('/stripe-setting', 'update')->name('stripe.update');
-});
-
-//! Route for Dynamic Page Settings
-Route::controller(DynamicPageController::class)->group(function () {
-    Route::get('/dynamic-page', 'index')->name('dynamic_page.index');
-    Route::get('/dynamic-page/create', 'create')->name('dynamic_page.create');
-    Route::post('/dynamic-page/store', 'store')->name('dynamic_page.store');
-    Route::get('/dynamic-page/edit/{id}', 'edit')->name('dynamic_page.edit');
-    Route::patch('/dynamic-page/update/{id}', 'update')->name('dynamic_page.update');
-    Route::get('/dynamic-page/status/{id}', 'status')->name('dynamic_page.status');
-    Route::delete('/dynamic-page/delete/{id}', 'destroy')->name('dynamic_page.destroy');
+    //* Courses List Route for Dropdown
+    Route::get('/courses/list', 'getCourses')->name('courses.list');
 });

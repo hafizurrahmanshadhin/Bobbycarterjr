@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\SocialLoginController;
 use App\Http\Controllers\Web\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Web\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Web\Auth\EmailVerificationNotificationController;
@@ -57,3 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });
+
+//! Social Login
+Route::get('/auth/{provider}', [SocialLoginController::class, 'RedirectToProvider']);
+Route::get('/auth/{provider}/callback', [SocialLoginController::class, 'HandleProviderCallback']);

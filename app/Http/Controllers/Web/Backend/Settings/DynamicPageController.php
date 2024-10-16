@@ -23,12 +23,12 @@ class DynamicPageController extends Controller {
      */
     public function index(Request $request): View | JsonResponse {
         if ($request->ajax()) {
-            $data = DynamicPage::latest();
+            $data = DynamicPage::latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('page_content', function ($data) {
                     $page_content       = $data->page_content;
-                    $short_page_content = strlen($page_content) > 100 ? substr($page_content, 0, 10) . '...' : $page_content;
+                    $short_page_content = strlen($page_content) > 100 ? substr($page_content, 0, 200) . '...' : $page_content;
                     return '<p>' . $short_page_content . '</p>';
                 })
 
@@ -48,7 +48,7 @@ class DynamicPageController extends Controller {
 
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                <a href="' . route('dynamic_page.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
+                                <a href="' . route('settings.dynamic_page.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
                                     <i class="fe fe-edit"></i>
                                 </a>
 
@@ -95,9 +95,9 @@ class DynamicPageController extends Controller {
             $data->page_content = $request->page_content;
             $data->save();
 
-            return redirect()->route('dynamic_page.index')->with('t-success', 'Updated successfully');
+            return redirect()->route('settings.dynamic_page.index')->with('t-success', 'Updated successfully');
         } catch (Exception) {
-            return redirect()->route('dynamic_page.index')->with('t-success', 'Dynamic Page failed created.');
+            return redirect()->route('settings.dynamic_page.index')->with('t-success', 'Dynamic Page failed created.');
         }
     }
 
@@ -136,10 +136,10 @@ class DynamicPageController extends Controller {
             $data->page_content = $request->page_content;
             $data->update();
 
-            return redirect()->route('dynamic_page.index')->with('t-success', 'Dynamic Page Updated Successfully.');
+            return redirect()->route('settings.dynamic_page.index')->with('t-success', 'Dynamic Page Updated Successfully.');
 
         } catch (Exception) {
-            return redirect()->route('dynamic_page.index')->with('t-success', 'Dynamic Page failed to update');
+            return redirect()->route('settings.dynamic_page.index')->with('t-success', 'Dynamic Page failed to update');
         }
     }
 

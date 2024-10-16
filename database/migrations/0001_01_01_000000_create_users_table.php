@@ -11,16 +11,17 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 150);
-            $table->string('email', 150)->unique();
+            $table->string('firstName');
+            $table->string('lastName');
+            $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
 
-            $table->boolean('terms_and_policy')->default(false);
-
             $table->string('avatar')->nullable();
+            $table->text('address')->nullable();
             $table->string('google_id')->nullable()->unique();
-            $table->string('apple_id')->nullable()->unique();
+            $table->string('facebook_id')->nullable()->unique();
+            $table->timestamp('otp_verified_at')->nullable();
 
             $table->enum('role', ['admin', 'user'])->default('user')->nullable(false);
             $table->enum('status', ['active', 'inactive'])->default('active');

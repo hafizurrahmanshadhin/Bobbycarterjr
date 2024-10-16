@@ -53,14 +53,17 @@
                                 <a href="#" data-bs-toggle="dropdown"
                                     class="nav-link pe-2 leading-none d-flex animate">
                                     <span>
-                                        <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('backend/images/faces/6.jpg') }}"
+                                        <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('frontend/avatar.jpg') }}"
                                             alt="profile-user"
                                             class="profile-img-change avatar profile-user brround cover-image">
                                     </span>
 
                                     <div class="text-center p-1 d-flex d-lg-none-max">
-                                        <h6 class="mb-0" id="profile-heading">{{ Auth::user()->name ?? 'N/A' }}<i
-                                                class="user-angle ms-1 fa fa-angle-down "></i></h6>
+                                        <h6 class="mb-0" id="profile-heading">
+                                            {{-- {{ Auth::user()->name ?? 'N/A' }} --}}
+                                            {{ ucfirst(Auth::user()->firstName) . ' ' . ucfirst(Auth::user()->lastName) ?? 'N/A' }}
+                                            <i class="user-angle ms-1 fa fa-angle-down "></i>
+                                        </h6>
                                     </div>
                                 </a>
 
