@@ -11,7 +11,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable {
+class User extends Authenticatable
+{
     use HasFactory, Notifiable, SoftDeletes, HasApiTokens;
 
     protected $guarded = [];
@@ -30,7 +31,8 @@ class User extends Authenticatable {
         'deleted_at',
     ];
 
-    protected function casts(): array {
+    protected function casts(): array
+    {
         return [
             'password'          => 'hashed',
             'firstName'         => 'string',
@@ -46,15 +48,16 @@ class User extends Authenticatable {
         ];
     }
 
-    public function userResponses(): HasMany {
+    public function userResponses(): HasMany
+    {
         return $this->hasMany(UserResponse::class);
     }
 
     public function articles()
     {
         return $this->belongsToMany(Article::class, 'article_users')
-                    ->withPivot('is_read')
-                    ->withTimestamps();
+            ->withPivot('is_read')
+            ->withTimestamps();
     }
 
     public function journals()
@@ -62,21 +65,27 @@ class User extends Authenticatable {
         return $this->hasMany(Journal::class);
     }
 
-     // Define the relationship with the Bookmark model
-     public function bookmarks()
-     {
-         return $this->hasMany(Bookmark::class);
-     }
+    public function reminders()
+    {
+        return $this->hasMany(Reminder::class);
+    }
 
-     // Optional: Relationship to get bookmarked articles directly
-     public function bookmarkedArticles()
+    // Optional: Relationship to get bookmarked articles directly
+    public function bookmarkedArticles()
     {
          return $this->belongsToMany(Article::class, 'bookmarks')->withTimestamps();
     }
 
-     // Relationship with UserRecommended
+    // Define the relationship with the Bookmark model
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    // Relationship with UserRecommended
     public function recommendations()
     {
         return $this->hasMany(UserRecommended::class);
+
     }
 }
