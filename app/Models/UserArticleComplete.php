@@ -5,18 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserModulesComplete extends Model
+class UserArticleComplete extends Model
 {
     use HasFactory;
 
-    protected $table = 'user_modules_completes';
-
     protected $fillable = [
         'user_id',
-        'module_id',
-        'mark',
-        'created_at',
-        'updated_at'
+        'article_id',
+        'mark'
     ];
 
     protected $hidden = [
@@ -26,7 +22,7 @@ class UserModulesComplete extends Model
     protected function casts(): array {
         return [
             'user_id' => 'integer',
-            'module_id' => 'integer',
+            'article_id' => 'integer',
             'mark'    => 'integer',
         ];
     }
@@ -36,8 +32,9 @@ class UserModulesComplete extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function module()
+    public function article()
     {
-        return $this->belongsTo(Module::class);
+        return $this->belongsTo(Article::class);
     }
+
 }

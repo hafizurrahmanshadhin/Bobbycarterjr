@@ -92,4 +92,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Module::class, 'user_modules_completes');
     }
+
+    public function articleCompletes()
+    {
+        return $this->hasMany(UserArticleComplete::class);
+    }
 }

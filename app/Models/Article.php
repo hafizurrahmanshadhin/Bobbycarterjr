@@ -59,4 +59,9 @@ class Article extends Model
     {
         return $this->belongsToMany(User::class, 'bookmarks')->withTimestamps();
     }
+
+    public function userCompletes()
+    {
+        return $this->hasMany(UserArticleComplete::class);
+    }
 }

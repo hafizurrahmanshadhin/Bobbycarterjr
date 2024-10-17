@@ -78,6 +78,17 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::controller(StatisticsController::class)->group(function () {
         Route::post('/module/complete/{module_id}', 'completeModule');
         Route::get('/module/status/{course_id}', 'moduleStatus');
+        Route::get('/specific/module/status/{course_id}', 'specificModuleStatus');
+
+        Route::get('/specific/task/status/{course_id}', 'specificTaskStatus');
+
+        Route::post('/article/complete/{article_id}', 'completeArticle');
+        Route::get('/article/status/{course_id}', 'articleStatus');
+
+        Route::get('/completed/task/{course_id}', 'completedTask');
+        Route::get('/completed/module/{course_id}', 'completedModule');
+        Route::get('/completed/article/{course_id}', 'completedArticle');
+        Route::get('/completed/all/{course_id}', 'allCompleted');
     });
 
 });
