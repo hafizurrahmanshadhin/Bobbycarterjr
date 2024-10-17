@@ -27,7 +27,6 @@ class ReminderController extends Controller
      * @return JsonResponse
      */
 
-
     public function reminderStore(Request $request)
     {
 
@@ -75,6 +74,25 @@ class ReminderController extends Controller
 
 
     /**
+     * Fetching Single Reminder Data.
+     *
+     * @param  int  $id
+     * @return JsonResponse
+     */
+    public function SingleReminder(int $id)
+    {
+
+        $data = Reminder::findOrFail($id);
+
+        // Check if the article was found
+        if ($data === null) {
+            return Helper::jsonResponse(false, 'Course Reminder not found', 404, []);
+        }
+
+        return Helper::jsonResponse(true, 'Course Reminder retrieved successfully', 200, $data);
+    }
+
+    /**
      * Retrieve All Reminders for Authenticated User.
      *
      * This method fetches all reminders associated with the currently authenticated user.
@@ -97,5 +115,64 @@ class ReminderController extends Controller
         }
 
         return Helper::jsonResponse(true, 'Reminder retrieved successfully', 200, $reminder);
+    }
+
+    /**
+     * Deleting a specific Reminder.
+     *
+     * @param  int  $id
+     * @return JsonResponse
+     */
+    public function reminderDelete(int $id)
+    {
+
+        // dd($id);
+        $data = Reminder::findOrFail($id);
+
+        $data->delete();
+
+        return Helper::jsonResponse(true, 'Reminder Deleted', 200, []);
+    }
+
+    /**
+     * Updating a specific Reminder.
+     *
+     * @param  Request  $request
+     * @param  int  $id
+     * @return JsonResponse
+     */
+
+    public function reminderUpdate(Request $request, int $id)
+    {
+
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'headline' => 'required|string|max:255',
+            'description' => 'required|string',
+            'reminder_date' => 'required|date',
+            'reminder_time' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return Helper::jsonResponse(false, 'Validation Failed', 422, $validator->errors()->first());
+        }
+
+        try {
+
+            $reminder = Reminder::findOrFail($id);
+
+
+            // Create the reminder entry
+            $data = $reminder->update([
+                'headline' => $request->headline,
+                'description' => $request->description,
+                'reminder_date' => $request->reminder_date,
+                'reminder_time' => $request->reminder_time,
+            ]);
+
+            return Helper::jsonResponse(true, 'reminder Updated', 200, $data);
+        } catch (\Exception $e) {
+            return Helper::jsonResponse(false, 'An error occurred while creating the reminder.', 500, $e->getMessage());
+        }
     }
 }
