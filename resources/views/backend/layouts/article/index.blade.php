@@ -37,6 +37,7 @@
                                     <th class="wd-15p border-bottom-0">Image</th>
                                     <th class="wd-15p border-bottom-0">Title</th>
                                     <th class="wd-15p border-bottom-0">Description</th>
+                                    <th class="wd-15p border-bottom-0">Mark</th>
                                     <th class="wd-15p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -117,6 +118,12 @@
                         {
                             data: 'description',
                             name: 'description',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'mark',
+                            name: 'mark',
                             orderable: true,
                             searchable: true
                         },

@@ -38,6 +38,7 @@
                                     <th class="wd-15p border-bottom-0">Content</th>
                                     <th class="wd-15p border-bottom-0">Question</th>
                                     <th class="wd-15p border-bottom-0">Module</th>
+                                    <th class="wd-15p border-bottom-0">Mark</th>
                                     <th class="wd-15p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -124,6 +125,12 @@
                         {
                             data: 'module',
                             name: 'module',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'mark',
+                            name: 'mark',
                             orderable: true,
                             searchable: true
                         },

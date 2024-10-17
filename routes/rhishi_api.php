@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\api\CourseModuleController;
 use App\Http\Controllers\Api\CourseTypeController;
 use App\Http\Controllers\api\JournalController;
+use App\Http\Controllers\api\StatisticsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\SurvayMarksController;
@@ -72,6 +73,11 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::controller(BookmarkController::class)->group(function () {
         Route::post('/bookmark/toggle', 'toggleBookmark');
         Route::get('/bookmarks', 'getBookmarks');
+    });
+
+    Route::controller(StatisticsController::class)->group(function () {
+        Route::post('/module/complete/{module_id}', 'completeModule');
+        Route::get('/module/status/{course_id}', 'moduleStatus');
     });
 
 });

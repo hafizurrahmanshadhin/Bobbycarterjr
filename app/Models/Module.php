@@ -41,4 +41,9 @@ class Module extends Model {
     public function task(): HasOne {
         return $this->hasOne(Task::class);
     }
+
+    public function usersCompleted()
+    {
+        return $this->belongsToMany(User::class, 'user_modules_completes');
+    }
 }

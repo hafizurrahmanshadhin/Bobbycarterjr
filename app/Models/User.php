@@ -86,6 +86,10 @@ class User extends Authenticatable
     public function recommendations()
     {
         return $this->hasMany(UserRecommended::class);
+    }
 
+    public function completedModules()
+    {
+        return $this->belongsToMany(Module::class, 'user_modules_completes');
     }
 }

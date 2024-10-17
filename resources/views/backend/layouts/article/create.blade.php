@@ -65,6 +65,14 @@
                                     @enderror
                                 </div>
 
+                                <div>
+                                    <label for="mark" class="form-label">Mark</label>
+                                    <input type="text" name="mark" id="mark"
+                                        class="form-control @error('mark') is-invalid @enderror" placeholder="Enter Mark"
+                                        value="{{ old('mark') }}">
+                                    <span class="text-danger error-text mark_error"></span>
+                                </div>
+
                                 <div class="mt-4">
                                     <input type="submit" class="btn btn-primary" value="Submit">
                                     <a href="{{ route('admin.article.index') }}" class="btn btn-danger">Back</a>

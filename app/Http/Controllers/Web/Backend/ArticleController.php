@@ -73,6 +73,7 @@ class ArticleController extends Controller
         $validator = $request->validate([
             'course_name' => 'required|numeric|exists:courses,id',
             'title' => 'required|string',
+            'mark' => 'required|numeric',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string'
         ]);
@@ -90,6 +91,7 @@ class ArticleController extends Controller
                 'course_id' => $request->course_name,
                 'title' => $request->title,
                 'description' => $request->description,
+                'mark' => $request->mark,
                 'image_url' => $imagePath
             ]);
 
@@ -110,6 +112,7 @@ class ArticleController extends Controller
         $validator = $request->validate([
             'course_name' => 'required|numeric|exists:courses,id',
             'title' => 'required|string',
+            'mark' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string'
         ]);
@@ -130,11 +133,14 @@ class ArticleController extends Controller
                 $image                        = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $imagePath = Helper::fileUpload($image, 'Article', $imageName);
+            }else{
+                $imagePath = $data->image_url;
             }
 
             $data->update([
                 'course_id' => $request->course_name,
                 'title' => $request->title,
+                'mark' => $request->mark,
                 'description' => $request->description,
                 'image_url' => $imagePath
             ]);

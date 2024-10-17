@@ -73,6 +73,7 @@ class CourseModuleController extends Controller
         // Determine validation rules based on the checkbox input
         $rules = [
             'course_name' => 'required|numeric|exists:courses,id',
+            'mark' => 'required|numeric',
             'title' => 'required|string',
             'description' => $request->input('is_exam') ? 'nullable|string' : 'required|string',
             'question' => $request->input('is_exam') ? 'required|string' : 'nullable|string',
@@ -100,6 +101,7 @@ class CourseModuleController extends Controller
             }
 
             $module->is_exam = $request->input('is_exam') ? true : false; // Explicitly set to true/false
+            $module->mark = $request->input('mark');
 
             $module->save();
 
@@ -148,6 +150,7 @@ class CourseModuleController extends Controller
             }
 
             $module->is_exam = $request->input('is_exam') ? true : false; // Explicitly set to true/false
+            $module->mark = $request->input('mark');
 
             $module->save();
 

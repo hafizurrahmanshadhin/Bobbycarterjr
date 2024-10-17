@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->text('content')->nullable();
             $table->boolean('is_exam')->default(false);
             $table->text('question')->nullable();
+            $table->integer('mark')->nullable();
 
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamp('created_at')->useCurrent();

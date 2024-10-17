@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('image_url');
             $table->string('title');
             $table->text('description');
+            $table->integer('mark')->nullable();
 
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();

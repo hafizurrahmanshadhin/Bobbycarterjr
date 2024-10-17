@@ -15,6 +15,7 @@ class Article extends Model
         'course_id',
         'title',
         'description',
+        'mark',
         'image_url',
         'status',
     ];
