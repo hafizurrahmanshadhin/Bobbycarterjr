@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Answer;
 use App\Models\Module;
-use App\Rules\AtLeastOneRequired;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
-class CourseModuleController extends Controller
-{
+class CourseModuleController extends Controller {
 
     /**
      * Return Course Module Under a Course Data.
@@ -62,7 +62,7 @@ class CourseModuleController extends Controller
      * @return JsonResponse
      */
 
-     public function courseModuleAnswerStore(Request $request, int $module_id) {
+    public function courseModuleAnswerStore(Request $request, int $module_id) {
 
         $user = auth()->user();
 
@@ -72,7 +72,7 @@ class CourseModuleController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'url' => $request->input('answer') ? 'nullable|url' : 'required|url',
+            'url'    => $request->input('answer') ? 'nullable|url' : 'required|url',
             'answer' => $request->input('url') ? 'nullable|string' : 'required|string',
         ]);
 
@@ -85,12 +85,12 @@ class CourseModuleController extends Controller
         try {
             $data = Answer::create([
                 'module_id' => $module_id,
-                'url' => $request->url,
-                'answer' => $request->answer,
+                'url'       => $request->url,
+                'answer'    => $request->answer,
             ]);
 
             $isAttached = $user->completedModules()->where('module_id', $module_id)->exists();
-            $module = Module::findOrFail($module_id);
+            $module     = Module::findOrFail($module_id);
 
             if (!$isAttached) {
                 // Attach the article to the user as read

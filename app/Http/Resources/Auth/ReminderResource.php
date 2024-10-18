@@ -5,8 +5,7 @@ namespace App\Http\Resources\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ReminderResource extends JsonResource
-{
+class ReminderResource extends JsonResource {
     /**
      * Transform the resource into an array for JSON response.
      *
@@ -20,15 +19,14 @@ class ReminderResource extends JsonResource
      *               reminder date, and reminder time.
      */
 
-    public function toArray(Request $request): array
-    {
+    public function toArray(Request $request): array {
         return [
-            'id'        => $this->id,
-            'user_id'    => $this->user_id,
-            'headline'    => $this->headline,
-            'description'    => $this->description,
-            'reminder_date'    => $this->reminder_date,
-            'reminder_time'    => $this->reminder_time,
+            'id'            => $this->id,
+            'user_id'       => $this->user_id,
+            'headline'      => $this->headline,
+            'description'   => $this->description,
+            'reminder_date' => $this->reminder_date,
+            'reminder_time' => $this->reminder_time,
         ];
     }
 }

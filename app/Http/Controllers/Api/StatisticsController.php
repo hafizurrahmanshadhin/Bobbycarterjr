@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Article;
 use App\Models\Course;
 use App\Models\Module;
 use App\Models\UserArticleComplete;
 use App\Models\UserModulesComplete;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class StatisticsController extends Controller
-{
+class StatisticsController extends Controller {
     /**
      * Store Completed module.
      *
@@ -55,21 +56,20 @@ class StatisticsController extends Controller
         $total_module = Module::where('course_id', $course_id)->count();
 
         $completed_module = UserModulesComplete::query()
-                        ->where('user_id', Auth::user()->id)
-                        ->whereIn('module_id', function ($query) use ($course_id) {
-                            $query->select('id')
-                                ->from('modules')
-                                ->where('course_id', $course_id);
-                        })
-                        ->count();
+            ->where('user_id', Auth::user()->id)
+            ->whereIn('module_id', function ($query) use ($course_id) {
+                $query->select('id')
+                    ->from('modules')
+                    ->where('course_id', $course_id);
+            })
+            ->count();
         $course = Course::where('id', $course_id)->first();
 
         $response = [
-            'total_module' => $total_module,
+            'total_module'           => $total_module,
             'total_completed_module' => $completed_module,
-            'course_image' => $course->image_url,
+            'course_image'           => $course->image_url,
         ];
-
 
         return Helper::jsonResponse(true, 'Course Module Status retrieved successfully', 200, $response);
     }
@@ -84,25 +84,24 @@ class StatisticsController extends Controller
     public function specificModuleStatus(int $course_id) {
 
         $specific_total_module = Module::query()
-                        ->where('course_id', $course_id)
-                        ->where('is_exam', 0)
-                        ->count();
+            ->where('course_id', $course_id)
+            ->where('is_exam', 0)
+            ->count();
 
         $specific_completed_module = UserModulesComplete::query()
-                        ->where('user_id', Auth::user()->id)
-                        ->whereIn('module_id', function ($query) use ($course_id) {
-                            $query->select('id')
-                                ->from('modules')
-                                ->where('course_id', $course_id)
-                                ->where('is_exam', 0);
-                        })
-                        ->count();
+            ->where('user_id', Auth::user()->id)
+            ->whereIn('module_id', function ($query) use ($course_id) {
+                $query->select('id')
+                    ->from('modules')
+                    ->where('course_id', $course_id)
+                    ->where('is_exam', 0);
+            })
+            ->count();
 
         $response = [
-            'specific_total_module' => $specific_total_module,
+            'specific_total_module'           => $specific_total_module,
             'specific_total_completed_module' => $specific_completed_module,
         ];
-
 
         return Helper::jsonResponse(true, 'Course Module Status retrieved successfully', 200, $response);
     }
@@ -117,25 +116,24 @@ class StatisticsController extends Controller
     public function specificTaskStatus(int $course_id) {
 
         $specific_total_task = Module::query()
-                        ->where('course_id', $course_id)
-                        ->where('is_exam',1)
-                        ->count();
+            ->where('course_id', $course_id)
+            ->where('is_exam', 1)
+            ->count();
 
         $specific_completed_task = UserModulesComplete::query()
-                        ->where('user_id', Auth::user()->id)
-                        ->whereIn('module_id', function ($query) use ($course_id) {
-                            $query->select('id')
-                                ->from('modules')
-                                ->where('course_id', $course_id)
-                                ->where('is_exam', 1);
-                        })
-                        ->count();
+            ->where('user_id', Auth::user()->id)
+            ->whereIn('module_id', function ($query) use ($course_id) {
+                $query->select('id')
+                    ->from('modules')
+                    ->where('course_id', $course_id)
+                    ->where('is_exam', 1);
+            })
+            ->count();
 
         $response = [
-            'specific_total_task' => $specific_total_task,
+            'specific_total_task'           => $specific_total_task,
             'specific_total_completed_task' => $specific_completed_task,
         ];
-
 
         return Helper::jsonResponse(true, 'Course Task Status retrieved successfully', 200, $response);
     }
@@ -163,7 +161,7 @@ class StatisticsController extends Controller
         if (!$isAttached) {
             $user->articleCompletes()->create([
                 'article_id' => $article_id,
-                'mark' => $article->mark, // Assuming you want to store the article's mark
+                'mark'       => $article->mark, // Assuming you want to store the article's mark
             ]);
         }
 
@@ -182,19 +180,18 @@ class StatisticsController extends Controller
         $total_article = Article::where('course_id', $course_id)->count();
 
         $completed_article = UserArticleComplete::query()
-                        ->where('user_id', Auth::user()->id)
-                        ->whereIn('article_id', function ($query) use ($course_id) {
-                            $query->select('id')
-                                ->from('articles')
-                                ->where('course_id', $course_id);
-                        })
-                        ->count();
+            ->where('user_id', Auth::user()->id)
+            ->whereIn('article_id', function ($query) use ($course_id) {
+                $query->select('id')
+                    ->from('articles')
+                    ->where('course_id', $course_id);
+            })
+            ->count();
 
         $response = [
-            'total_article' => $total_article,
-            'total_completed_article' => $completed_article
+            'total_article'           => $total_article,
+            'total_completed_article' => $completed_article,
         ];
-
 
         return Helper::jsonResponse(true, 'Course Article Status retrieved successfully', 200, $response);
     }
@@ -208,15 +205,15 @@ class StatisticsController extends Controller
 
     public function completedTask(int $course_id) {
         $completed_task = UserModulesComplete::query()
-                        ->with('module:id,title')
-                        ->where('user_id', Auth::user()->id)
-                        ->whereIn('module_id', function ($query) use ($course_id) {
-                            $query->select('id')
-                                ->from('modules')
-                                ->where('course_id', $course_id)
-                                ->where('is_exam', 1);
-                        })
-                        ->get();
+            ->with('module:id,title')
+            ->where('user_id', Auth::user()->id)
+            ->whereIn('module_id', function ($query) use ($course_id) {
+                $query->select('id')
+                    ->from('modules')
+                    ->where('course_id', $course_id)
+                    ->where('is_exam', 1);
+            })
+            ->get();
         return Helper::jsonResponse(true, 'Completed Task retrieved successfully', 200, $completed_task);
     }
 
@@ -229,15 +226,15 @@ class StatisticsController extends Controller
 
     public function completedModule(int $course_id) {
         $completed_modul = UserModulesComplete::query()
-                        ->with('module:id,title')
-                        ->where('user_id', Auth::user()->id)
-                        ->whereIn('module_id', function ($query) use ($course_id) {
-                            $query->select('id')
-                                ->from('modules')
-                                ->where('course_id', $course_id)
-                                ->where('is_exam', 0);
-                        })
-                        ->get();
+            ->with('module:id,title')
+            ->where('user_id', Auth::user()->id)
+            ->whereIn('module_id', function ($query) use ($course_id) {
+                $query->select('id')
+                    ->from('modules')
+                    ->where('course_id', $course_id)
+                    ->where('is_exam', 0);
+            })
+            ->get();
         return Helper::jsonResponse(true, 'Completed Module retrieved successfully', 200, $completed_modul);
     }
 
@@ -250,14 +247,14 @@ class StatisticsController extends Controller
 
     public function completedArticle(int $course_id) {
         $completed_article = UserArticleComplete::query()
-                        ->with('article:id,title')
-                        ->where('user_id', Auth::user()->id)
-                        ->whereIn('article_id', function ($query) use ($course_id) {
-                            $query->select('id')
-                                ->from('articles')
-                                ->where('course_id', $course_id);
-                        })
-                        ->get();
+            ->with('article:id,title')
+            ->where('user_id', Auth::user()->id)
+            ->whereIn('article_id', function ($query) use ($course_id) {
+                $query->select('id')
+                    ->from('articles')
+                    ->where('course_id', $course_id);
+            })
+            ->get();
         return Helper::jsonResponse(true, 'Completed Article retrieved successfully', 200, $completed_article);
     }
 

@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Bookmark;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class BookmarkController extends Controller
-{
+class BookmarkController extends Controller {
 
     /**
      * Toggle Bookmark add/remove.
@@ -47,7 +48,7 @@ class BookmarkController extends Controller
         } else {
             // If not, add to favorites
             $data = Bookmark::create([
-                'user_id' => $user->id,
+                'user_id'    => $user->id,
                 'article_id' => $articleID,
             ]);
             return Helper::jsonResponse(true, 'Ad added to bookmark.', 200, $data);
@@ -80,9 +81,9 @@ class BookmarkController extends Controller
         // Optionally format the response to include only necessary fields
         $formattedBookmarks = $bookmarkedArticles->map(function ($article) {
             return [
-                'id' => $article->id,
-                'title' => $article->title,
-                'image_url' => $article->image_url,
+                'id'          => $article->id,
+                'title'       => $article->title,
+                'image_url'   => $article->image_url,
                 'description' => $article->description,
             ];
         });

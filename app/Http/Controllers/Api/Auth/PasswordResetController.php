@@ -7,13 +7,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\OTPRequest;
 use App\Http\Requests\Auth\OTPVerificationRequest;
 use App\Http\Requests\Auth\PasswordResetRequest;
-use App\Jobs\SendOTPMailJob;
+use App\Mail\OTPMail;
 use App\Models\PasswordReset;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class PasswordResetController extends Controller {
     /**
@@ -30,10 +31,8 @@ class PasswordResetController extends Controller {
             $user  = User::where('email', $email)->first();
 
             if ($user) {
-                //! Dispatch OTP Email Job
-                SendOTPMailJob::dispatch($email, $otp);
                 //! OTP Email Address
-                // Mail::to($email)->send(new OTPMail($otp));
+                Mail::to($email)->send(new OTPMail($otp));
                 //! Update OTP in password_resets table
                 PasswordReset::updateOrCreate(
                     [

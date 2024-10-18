@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\web\Backend;
+namespace App\Http\Controllers\Web\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Module;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
 
-class CourseModuleController extends Controller
-{
+class CourseModuleController extends Controller {
     public function index(Request $request): JsonResponse | View {
         if ($request->ajax()) {
             $data = Module::latest()->get();
@@ -73,10 +72,10 @@ class CourseModuleController extends Controller
         // Determine validation rules based on the checkbox input
         $rules = [
             'course_name' => 'required|numeric|exists:courses,id',
-            'mark' => 'required|numeric',
-            'title' => 'required|string',
+            'mark'        => 'required|numeric',
+            'title'       => 'required|string',
             'description' => $request->input('is_exam') ? 'nullable|string' : 'required|string',
-            'question' => $request->input('is_exam') ? 'required|string' : 'nullable|string',
+            'question'    => $request->input('is_exam') ? 'required|string' : 'nullable|string',
         ];
 
         // Validate the request
@@ -92,7 +91,7 @@ class CourseModuleController extends Controller
             $module->course_id = $request->course_name;
 
             // Assign values based on request
-            $module->title = $request->title ?? null;  // Use null coalescing for clarity
+            $module->title = $request->title ?? null; // Use null coalescing for clarity
 
             if ($request->is_exam) {
                 $module->question = $request->input('question') ?? null;
@@ -101,7 +100,7 @@ class CourseModuleController extends Controller
             }
 
             $module->is_exam = $request->input('is_exam') ? true : false; // Explicitly set to true/false
-            $module->mark = $request->input('mark');
+            $module->mark    = $request->input('mark');
 
             $module->save();
 
@@ -112,7 +111,7 @@ class CourseModuleController extends Controller
     }
 
     public function edit($id) {
-        $data = Module::findOrFail($id);
+        $data   = Module::findOrFail($id);
         $course = Course::where('status', 'active')->get();
         return view('backend.layouts.module.edit', compact('data', 'course'));
     }
@@ -121,9 +120,9 @@ class CourseModuleController extends Controller
 
         $rules = [
             'course_name' => 'required|numeric|exists:courses,id',
-            'title' => 'required|string',
+            'title'       => 'required|string',
             'description' => $request->input('is_exam') ? 'nullable|string' : 'required|string',
-            'question' => $request->input('is_exam') ? 'required|string' : 'nullable|string',
+            'question'    => $request->input('is_exam') ? 'required|string' : 'nullable|string',
         ];
 
         // Validate the request
@@ -139,18 +138,18 @@ class CourseModuleController extends Controller
             $module->course_id = $request->course_name;
 
             // Assign values based on request
-            $module->title = $request->title ?? null;  // Use null coalescing for clarity
+            $module->title = $request->title ?? null; // Use null coalescing for clarity
 
             if ($request->is_exam) {
                 $module->question = $request->input('question') ?? null;
-                $module->content = null;
+                $module->content  = null;
             } else {
-                $module->content = $request->input('description') ?? null;
+                $module->content  = $request->input('description') ?? null;
                 $module->question = null;
             }
 
             $module->is_exam = $request->input('is_exam') ? true : false; // Explicitly set to true/false
-            $module->mark = $request->input('mark');
+            $module->mark    = $request->input('mark');
 
             $module->save();
 

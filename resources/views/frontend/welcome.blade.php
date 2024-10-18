@@ -11,7 +11,7 @@
 
     {{-- FAVICON --}}
     <link rel="shortcut icon" type="image/x-icon"
-        href="{{ isset($systemSetting->favicon) && !empty($systemSetting->favicon) ? asset($systemSetting->favicon) : asset('frontend/eVento_Favicon.png') }}" />
+        href="{{ isset($systemSetting->favicon) && !empty($systemSetting->favicon) ? asset($systemSetting->favicon) : asset('frontend/logo.png') }}" />
 
     <title>Poswell</title>
     <style>

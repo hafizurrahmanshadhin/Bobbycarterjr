@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Journal;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class JournalController extends Controller
-{
+class JournalController extends Controller {
     /**
      * Store Jurnal Data.
      *
@@ -20,8 +21,8 @@ class JournalController extends Controller
     public function journalStore(Request $request) {
         // Validate the request
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'title'       => 'required|string|max:255',
+            'image'       => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string',
         ]);
 
@@ -34,17 +35,17 @@ class JournalController extends Controller
 
             // Handle image upload
             if ($request->hasFile('image')) {
-                $image = $request->file('image');
+                $image     = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $imagePath = Helper::fileUpload($image, 'Journal', $imageName);
             }
 
             // Create the journal entry
             $data = Journal::create([
-                'user_id' => auth()->id(), // Assuming you want to associate the journal with the authenticated user
+                'user_id'     => auth()->id(), // Assuming you want to associate the journal with the authenticated user
                 'title' => $request->title,
                 'description' => $request->description,
-                'image_url' => $imagePath,
+                'image_url'   => $imagePath,
             ]);
 
             return Helper::jsonResponse(true, 'Journal Created Successful.', 200, $data);
@@ -114,7 +115,7 @@ class JournalController extends Controller
         return Helper::jsonResponse(true, 'Journal Deleted', 200, []);
     }
 
-     /**
+    /**
      * Edit JOurnal Based On ID .
      *
      * @param  RegisterRequest  $request
@@ -125,8 +126,8 @@ class JournalController extends Controller
 
         // Validate the request
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'title'       => 'required|string|max:255',
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string',
         ]);
 
@@ -136,7 +137,7 @@ class JournalController extends Controller
 
         try {
 
-            $journal = Journal::findOrFail($id);
+            $journal   = Journal::findOrFail($id);
             $imagePath = null;
 
             // Handle image upload
@@ -149,16 +150,16 @@ class JournalController extends Controller
                     }
                 }
 
-                $image = $request->file('image');
+                $image     = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $imagePath = Helper::fileUpload($image, 'Journal', $imageName);
             }
 
             // Create the journal entry
             $data = $journal->update([
-                'title' => $request->title,
+                'title'       => $request->title,
                 'description' => $request->description,
-                'image_url' => $imagePath,
+                'image_url'   => $imagePath,
             ]);
 
             return Helper::jsonResponse(true, 'Journal Updated', 200, $data);

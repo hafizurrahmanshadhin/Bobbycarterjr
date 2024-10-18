@@ -1,18 +1,18 @@
 <?php
 
-use App\Http\Controllers\api\ArticleController;
-use App\Http\Controllers\api\BookmarkController;
+use App\Http\Controllers\Api\ArticleController;
+use App\Http\Controllers\Api\BookmarkController;
 use App\Http\Controllers\Api\CourseController;
-use App\Http\Controllers\api\CourseModuleController;
+use App\Http\Controllers\Api\CourseModuleController;
 use App\Http\Controllers\Api\CourseTypeController;
-use App\Http\Controllers\api\JournalController;
-use App\Http\Controllers\api\StatisticsController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\JournalController;
+use App\Http\Controllers\Api\StatisticsController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\SurvayMarksController;
 use App\Http\Controllers\Api\SurvayQuestionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VoiceController;
+use Illuminate\Support\Facades\Route;
 
 Route::controller(SubscriptionController::class)->group(function () {
     Route::get('/package/free', 'freePackage');
@@ -23,7 +23,7 @@ Route::controller(VoiceController::class)->group(function () {
     Route::get('rrr/{text}', 'rrr');
 });
 
-Route::group(['middleware' => ['auth:sanctum']], function() {
+Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::controller(UserController::class)->group(function () {
         Route::get('/user/data', 'userData');
