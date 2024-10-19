@@ -7,12 +7,12 @@ use Illuminate\Support\Str;
 
 class Helper {
     //! File or Image Upload
-    public static function fileUpload($file, string $folder, string $name): ?string {
-        if (!$file->isValid()) {
+    public static function fileUpload($file, string $folder, string $name = null): ?string {
+        if (!$file || !$file->isValid()) {
             return null;
         }
 
-        $imageName = Str::slug($name) . '.' . $file->extension();
+        $imageName = ($name ? Str::slug($name) : Str::random(10)) . '.' . $file->extension();
         $path      = public_path('uploads/' . $folder);
         if (!file_exists($path)) {
             mkdir($path, 0755, true);

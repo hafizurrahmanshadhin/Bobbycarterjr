@@ -107,3 +107,19 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#logo').on('dropify.afterClear', function(event, element) {
+                $('input[name="remove_logo"]').val('1');
+                $(element.element).dropify('resetPreview');
+            });
+
+            $('#favicon').on('dropify.afterClear', function(event, element) {
+                $('input[name="remove_favicon"]').val('1');
+                $(element.element).dropify('resetPreview');
+            });
+        });
+    </script>
+@endpush
