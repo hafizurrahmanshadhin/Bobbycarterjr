@@ -85,6 +85,7 @@ class CourseModuleController extends Controller {
         try {
             $data = Answer::create([
                 'module_id' => $module_id,
+                'user_id' => $user->id,
                 'url'       => $request->url,
                 'answer'    => $request->answer,
             ]);

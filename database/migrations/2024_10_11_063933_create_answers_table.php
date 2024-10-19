@@ -12,6 +12,11 @@ return new class extends Migration {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('user_id')->nullable(false);
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onDelete('restrict')
+                ->onUpdate('cascade');
+
             $table->unsignedBigInteger('module_id')->nullable(false);
             $table->foreign('module_id')->references('id')->on('modules')
                 ->onDelete('restrict')
