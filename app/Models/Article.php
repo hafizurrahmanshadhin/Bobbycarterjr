@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Article extends Model
-{
+class Article extends Model {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
@@ -29,11 +28,11 @@ class Article extends Model
 
     protected function casts(): array {
         return [
-            'course_id' => 'integer',
-            'title'     => 'string',
-            'description'  => 'string',
-            'image_url'  => 'string',
-            'status'  => 'string',
+            'course_id'   => 'integer',
+            'title'       => 'string',
+            'description' => 'string',
+            'image_url'   => 'string',
+            'status'      => 'string',
         ];
     }
 
@@ -41,27 +40,23 @@ class Article extends Model
         return $this->belongsTo(Course::class);
     }
 
-    public function users()
-    {
+    public function users() {
         return $this->belongsToMany(User::class, 'article_users')
-                    ->withPivot('is_read')
-                    ->withTimestamps();
+            ->withPivot('is_read')
+            ->withTimestamps();
     }
 
     // Define the relationship with the Bookmark model
-    public function bookmarks()
-    {
+    public function bookmarks() {
         return $this->hasMany(Bookmark::class);
     }
 
     // Optional: Relationship to get users who bookmarked this article
-    public function bookmarkedBy()
-    {
+    public function bookmarkedBy() {
         return $this->belongsToMany(User::class, 'bookmarks')->withTimestamps();
     }
 
-    public function userCompletes()
-    {
+    public function userCompletes() {
         return $this->hasMany(UserArticleComplete::class);
     }
 }

@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Article;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ArticleController extends Controller
-{
+class ArticleController extends Controller {
     /**
      * Return Article Under a Course Data.
      *
@@ -64,7 +65,6 @@ class ArticleController extends Controller
         return Helper::jsonResponse(true, 'Course Article retrieved successfully', 200, $data);
     }
 
-
     /**
      * Return Daily Read Article Under a Course Data.
      *
@@ -82,9 +82,9 @@ class ArticleController extends Controller
 
         // Get the user's articles filtered by course ID and read status
         $data = $user->articles()
-                     ->where('articles.course_id', $course_id)
-                     ->where('is_read', true)
-                     ->get();
+            ->where('articles.course_id', $course_id)
+            ->where('is_read', true)
+            ->get();
 
         // Check if any articles were found
         if ($data->isEmpty()) {
@@ -94,10 +94,10 @@ class ArticleController extends Controller
         // Format the response to remove the pivot relationship
         $formattedData = $data->map(function ($article) {
             return [
-                'id' => $article->id,
-                'course_id' => $article->course_id,
-                'image_url' => $article->image_url,
-                'title' => $article->title,
+                'id'          => $article->id,
+                'course_id'   => $article->course_id,
+                'image_url'   => $article->image_url,
+                'title'       => $article->title,
                 'description' => $article->description,
             ];
         });

@@ -1,20 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\web\Backend;
+namespace App\Http\Controllers\Web\Backend;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Course;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Yajra\DataTables\DataTables;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\Validate;
+use Yajra\DataTables\DataTables;
 
-class ArticleController extends Controller
-{
+class ArticleController extends Controller {
+    /**
+     * Return Article Under a Course Data.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
     public function index(Request $request): JsonResponse | View {
         if ($request->ajax()) {
             $data = Article::latest()->get();
@@ -56,7 +60,7 @@ class ArticleController extends Controller
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['course_name', 'description', 'image_url','status', 'action'])
+                ->rawColumns(['course_name', 'description', 'image_url', 'status', 'action'])
                 ->make();
         }
         return view('backend.layouts.article.index');
@@ -72,27 +76,27 @@ class ArticleController extends Controller
         // Validate the request
         $validator = $request->validate([
             'course_name' => 'required|numeric|exists:courses,id',
-            'title' => 'required|string',
-            'mark' => 'required|numeric',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'description' => 'required|string'
+            'title'       => 'required|string',
+            'mark'        => 'required|numeric',
+            'image'       => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'description' => 'required|string',
         ]);
 
         try {
 
             // Handle image upload
             if ($request->hasFile('image')) {
-                $image                        = $request->file('image');
+                $image     = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $imagePath = Helper::fileUpload($image, 'Article', $imageName);
             }
 
             Article::create([
-                'course_id' => $request->course_name,
-                'title' => $request->title,
+                'course_id'   => $request->course_name,
+                'title'       => $request->title,
                 'description' => $request->description,
-                'mark' => $request->mark,
-                'image_url' => $imagePath
+                'mark'        => $request->mark,
+                'image_url'   => $imagePath,
             ]);
 
             return to_route('admin.article.index')->with('t-success', 'New Article Created');
@@ -102,7 +106,7 @@ class ArticleController extends Controller
     }
 
     public function edit($id) {
-        $data = Article::findOrFail($id);
+        $data   = Article::findOrFail($id);
         $course = Course::where('status', 'active')->get();
         return view('backend.layouts.article.edit', compact('data', 'course'));
     }
@@ -111,10 +115,10 @@ class ArticleController extends Controller
 
         $validator = $request->validate([
             'course_name' => 'required|numeric|exists:courses,id',
-            'title' => 'required|string',
-            'mark' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'description' => 'required|string'
+            'title'       => 'required|string',
+            'mark'        => 'required|numeric',
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'description' => 'required|string',
         ]);
 
         try {
@@ -130,19 +134,19 @@ class ArticleController extends Controller
                     }
                 }
 
-                $image                        = $request->file('image');
+                $image     = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $imagePath = Helper::fileUpload($image, 'Article', $imageName);
-            }else{
+            } else {
                 $imagePath = $data->image_url;
             }
 
             $data->update([
-                'course_id' => $request->course_name,
-                'title' => $request->title,
-                'mark' => $request->mark,
+                'course_id'   => $request->course_name,
+                'title'       => $request->title,
+                'mark'        => $request->mark,
                 'description' => $request->description,
-                'image_url' => $imagePath
+                'image_url'   => $imagePath,
             ]);
 
             return to_route('admin.article.index')->with('t-success', 'New Article Updated');

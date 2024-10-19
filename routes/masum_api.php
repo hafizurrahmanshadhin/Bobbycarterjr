@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\ReminderController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::controller(ReminderController::class)->group(function () {

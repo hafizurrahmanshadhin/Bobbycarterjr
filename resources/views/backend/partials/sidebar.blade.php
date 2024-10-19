@@ -7,14 +7,14 @@
     <div class="app-sidebar">
         <div class="side-header p-0 py-2">
             <a class="header-brand1" href="{{ route('dashboard') }}">
-                <img src="{{ asset($systemSetting->logo ?? 'backend/images/brand/logo.png') }}"
-                    class="header-brand-img desktop-logo" alt="logo" style="width: 100px; height: 100%;">
-                <img src="{{ asset($systemSetting->logo ?? 'backend/images/brand/logo-1.png') }}"
-                    class="header-brand-img toggle-logo" alt="logo" style="width: 100px; height: 100%;">
-                <img src="{{ asset($systemSetting->logo ?? 'backend/images/brand/logo-2.png') }}"
-                    class="header-brand-img light-logo" alt="logo" style="width: 100px; height: 100%;">
-                <img src="{{ asset($systemSetting->logo ?? 'backend/images/brand/logo-3.png') }}"
-                    class="header-brand-img light-logo1" alt="logo" style="width: 100px; height: 100%;">
+                <img src="{{ asset($systemSetting->logo ?? 'frontend/logo.png') }}" class="header-brand-img desktop-logo"
+                    alt="logo" style="width: 100px; height: 100%;">
+                <img src="{{ asset($systemSetting->logo ?? 'frontend/logo.png') }}" class="header-brand-img toggle-logo"
+                    alt="logo" style="width: 100px; height: 100%;">
+                <img src="{{ asset($systemSetting->logo ?? 'frontend/logo.png') }}" class="header-brand-img light-logo"
+                    alt="logo" style="width: 100px; height: 100%;">
+                <img src="{{ asset($systemSetting->logo ?? 'frontend/logo.png') }}" class="header-brand-img light-logo1"
+                    alt="logo" style="width: 100px; height: 100%;">
             </a>
         </div>
 

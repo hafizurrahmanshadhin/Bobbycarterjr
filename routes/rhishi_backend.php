@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\web\Backend\ArticleController;
-use App\Http\Controllers\web\Backend\CourseModuleController;
+use App\Http\Controllers\Web\Backend\ArticleController;
+use App\Http\Controllers\Web\Backend\CourseModuleController;
 use App\Http\Controllers\Web\Backend\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
