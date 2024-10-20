@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder {
             OptionSeeder::class,
             ModuleSeeder::class,
             ArticlesSeeder::class,
+            DailyAffirmationsSeeder::class,
         ]);
     }
 }

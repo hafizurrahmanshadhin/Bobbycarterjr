@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Answer;
+use App\Models\Course;
 use App\Models\Module;
 use Carbon\Carbon;
 use Exception;
@@ -27,13 +28,19 @@ class CourseModuleController extends Controller {
     public function courseModule(int $course_id) {
 
         $data = Module::where('course_id', $course_id)->get();
+        $course = Course::findOrFail($course_id);
 
         // Check if the Course Types was found
         if ($data->isEmpty()) {
             return Helper::jsonResponse(true, 'Course Module not found', 200, []);
         }
 
-        return Helper::jsonResponse(true, 'Course Module retrieved successfully', 200, $data);
+        $response = [
+            'course_image' => $course->image_url,
+            'modules' => $data,
+        ];
+
+        return Helper::jsonResponse(true, 'Course Module retrieved successfully', 200, $response);
     }
 
     /**
@@ -52,7 +59,14 @@ class CourseModuleController extends Controller {
             return Helper::jsonResponse(true, 'Course Module not found', 200, []);
         }
 
-        return Helper::jsonResponse(true, 'Course Module retrieved successfully', 200, $data);
+        $course = Course::findOrFail($data->course_id);
+
+        $response = [
+            'course_image' => $course->image_url,
+            'module' => $data,
+        ];
+
+        return Helper::jsonResponse(true, 'Course Module retrieved successfully', 200, $response);
     }
 
     /**

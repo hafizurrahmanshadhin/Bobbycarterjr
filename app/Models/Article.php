@@ -53,7 +53,7 @@ class Article extends Model {
 
     // Optional: Relationship to get users who bookmarked this article
     public function bookmarkedBy() {
-        return $this->belongsToMany(User::class, 'bookmarks')->withTimestamps();
+        return $this->belongsToMany(User::class, 'bookmarks');
     }
 
     public function userCompletes() {
