@@ -43,7 +43,7 @@
                                         <td>
                                             <a href="#viewModal" onclick="ViewDataModal({{ $item->id }})"
                                                 class="btn btn-primary fs-14 text-white edit-icn" data-bs-toggle="modal"
-                                                title="Edit">
+                                                title="Edit" aria-label="Edit item {{ $item->id }}">
                                                 <i class="fe fe-edit"></i>
                                             </a>
                                         </td>
@@ -74,14 +74,16 @@
                     </button>
                 </div>
                 <div class="modal-body" style="max-height: 550px; overflow: auto; width: 100%;">
-                    <form action="{{ route('admin.daily_affirmation.update') }}">
+                    <form id="FromID" action="{{ route('admin.daily_affirmation.update') }}" method="POST">
                         <div class="form-group">
                             <label for="notification" class="form-label text-muted">Notification:</label>
                             <textarea rows="5" id="notification" name="notification" placeholder="Enter Notification" class="form-control"></textarea>
+                            <span class="text-danger error-text notification_error"></span>
                         </div>
+                        <input type="hidden" name="id" id="id">
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button id="FromButton" type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -93,36 +95,50 @@
 @push('scripts')
     <script>
         function ViewDataModal(id) {
-            axios.get("{{ route('admin.daily_affirmation.single', ':id') }}".replace(':id', id))
+            const url = `{{ route('admin.daily_affirmation.single', ':id') }}`.replace(':id', id);
+
+            axios.get(url)
                 .then(function(response) {
                     if (response.data.success) {
-                        let data = response.data.data;
-                        document.getElementById('notification').value = data.notification;
+                        const data = response.data.data;
 
+                        // Check if elements exist before updating
+                        const notificationInput = document.getElementById('notification');
+                        const idInput = document.getElementById('id');
+
+                        if (notificationInput && idInput) {
+                            notificationInput.value = data.notification;
+                            idInput.value = data.id;
+                        } else {
+                            toastr.error('Input elements not found.');
+                        }
                     } else {
                         toastr.error('Failed to load subscription data.');
                     }
                 })
                 .catch(function(error) {
-                    // Check if error response exists and show the relevant message
+                    // Enhanced error handling
                     const errorMessage = error.response && error.response.data && error.response.data.message ?
                         error.response.data.message :
                         'An error occurred while loading subscription data.';
+                    console.error('Error loading data:', error); // Log error for debugging
                     toastr.error(errorMessage);
                 });
         }
+    </script>
 
+    <script>
         $(function() {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                 }
             });
-            $("#SubscriptionForm").on('submit', function(e) {
+            $("#FromID").on('submit', function(e) {
                 e.preventDefault();
 
                 $.ajax({
-                    url: {{ route('admin.daily_affirmation.single') }},
+                    url: "{{ route('admin.daily_affirmation.update') }}",
                     method: $(this).attr('method'),
                     data: new FormData(this),
                     processData: false,
@@ -130,31 +146,24 @@
                     contentType: false,
                     beforeSend: function() {
                         $(document).find('span.error-text').text('');
-                        $('#SubscriptionSubmit').attr('disabled', true).text('Loading...');
+                        $('#FromButton').attr('disabled', true).text('Loading...');
                     },
                     success: function(data) {
                         if (data.status == 0) {
 
                             $.each(data.error, function(prefix, val) {
-                                var id = prefix + '_error';
-                                var errorSpanTag = document.getElementById(id);
-                                errorSpanTag.innerHTML = val[0];
+                                $('span.' + prefix + '_error').text(val[0]);
                             });
 
-                            $('#SubscriptionSubmit').removeAttr('disabled').text('Save');
+                            $('#FromButton').removeAttr('disabled').text('Save');
 
                         } else {
                             toastr.success(data.msg);
-                            $('#SubscriptionSubmit').removeAttr('disabled').text('Save');
-
-                            setTimeout(function() {
-                                window.location.href =
-                                    "{{ route('admin.subscription.index') }}";
-                            }, 1000);
+                            $('#FromButton').removeAttr('disabled').text('Save');
+                            $('#viewModal').modal('hide');
                         }
                     }
                 });
-
             });
         });
     </script>

@@ -44,5 +44,5 @@ Route::controller(TaskAnswersController::class)->name('admin.')->group(function 
 Route::controller(DailyAffirmationController::class)->name('admin.')->group(function () {
     Route::get('/daily-affirmation', 'index')->name('daily_affirmation.index');
     Route::get('/daily-affirmation/{id}', 'single')->name('daily_affirmation.single');
-    Route::post('/daily-affirmation', 'update')->name('daily_affirmation.update');
+    Route::post('/daily-affirmation/update', 'update')->name('daily_affirmation.update');
 });
