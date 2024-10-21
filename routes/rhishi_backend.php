@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\Web\Backend\ArticleController;
 use App\Http\Controllers\Web\Backend\CourseModuleController;
-use App\Http\Controllers\web\Backend\DailyAffirmationController;
+use App\Http\Controllers\Web\Backend\DailyAffirmationController;
 use App\Http\Controllers\Web\Backend\SubscriptionController;
-use App\Http\Controllers\web\Backend\TaskAnswersController;
+use App\Http\Controllers\Web\Backend\TaskAnswersController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(SubscriptionController::class)->name('admin.')->group(function () {
