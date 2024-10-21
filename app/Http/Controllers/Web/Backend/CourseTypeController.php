@@ -105,7 +105,7 @@ class CourseTypeController extends Controller {
     public function update(Request $request, int $id): JsonResponse {
         $validated = $request->validate([
             'name'  => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
         ]);
 
         $courseType = CourseType::find($id);
@@ -135,8 +135,13 @@ class CourseTypeController extends Controller {
     public function destroy(int $id): JsonResponse {
         $courseType = CourseType::find($id);
         if ($courseType) {
+            if ($courseType->image && file_exists(public_path($courseType->image))) {
+                unlink(public_path($courseType->image));
+            }
+
             $courseType->delete();
-            return response()->json(['success' => true, 'message' => 'Course type deleted successfully']);
+
+            return response()->json(['success' => true, 'message' => 'Course type and associated image deleted successfully']);
         } else {
             return response()->json(['success' => false, 'message' => 'Course type not found']);
         }

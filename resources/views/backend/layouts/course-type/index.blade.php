@@ -216,13 +216,18 @@
             }
         });
 
+        // Initialize Dropify
+        $('.dropify').dropify();
+
         // storing data
-        function showCreateModal() {
+        window.showCreateModal = function() {
             $('#createCourseTypeName').val('');
+            $('#createCourseTypeImage').val('');
+            $('#createCourseTypeImage').dropify().clearElement();
             $('#createModal').modal('show');
         }
 
-        function storeCourseType() {
+        window.storeCourseType = function() {
             let courseName = $('#createCourseTypeName').val();
             let courseImage = $('#createCourseTypeImage').prop('files')[0];
 
@@ -257,7 +262,7 @@
         }
 
         //Edit data
-        function editCourseType(id) {
+        window.editCourseType = function(id) {
             $.ajax({
                 url: '{{ route('course-type.edit', ':id') }}'.replace(':id', id),
                 type: 'GET',
@@ -265,6 +270,27 @@
                     if (response.success) {
                         $('#editCourseTypeName').val(response.data.name);
                         $('#editCourseTypeId').val(response.data.id);
+
+                        // Initialize Dropify with existing image
+                        let imageUrl = `{{ asset(':image') }}`.replace(':image', response.data.image);
+                        let drEvent = $('#editCourseTypeImage').dropify({
+                            defaultFile: imageUrl,
+                            messages: {
+                                'default': 'Drag and drop a file here or click',
+                                'replace': 'Drag and drop or click to replace',
+                                'remove': 'Remove',
+                                'error': 'Ooops, something wrong happened.'
+                            }
+                        });
+
+                        // Destroy and reinitialize Dropify to update the image preview
+                        drEvent = drEvent.data('dropify');
+                        drEvent.resetPreview();
+                        drEvent.clearElement();
+                        drEvent.settings.defaultFile = imageUrl;
+                        drEvent.destroy();
+                        drEvent.init();
+
                         $('#editModal').modal('show');
                     } else {
                         toastr.error(response.message);
@@ -276,8 +302,9 @@
             });
         }
 
+
         // update data
-        function updateCourseType() {
+        window.updateCourseType = function() {
             let courseId = $('#editCourseTypeId').val();
             let courseName = $('#editCourseTypeName').val();
             let courseImage = $('#editCourseTypeImage').prop('files')[0];
@@ -288,6 +315,7 @@
             }
 
             let formData = new FormData();
+            formData.append('_method', 'PUT'); // Add this line to specify the HTTP method
             formData.append('name', courseName);
             if (courseImage) {
                 formData.append('image', courseImage);
