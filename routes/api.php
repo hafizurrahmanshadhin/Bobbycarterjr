@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
+use App\Http\Controllers\Api\ReminderController;
 use Illuminate\Support\Facades\Route;
 
 //! Auth Routes
@@ -17,3 +18,13 @@ Route::post('/reset-password', [PasswordResetController::class, 'ResetPassword']
 
 //! Route For Socialite Login.
 Route::post('/social-login', [SocialLoginController::class, 'SocialLogin']);
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::controller(ReminderController::class)->group(function () {
+        Route::get('/reminders', 'getAllReminders');
+        Route::get('/single-reminder/{id}', 'SingleReminder');
+        Route::post('/reminder/store', 'reminderStore');
+        Route::delete('/reminder/delete/{id}', 'reminderDelete');
+        Route::post('/reminder/update/{id}', 'reminderUpdate');
+    });
+});
