@@ -70,27 +70,24 @@ class CourseController extends Controller {
      */
     public function store(Request $request): JsonResponse {
         try {
-            // Validate incoming request
             $validated = $request->validate([
                 'course_type_id' => 'required|exists:course_types,id',
                 'name'           => 'required|string|max:255',
-                'image'          => 'required|image|mimes:jpeg,png,jpg|max:2048', // Add image validation
+                'image'          => 'required|image|mimes:jpeg,png,jpg|max:10240',
             ]);
 
-            // Create the course
-            $course = new Course();
+            $course                 = new Course();
             $course->course_type_id = $validated['course_type_id'];
-            $course->name = $validated['name'];
+            $course->name           = $validated['name'];
 
-            // Handle image upload
             if ($request->hasFile('image')) {
-                $image                        = $request->file('image');
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $imagePath = Helper::fileUpload($image, 'Course', $imageName);
-                $course->image_url = $imagePath; // Save the image path to the database
+                $image             = $request->file('image');
+                $imageName         = time() . '.' . $image->getClientOriginalExtension();
+                $imagePath         = Helper::fileUpload($image, 'Course', $imageName);
+                $course->image_url = $imagePath;
             }
 
-            $course->save(); // Save the course to the database
+            $course->save();
 
             return response()->json(['success' => true, 'message' => 'Course created successfully']);
         } catch (Exception $e) {
@@ -139,25 +136,23 @@ class CourseController extends Controller {
             $validated = $request->validate([
                 'course_type_id' => 'required|exists:course_types,id',
                 'name'           => 'required|string|max:255',
-                'image'          => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'image'          => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
             ]);
 
-            $course = Course::findOrFail($id);
+            $course                 = Course::findOrFail($id);
             $course->course_type_id = $validated['course_type_id'];
-            $course->name = $validated['name'];
+            $course->name           = $validated['name'];
 
-            // Handle image upload
             if ($request->hasFile('image')) {
-                // Delete old image if it exists
                 if ($course->image_url) {
                     $previousImagePath = public_path($course->image_url);
                     if (file_exists($previousImagePath)) {
                         unlink($previousImagePath);
                     }
                 }
-                $image                        = $request->file('image');
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $imagePath = Helper::fileUpload($image, 'Course', $imageName);
+                $image             = $request->file('image');
+                $imageName         = time() . '.' . $image->getClientOriginalExtension();
+                $imagePath         = Helper::fileUpload($image, 'Course', $imageName);
                 $course->image_url = $imagePath;
             }
 
@@ -178,9 +173,15 @@ class CourseController extends Controller {
     public function destroy(int $id): JsonResponse {
         try {
             $course = Course::find($id);
+
             if ($course) {
+                if ($course->image_url && file_exists(public_path($course->image_url))) {
+                    unlink(public_path($course->image_url));
+                }
+
                 $course->delete();
-                return response()->json(['success' => true, 'message' => 'Course deleted successfully']);
+
+                return response()->json(['success' => true, 'message' => 'Course and associated image deleted successfully']);
             } else {
                 return response()->json(['success' => false, 'message' => 'Course not found'], 404);
             }

@@ -21,7 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('admin/settings')
                 ->group(base_path('routes/settings.php'));
 
-
             //Rhishi Kesh Routes
             Route::middleware(['web', 'auth', 'admin'])
                 ->prefix('admin')
@@ -30,11 +29,6 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware(['api'])
                 ->prefix('api')
                 ->group(base_path('routes/rhishi_api.php'));
-
-            // Route by Masum
-            Route::middleware(['api'])
-            ->prefix('api')
-            ->group(base_path('routes/masum_api.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware) {

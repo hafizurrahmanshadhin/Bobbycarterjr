@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web\Backend;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\CourseType;
 use Exception;
@@ -23,6 +24,10 @@ class CourseTypeController extends Controller {
             $data = CourseType::latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('image', function ($data) {
+                    $url = asset($data->image);
+                    return "<img src='$url' width='100'>";
+                })
                 ->addColumn('status', function ($data) {
                     $backgroundColor  = $data->status == "active" ? '#4CAF50' : '#ccc';
                     $sliderTranslateX = $data->status == "active" ? '26px' : '2px';
@@ -47,7 +52,7 @@ class CourseTypeController extends Controller {
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['image', 'status', 'action'])
                 ->make();
         }
         return view('backend.layouts.course-type.index');
@@ -61,14 +66,18 @@ class CourseTypeController extends Controller {
      */
     public function store(Request $request): JsonResponse {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name'  => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
         ]);
 
-        $courseType       = new CourseType();
-        $courseType->name = $validated['name'];
+        $imagePath = Helper::fileUpload($request->file('image'), 'course_types', $validated['name']);
+
+        $courseType        = new CourseType();
+        $courseType->name  = $validated['name'];
+        $courseType->image = $imagePath;
         $courseType->save();
 
-        return response()->json(['success' => true, 'message' => 'Course type created successfully']);
+        return Helper::jsonResponse(true, 'Course type created successfully', 201);
     }
 
     /**
@@ -95,18 +104,26 @@ class CourseTypeController extends Controller {
      */
     public function update(Request $request, int $id): JsonResponse {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name'  => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
         ]);
 
         $courseType = CourseType::find($id);
-        if ($courseType) {
-            $courseType->name = $validated['name'];
-            $courseType->save();
 
-            return response()->json(['success' => true, 'message' => 'Course type updated successfully']);
-        } else {
-            return response()->json(['success' => false, 'message' => 'Course type not found']);
+        if (!$courseType) {
+            return Helper::jsonResponse(false, 'Course type not found', 404);
         }
+
+        $courseType->name = $validated['name'];
+
+        if ($request->hasFile('image')) {
+            Helper::fileDelete(public_path($courseType->image));
+            $courseType->image = Helper::fileUpload($request->file('image'), 'course_types', $validated['name']);
+        }
+
+        $courseType->save();
+
+        return Helper::jsonResponse(true, 'Course type updated successfully', 200);
     }
 
     /**
@@ -118,8 +135,13 @@ class CourseTypeController extends Controller {
     public function destroy(int $id): JsonResponse {
         $courseType = CourseType::find($id);
         if ($courseType) {
+            if ($courseType->image && file_exists(public_path($courseType->image))) {
+                unlink(public_path($courseType->image));
+            }
+
             $courseType->delete();
-            return response()->json(['success' => true, 'message' => 'Course type deleted successfully']);
+
+            return response()->json(['success' => true, 'message' => 'Course type and associated image deleted successfully']);
         } else {
             return response()->json(['success' => false, 'message' => 'Course type not found']);
         }

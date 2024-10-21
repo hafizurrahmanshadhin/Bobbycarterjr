@@ -12,6 +12,7 @@ return new class extends Migration {
         Schema::create('course_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable(false);
+            $table->string('image')->nullable(false);
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

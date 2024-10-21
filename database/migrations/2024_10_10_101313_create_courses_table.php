@@ -18,7 +18,7 @@ return new class extends Migration {
                 ->onUpdate('cascade');
 
             $table->string('name')->nullable(false);
-            $table->string('image_url');
+            $table->string('image_url')->nullable(false);
 
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamp('created_at')->useCurrent();

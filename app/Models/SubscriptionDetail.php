@@ -6,14 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SubscriptionDetail extends Model
-{
+class SubscriptionDetail extends Model {
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
-    public function subscription()
-    {
+    public function subscription() {
         return $this->belongsTo(Subscription::class);
     }
 
@@ -25,7 +23,7 @@ class SubscriptionDetail extends Model
 
     protected function casts(): array {
         return [
-            'id' => 'integer',
+            'id'              => 'integer',
             'subscription_id' => 'integer',
         ];
     }

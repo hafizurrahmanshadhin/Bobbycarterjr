@@ -20,13 +20,14 @@ class Course extends Model {
         'created_at',
         'updated_at',
         'deleted_at',
-        'status'
+        'status',
     ];
 
     protected function casts(): array {
         return [
             'course_type_id' => 'integer',
             'name'           => 'string',
+            'image_url'      => 'string',
             'status'         => 'string',
         ];
     }
@@ -44,8 +45,7 @@ class Course extends Model {
     }
 
     // Relationship with UserRecommended
-    public function recommendedBy()
-    {
+    public function recommendedBy() {
         return $this->hasMany(UserRecommended::class);
     }
 }
