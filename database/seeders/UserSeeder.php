@@ -11,6 +11,7 @@ class UserSeeder extends Seeder {
         DB::table('users')->insert([
             [
                 'id'                => 1,
+                'is_subscribed'     => 0,
                 'firstName'         => 'admin',
                 'lastName'          => 'admin',
                 'email'             => 'admin@admin.com',
@@ -30,6 +31,7 @@ class UserSeeder extends Seeder {
             ],
             [
                 'id'                => 2,
+                'is_subscribed'     => 0,
                 'firstName'         => 'user',
                 'lastName'          => 'user',
                 'email'             => 'user@user.com',
@@ -45,6 +47,26 @@ class UserSeeder extends Seeder {
                 'remember_token'    => null,
                 'created_at'        => '2024-09-05 04:07:08',
                 'updated_at'        => '2024-09-05 10:07:37',
+                'deleted_at'        => null,
+            ],
+            [
+                'id'                => 3,
+                'is_subscribed'     => 1,
+                'firstName'         => 'Hafizur',
+                'lastName'          => 'Rahman',
+                'email'             => 'shadhin666@gmail.com',
+                'email_verified_at' => null,
+                'password'          => Hash::make('12345678'),
+                'avatar'            => null,
+                'address'           => null,
+                'google_id'         => null,
+                'facebook_id'       => null,
+                'otp_verified_at'   => null,
+                'role'              => 'user',
+                'status'            => 'active',
+                'remember_token'    => null,
+                'created_at'        => '2024-10-21 05:15:44',
+                'updated_at'        => '2024-10-21 05:15:44',
                 'deleted_at'        => null,
             ],
         ]);
