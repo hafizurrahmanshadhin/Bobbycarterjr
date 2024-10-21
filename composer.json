@@ -13,6 +13,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
+        "pbmedia/laravel-ffmpeg": "^8.5",
         "yajra/laravel-datatables": "11.0"
     },
     "require-dev": {

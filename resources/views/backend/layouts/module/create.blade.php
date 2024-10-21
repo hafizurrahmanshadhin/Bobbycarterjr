@@ -65,6 +65,21 @@
                                             value="{{ old('description') }}"></textarea>
                                         <span class="text-danger error-text description_error"></span>
                                     </div>
+                                    <div>
+                                        <label for="file" class="form-label">File</label>
+                                        <input type="file" name="file" id="file"
+                                            class="form-control @error('file') is-invalid @enderror"
+                                            value="{{ old('file') }}" accept=".mp3,.wav,.ogg">
+                                        <span class="text-danger error-text file_error"></span>
+
+                                        <div class="mt-2">
+                                            <audio id="audioPreview" style="display: none" controls>
+                                                <source id="audioSource" src="" type="">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="audio_duration" id="audio_duration" />
                                 </div>
 
                                 <div id="ExamContent">
@@ -123,6 +138,30 @@
         </script>
 
         <script>
+            const fileInput = document.getElementById('file');
+            const audioPreview = document.getElementById('audioPreview');
+            const audioSource = document.getElementById('audioSource');
+            const audioDurationInput = document.getElementById('audio_duration');
+
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                const audio = new Audio(URL.createObjectURL(file));
+
+                audio.addEventListener('loadedmetadata', () => {
+                    audioDurationInput.value = audio.duration;
+                });
+
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    audioSource.src = url;
+                    audioSource.type = file.type; // Set the correct MIME type
+                    audioPreview.load(); // Load the new audio source
+                    audioPreview.style.display = 'block'; // Show the audio element
+                } else {
+                    audioPreview.style.display = 'none'; // Hide the audio element if no file
+                }
+            });
+
             $(function() {
                 $.ajaxSetup({
                     headers: {

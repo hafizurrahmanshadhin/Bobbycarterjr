@@ -22,6 +22,8 @@ return new class extends Migration {
             $table->boolean('is_exam')->default(false);
             $table->text('question')->nullable();
             $table->integer('mark')->nullable();
+            $table->string('file_url')->nullable();
+            $table->string('audio_time')->nullable();
 
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamp('created_at')->useCurrent();

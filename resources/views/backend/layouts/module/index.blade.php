@@ -28,14 +28,15 @@
 
 
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered text-nowrap border-bottom w-100" id="datatable">
+                    <div class="table-responsive export-table">
+                        <table class="table table-bordered dataTables_wrapper dt-bootstrap5 no-footer" id="datatable">
                             <thead>
                                 <tr>
                                     <th class="wd-15p border-bottom-0">#</th>
                                     <th class="wd-15p border-bottom-0">Course Name</th>
                                     <th class="wd-15p border-bottom-0">Title</th>
                                     <th class="wd-15p border-bottom-0">Content</th>
+                                    <th class="wd-15p border-bottom-0">Duration</th>
                                     <th class="wd-15p border-bottom-0">Question</th>
                                     <th class="wd-15p border-bottom-0">Module</th>
                                     <th class="wd-15p border-bottom-0">Mark</th>
@@ -113,6 +114,12 @@
                         {
                             data: 'content',
                             name: 'content',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'audio_time',
+                            name: 'audio_time',
                             orderable: true,
                             searchable: true
                         },

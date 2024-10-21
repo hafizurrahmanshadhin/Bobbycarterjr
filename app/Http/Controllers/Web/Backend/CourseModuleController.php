@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web\Backend;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Module;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
+use FFMpeg;
 
 class CourseModuleController extends Controller {
     public function index(Request $request): JsonResponse | View {
@@ -29,6 +31,28 @@ class CourseModuleController extends Controller {
                     $page_content       = $data->question;
                     $short_page_content = strlen($page_content) > 100 ? substr($page_content, 0, 100) . '...' : $page_content;
                     return '<p>' . $short_page_content . ' </p>';
+                })
+                ->addColumn('audio_time', function ($data) {
+                    $page_content = $data->audio_time; // Assume this is in seconds
+
+                    if ($page_content === null) {
+                        // If audio_time is null, don't show any time
+                        return null; // Or you can return an empty string or message
+                    }
+
+                    if ($page_content < 60) {
+                        // Less than one minute, show seconds
+                        $formatted_time = floor($page_content) . ' second' . ($page_content > 1 ? 's' : '');
+                    } else {
+                        // More than one minute, calculate minutes
+                        $minutes = floor($page_content / 60);
+
+                        // Format output: only show minutes and omit seconds
+                        $formatted_time = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+                    }
+
+                    // Optionally return the formatted time if needed
+                    return $formatted_time;
                 })
                 ->addColumn('module', function ($data) {
                     return $data->is_exam == 1 ? "<span class='badge bg-primary'>Question Module</span>" : '';
@@ -57,7 +81,7 @@ class CourseModuleController extends Controller {
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['course_name', 'status', 'content', 'module', 'question', 'action'])
+                ->rawColumns(['course_name', 'audio_time', 'status', 'content', 'module', 'question', 'action'])
                 ->make();
         }
         return view('backend.layouts.module.index');
@@ -76,6 +100,8 @@ class CourseModuleController extends Controller {
             'title'       => 'required|string',
             'description' => $request->input('is_exam') ? 'nullable|string' : 'required|string',
             'question'    => $request->input('is_exam') ? 'required|string' : 'nullable|string',
+            'file' => $request->input('is_exam') ? 'nullable|file|max:20480' : 'required|file|max:20480',
+            'audio_duration' => $request->input('is_exam') ? 'nullable|numeric' : 'required|numeric',
         ];
 
         // Validate the request
@@ -97,6 +123,20 @@ class CourseModuleController extends Controller {
                 $module->question = $request->input('question') ?? null;
             } else {
                 $module->content = $request->input('description') ?? null;
+            }
+
+            if (!$request->is_exam) {
+
+                // Handle image upload
+                if ($request->hasFile('file')) {
+                    $file                        = $request->file('file');
+                    $fileName = time() . '.' . $file->getClientOriginalExtension();
+                    $filePath = Helper::fileUpload($file, 'Module', $fileName);
+
+                    //store Database
+                    $module->file_url = $filePath;
+                    $module->audio_time = $request->audio_duration;
+                }
             }
 
             $module->is_exam = $request->input('is_exam') ? true : false; // Explicitly set to true/false
