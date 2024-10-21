@@ -31,7 +31,7 @@
                         href="javascript:void(0)" onclick="showCreateModal()">Add New</a>
                 </div>
 
-                {{-- CREATE MODAL --}}
+                {{-- CREATE MODAL Start --}}
                 <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -51,9 +51,15 @@
                                         <input type="text" id="createCourseTypeName" class="form-control"
                                             placeholder="Enter Course Type">
                                     </div>
-                                    <small id="createCourseTypeHelp" class="form-text text-muted">Enter the name of the
-                                        course type.</small>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="createCourseTypeImage" class="form-label text-muted">Course Type
+                                        Image:</label>
+                                    <input type="file" id="createCourseTypeImage" class="form-control">
+                                    <small class="form-text text-muted">Upload an image (JPEG, PNG, etc.).</small>
+                                </div>
+
                                 <div id="createFeedback" class="mt-2"></div>
                             </div>
                             <div class="modal-footer">
@@ -65,8 +71,9 @@
                         </div>
                     </div>
                 </div>
+                {{-- CREATE MODAL End --}}
 
-                {{-- EDIT MODAL --}}
+                {{-- EDIT MODAL Start --}}
                 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
@@ -85,9 +92,16 @@
                                             placeholder="Enter Course Type">
                                         <input type="hidden" id="editCourseTypeId">
                                     </div>
-                                    <small id="editCourseTypeHelp" class="form-text text-muted">Modify the name of the
-                                        course type.</small>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="editCourseTypeImage" class="form-label text-muted">Course Type
+                                        Image:</label>
+                                    <input type="file" id="editCourseTypeImage" class="form-control">
+                                    <small class="form-text text-muted">Upload a new image if you want to change the
+                                        existing one (JPEG, PNG, etc.).</small>
+                                </div>
+
                                 <div id="editFeedback" class="mt-2"></div>
                             </div>
                             <div class="modal-footer">
@@ -99,6 +113,7 @@
                         </div>
                     </div>
                 </div>
+                {{-- EDIT MODAL End --}}
 
                 <div class="card-body">
                     <div class="table-responsive">
@@ -107,6 +122,7 @@
                                 <tr>
                                     <th class="wd-15p border-bottom-0">#</th>
                                     <th class="wd-15p border-bottom-0">Name</th>
+                                    <th class="wd-15p border-bottom-0">Image</th>
                                     <th class="wd-15p border-bottom-0">Status</th>
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
@@ -173,6 +189,12 @@
                             searchable: true
                         },
                         {
+                            data: 'image',
+                            name: 'image',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
                             data: 'status',
                             name: 'status',
                             orderable: false,
@@ -202,20 +224,25 @@
 
         function storeCourseType() {
             let courseName = $('#createCourseTypeName').val();
+            let courseImage = $('#createCourseTypeImage').prop('files')[0];
 
-            if (courseName.trim() === '') {
-                toastr.error('Please enter a course type name.');
+            if (courseName.trim() === '' || !courseImage) {
+                toastr.error('Please enter a course type name and upload an image.');
                 return;
             }
+
+            let formData = new FormData();
+            formData.append('name', courseName);
+            formData.append('image', courseImage);
 
             $.ajax({
                 url: "{{ route('course-type.store') }}",
                 type: "POST",
-                data: {
-                    name: courseName
-                },
+                data: formData,
+                contentType: false,
+                processData: false,
                 success: function(response) {
-                    if (response.success) {
+                    if (response.status) {
                         $('#createModal').modal('hide');
                         $('#datatable').DataTable().ajax.reload();
                         toastr.success(response.message);
@@ -253,20 +280,27 @@
         function updateCourseType() {
             let courseId = $('#editCourseTypeId').val();
             let courseName = $('#editCourseTypeName').val();
+            let courseImage = $('#editCourseTypeImage').prop('files')[0];
 
             if (courseName.trim() === '') {
                 toastr.error('Please enter a course type name.');
                 return;
             }
 
+            let formData = new FormData();
+            formData.append('name', courseName);
+            if (courseImage) {
+                formData.append('image', courseImage);
+            }
+
             $.ajax({
                 url: "{{ route('course-type.update', ':id') }}".replace(':id', courseId),
-                type: "PUT",
-                data: {
-                    name: courseName
-                },
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
                 success: function(response) {
-                    if (response.success) {
+                    if (response.status) {
                         $('#editModal').modal('hide');
                         $('#datatable').DataTable().ajax.reload();
                         toastr.success(response.message);

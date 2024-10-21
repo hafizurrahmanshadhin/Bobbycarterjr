@@ -13,6 +13,7 @@ class CourseType extends Model {
 
     protected $fillable = [
         'name',
+        'image',
         'status',
     ];
 
@@ -20,13 +21,14 @@ class CourseType extends Model {
         'created_at',
         'updated_at',
         'deleted_at',
-        'status'
+        'status',
     ];
 
     protected function casts(): array {
         return [
-            'id' => 'integer',
+            'id'     => 'integer',
             'name'   => 'string',
+            'image'  => 'string',
             'status' => 'string',
         ];
     }
