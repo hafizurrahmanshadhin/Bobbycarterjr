@@ -31,7 +31,7 @@
                         href="javascript:void(0)" onclick="showCreateModal()">Add New</a>
                 </div>
 
-                {{-- CREATE MODAL Start --}}
+                {{-- CREATE MODAL START --}}
                 <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -56,7 +56,7 @@
                                 <div class="form-group">
                                     <label for="createCourseTypeImage" class="form-label text-muted">Course Type
                                         Image:</label>
-                                    <input type="file" id="createCourseTypeImage" class="form-control">
+                                    <input type="file" id="createCourseTypeImage" class="dropify form-control">
                                     <small class="form-text text-muted">Upload an image (JPEG, PNG, etc.).</small>
                                 </div>
 
@@ -71,9 +71,9 @@
                         </div>
                     </div>
                 </div>
-                {{-- CREATE MODAL End --}}
+                {{-- CREATE MODAL END --}}
 
-                {{-- EDIT MODAL Start --}}
+                {{-- EDIT MODAL START --}}
                 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
@@ -97,7 +97,7 @@
                                 <div class="form-group">
                                     <label for="editCourseTypeImage" class="form-label text-muted">Course Type
                                         Image:</label>
-                                    <input type="file" id="editCourseTypeImage" class="form-control">
+                                    <input type="file" id="editCourseTypeImage" class="dropify form-control">
                                     <small class="form-text text-muted">Upload a new image if you want to change the
                                         existing one (JPEG, PNG, etc.).</small>
                                 </div>
@@ -113,7 +113,7 @@
                         </div>
                     </div>
                 </div>
-                {{-- EDIT MODAL End --}}
+                {{-- EDIT MODAL END --}}
 
                 <div class="card-body">
                     <div class="table-responsive">
