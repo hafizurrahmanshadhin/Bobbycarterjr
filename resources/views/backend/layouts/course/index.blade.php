@@ -28,10 +28,6 @@
                     style="margin-bottom: 0; display: flex; justify-content: space-between;">
                     <h3 class="card-title">Course List</h3>
 
-                    <div class="d-flex justify-content-start align-items-center gap-2">
-                        <a class="btn btn-primary" href="">Add Module</a>
-                    </div>
-
                     <a class="btn btn-primary" data-bs-target="#createModal" data-bs-toggle="modal"
                         href="javascript:void(0)" onclick="showCreateModal()">Add New</a>
                 </div>
@@ -98,7 +94,7 @@
                     <div class="form-group mt-3">
                         <label for="CourseImage" class="form-label text-muted">Course Image:</label>
                         <div class="input-group">
-                            <input type="file" id="CourseImage" class="form-control">
+                            <input type="file" id="CourseImage" class="dropify form-control">
                         </div>
                         <small id="editCourseNameHelp" class="form-text text-muted">Select course image.</small>
                     </div>
@@ -152,12 +148,10 @@
 
                     {{-- Course Image Input --}}
                     <div class="form-group mt-3">
-                        <label for="updateCourseImage" class="form-label text-muted">Course Image:</label>
-                        <div class="input-group">
-                            <input type="file" id="updateCourseImage" class="form-control">
-                        </div>
-                        <small id="editCourseNameHelp" class="form-text text-muted">Select course image.</small>
-                        <img src="" alt="Preview" width="100" id="editPreviewImage" class="mt-2">
+                        <label for="editCourseImage" class="form-label text-muted">Course Image:</label>
+                        <input type="file" id="editCourseImage" class="dropify form-control">
+                        <small id="editCourseImageHelp" class="form-text text-muted">Upload a new image if you want to
+                            change the existing one (JPEG, PNG, etc.).</small>
                     </div>
                     <input type="hidden" id="editCourseId">
                     <div id="editFeedback" class="mt-2"></div>
@@ -174,12 +168,7 @@
 
 @push('scripts')
     <script>
-        // Get the CSRF token from the meta tag
-        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute(
-            'content');
-
         document.addEventListener('DOMContentLoaded', function() {
-            // Populate course type dropdown
             function loadCourseTypes(selectElementId, selectedValue = null) {
                 axios.get("{{ route('course-types.list') }}")
                     .then(function(response) {
@@ -247,7 +236,6 @@
                             document.getElementById('courseName').value = '';
                             document.getElementById('CourseImage').value = '';
                         } else {
-                            // Handle any error messages returned from the server
                             toastr.error(response.data.message);
                         }
                     })
@@ -266,11 +254,30 @@
                         if (response.data.success) {
                             let course = response.data.data;
                             document.getElementById('editCourseName').value = course.name;
-                            document.getElementById('editPreviewImage').src = course
-                                .image_url; // Set image preview
+                            document.getElementById('editCourseId').value = course.id;
+
+                            // Initialize Dropify with existing image
+                            let imageUrl = `{{ asset(':image') }}`.replace(':image', course.image_url);
+                            let drEvent = $('#editCourseImage').dropify({
+                                defaultFile: imageUrl,
+                                messages: {
+                                    'default': 'Drag and drop a file here or click',
+                                    'replace': 'Drag and drop or click to replace',
+                                    'remove': 'Remove',
+                                    'error': 'Ooops, something wrong happened.'
+                                }
+                            });
+
+                            // Destroy and reinitialize Dropify to update the image preview
+                            drEvent = drEvent.data('dropify');
+                            drEvent.resetPreview();
+                            drEvent.clearElement();
+                            drEvent.settings.defaultFile = imageUrl;
+                            drEvent.destroy();
+                            drEvent.init();
+
                             loadCourseTypes('editCourseType', course
                                 .course_type_id); // Load course types and set selected value
-                            document.getElementById('editCourseId').value = course.id;
                             $('#editModal').modal('show');
                         } else {
                             toastr.error('Failed to load course data.');
@@ -286,7 +293,7 @@
                 let courseId = document.getElementById('editCourseId').value;
                 let courseTypeId = document.getElementById('editCourseType').value;
                 let courseName = document.getElementById('editCourseName').value;
-                let courseImage = document.getElementById('updateCourseImage').files[0];
+                let courseImage = document.getElementById('editCourseImage').files[0];
 
                 // Validate input
                 if (!courseTypeId || !courseName.trim()) {
@@ -296,6 +303,7 @@
 
                 // Create FormData object
                 let formData = new FormData();
+                formData.append('_method', 'PUT'); // Add this line to specify the HTTP method
                 formData.append('course_type_id', courseTypeId);
                 formData.append('name', courseName);
 
@@ -305,9 +313,9 @@
                 }
 
                 // Make the PUT request
-                axios.put("{{ route('course.update', ':id') }}".replace(':id', courseId), formData, {
+                axios.post("{{ route('course.update', ':id') }}".replace(':id', courseId), formData, {
                         headers: {
-                            'Content-Type': 'multipart/form-data' // Ensure correct content type
+                            'Content-Type': 'multipart/form-data'
                         }
                     })
                     .then(function(response) {
@@ -325,7 +333,6 @@
                         toastr.error(errorMessage);
                     });
             }
-
 
             // Status Change Confirm Alert
             window.showStatusChangeAlert = function(id) {
@@ -405,10 +412,10 @@
                 serverSide: true,
                 language: {
                     processing: `<div class="text-center">
-                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                      </div>
-                        </div>`
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+                </div>`
                 },
                 scroller: {
                     loadingIndicator: false
