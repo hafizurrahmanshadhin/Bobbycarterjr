@@ -29,7 +29,7 @@
                                 <div class="ms-3 mb-4">
                                     <div class="form-check form-switch">
                                         <input style="width: 60px;height: 30px;" class="form-check-input" type="checkbox"
-                                            id="is_exam" name="is_exam">
+                                            @if ($data->is_exam == 1) checked @endif id="is_exam" name="is_exam">
                                         <label style="margin-left: 40px;margin-top: 8px;font-size: 17px; user-select: none"
                                             class="form-check-label" for="is_exam">
                                             Exam Module?</label>
@@ -65,6 +65,22 @@
                                             class="form-control @error('description') is-invalid @enderror" placeholder="Enter Description">{{ old('description', $data->content ?? '') }}</textarea>
                                         <span class="text-danger error-text description_error"></span>
                                     </div>
+                                    <div>
+                                        <label for="file" class="form-label">File</label>
+                                        <input type="file" name="file" id="file"
+                                            class="form-control @error('file') is-invalid @enderror"
+                                            value="{{ old('file') }}" accept=".mp3,.wav,.ogg">
+                                        <span class="text-danger error-text file_error"></span>
+
+                                        <div class="mt-2">
+                                            <audio id="audioPreview" controls
+                                                style="@if ($data->is_exam == 1) display: none @endif">
+                                                <source id="audioSource" src="{{ asset($data->file_url) }}" type="">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="audio_duration" id="audio_duration" />
                                 </div>
 
                                 <div id="ExamContent">
@@ -124,6 +140,30 @@
         </script>
 
         <script>
+            const fileInput = document.getElementById('file');
+            const audioPreview = document.getElementById('audioPreview');
+            const audioSource = document.getElementById('audioSource');
+            const audioDurationInput = document.getElementById('audio_duration');
+
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                const audio = new Audio(URL.createObjectURL(file));
+
+                audio.addEventListener('loadedmetadata', () => {
+                    audioDurationInput.value = audio.duration;
+                });
+
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    audioSource.src = url;
+                    audioSource.type = file.type; // Set the correct MIME type
+                    audioPreview.load(); // Load the new audio source
+                    audioPreview.style.display = 'block'; // Show the audio element
+                } else {
+                    audioPreview.style.display = 'none'; // Hide the audio element if no file
+                }
+            });
+
             $(function() {
 
                 $.ajaxSetup({

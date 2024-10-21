@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Module;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,6 +15,7 @@ use Yajra\DataTables\DataTables;
 use FFMpeg;
 
 class CourseModuleController extends Controller {
+
     public function index(Request $request): JsonResponse | View {
         if ($request->ajax()) {
             $data = Module::latest()->get();
@@ -21,16 +23,6 @@ class CourseModuleController extends Controller {
                 ->addIndexColumn()
                 ->addColumn('course_name', function ($data) {
                     return $data->course->name;
-                })
-                ->addColumn('content', function ($data) {
-                    $page_content       = $data->content;
-                    $short_page_content = strlen($page_content) > 100 ? substr($page_content, 0, 100) . '...' : $page_content;
-                    return '<p>' . $short_page_content . ' </p>';
-                })
-                ->addColumn('question', function ($data) {
-                    $page_content       = $data->question;
-                    $short_page_content = strlen($page_content) > 100 ? substr($page_content, 0, 100) . '...' : $page_content;
-                    return '<p>' . $short_page_content . ' </p>';
                 })
                 ->addColumn('audio_time', function ($data) {
                     $page_content = $data->audio_time; // Assume this is in seconds
@@ -76,12 +68,16 @@ class CourseModuleController extends Controller {
                                     <i class="fe fe-edit"></i>
                                 </a>
 
+                                <a href="#" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal" onclick="viewModule(' . $data->id . ')">
+                                    <i class="fe fe-eye"></i>
+                                </a>
+
                                 <a href="#" type="button" onclick="showDeleteConfirm(' . $data->id . ')" class="btn btn-danger fs-14 text-white delete-icn" title="Delete">
                                     <i class="fe fe-trash"></i>
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['course_name', 'audio_time', 'status', 'content', 'module', 'question', 'action'])
+                ->rawColumns(['course_name', 'audio_time', 'status', 'module', 'action'])
                 ->make();
         }
         return view('backend.layouts.module.index');
@@ -163,6 +159,8 @@ class CourseModuleController extends Controller {
             'title'       => 'required|string',
             'description' => $request->input('is_exam') ? 'nullable|string' : 'required|string',
             'question'    => $request->input('is_exam') ? 'required|string' : 'nullable|string',
+            'file' => $request->input('is_exam') ? 'nullable|file|max:20480' : 'nullable|file|max:20480',
+            'audio_duration' => $request->input('is_exam') ? 'nullable|numeric' : 'nullable|numeric',
         ];
 
         // Validate the request
@@ -173,6 +171,7 @@ class CourseModuleController extends Controller {
         }
 
         try {
+
             $module = Module::findOrFail($id);
 
             $module->course_id = $request->course_name;
@@ -186,6 +185,28 @@ class CourseModuleController extends Controller {
             } else {
                 $module->content  = $request->input('description') ?? null;
                 $module->question = null;
+            }
+
+            if (!$request->is_exam) {
+
+                // Handle image upload
+                if ($request->hasFile('file')) {
+
+                    if ($module->file_url) {
+                        $previousImagePath = public_path($module->file_url);
+                        if (file_exists($previousImagePath)) {
+                            unlink($previousImagePath);
+                        }
+                    }
+
+                    $file                        = $request->file('file');
+                    $fileName = time() . '.' . $file->getClientOriginalExtension();
+                    $filePath = Helper::fileUpload($file, 'Module', $fileName);
+
+                    //store Database
+                    $module->file_url = $filePath;
+                    $module->audio_time = $request->audio_duration;
+                }
             }
 
             $module->is_exam = $request->input('is_exam') ? true : false; // Explicitly set to true/false
@@ -229,5 +250,20 @@ class CourseModuleController extends Controller {
             't-success' => true,
             'message'   => 'Deleted successfully.',
         ]);
+    }
+
+    /**
+     * Display the specified Course Module.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function single(int $id): JsonResponse {
+        try {
+            $data = Module::with('course')->findOrFail($id);
+            return response()->json(['success' => true, 'data' => $data]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 }

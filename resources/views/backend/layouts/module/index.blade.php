@@ -35,9 +35,7 @@
                                     <th class="wd-15p border-bottom-0">#</th>
                                     <th class="wd-15p border-bottom-0">Course Name</th>
                                     <th class="wd-15p border-bottom-0">Title</th>
-                                    <th class="wd-15p border-bottom-0">Content</th>
                                     <th class="wd-15p border-bottom-0">Duration</th>
-                                    <th class="wd-15p border-bottom-0">Question</th>
                                     <th class="wd-15p border-bottom-0">Module</th>
                                     <th class="wd-15p border-bottom-0">Mark</th>
                                     <th class="wd-15p border-bottom-0">Status</th>
@@ -49,6 +47,63 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- VIEW MODAL --}}
+    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewModalLabel">
+                        <i class="bi bi-eye"></i> View Single Module
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="courseName" class="form-label text-muted">Course Name:</label>
+                        <input type="text" id="courseName" class="form-control" readonly>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="title" class="form-label text-muted">Title:</label>
+                        <input type="text" id="title" class="form-control" readonly>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="mark" class="form-label text-muted">Mark:</label>
+                        <input type="text" id="mark" class="form-control" readonly>
+                    </div>
+                    <div id="contentModule">
+                        <div class="form-group mt-3">
+                            <label for="content" class="form-label text-muted">Content:</label>
+                            <textarea rows="7" id="content" class="form-control" readonly></textarea>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="duration" class="form-label text-muted">Duration:</label>
+                            <input type="text" id="duration" class="form-control" readonly>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="audio" class="form-label text-muted">Audio:</label>
+                            <audio src="" id="audio" controls></audio>
+                        </div>
+                    </div>
+                    <div id="examModule">
+                        <div class="form-group mt-3">
+                            <div class="p-3 border" style="background: rgba(228,231,236,.35)">
+                                <div class="badge bg-primary">Exam Module</div>
+                            </div>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="question" class="form-label text-muted">Question:</label>
+                            <textarea rows="7" id="question" class="form-control" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i>
+                        Close</button>
                 </div>
             </div>
         </div>
@@ -112,20 +167,8 @@
                             searchable: true
                         },
                         {
-                            data: 'content',
-                            name: 'content',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
                             data: 'audio_time',
                             name: 'audio_time',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'question',
-                            name: 'question',
                             orderable: true,
                             searchable: true
                         },
@@ -245,6 +288,62 @@
                     toastr.error('An error occurred. Please try again.');
                 }
             });
+        }
+    </script>
+
+    <script>
+        // Function to view module details
+        window.viewModule = function(id) {
+
+            axios.get("{{ route('admin.course.module.single', ':id') }}".replace(':id', id))
+                .then(function(response) {
+                    if (response.data.success) {
+                        let module = response.data.data;
+                        console.log(module);
+                        document.getElementById('courseName').value = module.course.name;
+                        document.getElementById('title').value = module.title;
+                        document.getElementById('mark').value = module.mark;
+                        document.getElementById('content').value = module.content;
+
+                        const audioTime = module.audio_time; // Assuming this is in seconds
+
+                        if (audioTime < 60) {
+                            /// Show duration in whole seconds
+                            const wholeSeconds = Math.floor(audioTime);
+                            document.getElementById('duration').value =
+                                `${wholeSeconds} second${wholeSeconds !== 1 ? 's' : ''}`;
+                        } else {
+                            // Convert to minutes
+                            const minutes = Math.floor(audioTime / 60);
+                            document.getElementById('duration').value =
+                                `${minutes} minute${minutes !== 1 ? 's' : ''}`.trim();
+                        }
+
+                        const domainName = window.location.origin;
+                        let audioURL = `${domainName}/${module.file_url}`;
+                        document.getElementById('audio').src = audioURL;
+
+                        document.getElementById('question').value = module.question;
+
+                        if (module.is_exam === 1) {
+                            document.getElementById('examModule').style.display = 'block';
+                            document.getElementById('contentModule').style.display =
+                                'none'; // Hide content module if it's an exam
+                        } else {
+                            document.getElementById('contentModule').style.display = 'block';
+                            document.getElementById('examModule').style.display =
+                                'none'; // Hide exam module if it's not an exam
+                        }
+
+
+                        $('#viewModal').modal('show');
+                    } else {
+                        toastr.error('Failed to load survey question data.');
+                    }
+                })
+                .catch(function() {
+                    toastr.error('An error occurred while loading survey question data.');
+                })
         }
     </script>
 @endpush
