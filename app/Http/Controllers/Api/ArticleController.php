@@ -6,10 +6,13 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Article;
+use App\Models\Course;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller {
+
     /**
      * Return Article Under a Course Data.
      *
@@ -26,7 +29,14 @@ class ArticleController extends Controller {
             return Helper::jsonResponse(true, 'Course Article not found', 200, []);
         }
 
-        return Helper::jsonResponse(true, 'Course Article retrieved successfully', 200, $data);
+        $course = Course::findOrFail($course_id);
+
+        $response = [
+            'course_image' => $course->image_url,
+            'articles' => $data,
+        ];
+
+        return Helper::jsonResponse(true, 'Course Article retrieved successfully', 200, $response);
     }
 
     /**
@@ -53,6 +63,12 @@ class ArticleController extends Controller {
             return Helper::jsonResponse(false, 'Course Article not found', 404, []);
         }
 
+        // Check if the current user has bookmarked this article
+        $data->is_bookmarked = $data->bookmarkedBy->contains($id);
+
+        // Optionally, unset the bookmarkBy relation if you don't need it
+        unset($data->bookmarkedBy);
+
         // Check if the article is already attached to the user
 
         $isAttached = $user->articles()->where('article_id', $id)->exists();
@@ -73,7 +89,7 @@ class ArticleController extends Controller {
      */
 
     public function courseDailyReadArticle(int $course_id) {
-        $user = auth()->user();
+        $user = Auth()->user();
 
         // Ensure the user is authenticated
         if (!$user) {

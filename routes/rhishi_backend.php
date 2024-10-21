@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Web\Backend\ArticleController;
 use App\Http\Controllers\Web\Backend\CourseModuleController;
+use App\Http\Controllers\web\Backend\DailyAffirmationController;
 use App\Http\Controllers\Web\Backend\SubscriptionController;
+use App\Http\Controllers\web\Backend\TaskAnswersController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(SubscriptionController::class)->name('admin.')->group(function () {
@@ -30,4 +32,17 @@ Route::controller(ArticleController::class)->name('admin.')->group(function () {
     Route::post('/article/update/{id}', 'update')->name('article.update');
     Route::post('/article/status/{id}', 'status')->name('article.status');
     Route::post('/article/destroy/{id}', 'destroy')->name('article.destroy');
+});
+
+//! Route for SurvayQuestionController
+Route::controller(TaskAnswersController::class)->name('admin.')->group(function () {
+    Route::get('/task-answers', 'index')->name('task_answer.index');
+    Route::get('/task-answer/single/{id}', 'single')->name('survay-question.single');
+});
+
+//! Route for SurvayQuestionController
+Route::controller(DailyAffirmationController::class)->name('admin.')->group(function () {
+    Route::get('/daily-affirmation', 'index')->name('daily_affirmation.index');
+    Route::get('/daily-affirmation/{id}', 'single')->name('daily_affirmation.single');
+    Route::post('/daily-affirmation', 'update')->name('daily_affirmation.update');
 });

@@ -15,6 +15,7 @@ class Answer extends Model {
 
     protected $fillable = [
         'module_id',
+        'user_id',
         'url',
         'answer',
         'status',
@@ -36,8 +37,15 @@ class Answer extends Model {
         ];
     }
 
-    public function task(): BelongsTo {
-        return $this->belongsTo(Task::class);
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Relationship with Module
+    public function module()
+    {
+        return $this->belongsTo(Module::class);
     }
 
     public function userResponses(): HasMany {
