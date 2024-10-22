@@ -30,6 +30,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('/user/update/{id}', 'userUpdate');
         Route::post('/user/password/update', 'updatePassword');
         Route::delete('/user/delete', 'userDelete');
+
+        Route::post('/generate-link/{user_id}', [UserController::class, 'GenerateLink']);
     });
 
     Route::controller(CourseTypeController::class)->group(function () {
