@@ -17,7 +17,6 @@
     </div>
     {{-- PAGE-HEADER --}}
 
-
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -56,6 +55,8 @@
             </div>
         </div>
     </div>
+
+
     <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -92,6 +93,7 @@
     </div>
 @endsection
 
+
 @push('scripts')
     <script>
         function ViewDataModal(id) {
@@ -126,6 +128,7 @@
                 });
         }
     </script>
+
 
     <script>
         $(function() {

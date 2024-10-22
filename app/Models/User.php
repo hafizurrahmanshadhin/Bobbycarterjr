@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\FirebaseToken;
 use App\Models\Membership;
 use App\Models\UserResponse;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -91,5 +92,9 @@ class User extends Authenticatable {
 
     public function membership(): HasOne {
         return $this->hasOne(Membership::class);
+    }
+
+    public function firebaseTokens(): HasMany {
+        return $this->hasMany(FirebaseToken::class);
     }
 }
