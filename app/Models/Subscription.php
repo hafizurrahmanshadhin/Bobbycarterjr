@@ -34,3 +34,32 @@ class Subscription extends Model {
         return $this->hasOne(Membership::class);
     }
 }
+
+
+
+
+
+//! This methid will work when working on payment gateway
+// public function activateSubscription($userId, $subscriptionId) {
+//     $user = User::findOrFail($userId);
+//     $subscription = Subscription::findOrFail($subscriptionId);
+
+//     // Calculate the start and end dates based on the subscription period
+//     $startDate = now();
+//     $endDate = now()->addMonths($subscription->expire_at);
+
+//     // Create the membership record
+//     Membership::create([
+//         'user_id' => $user->id,
+//         'subscription_id' => $subscription->id,
+//         'start_date' => $startDate,
+//         'end_date' => $endDate,
+//     ]);
+
+//     // Set the user's subscription status to active
+//     $user->is_subscribed = 1;
+//     $user->save();
+
+//     return response()->json(['message' => 'Subscription activated successfully']);
+// }
+
