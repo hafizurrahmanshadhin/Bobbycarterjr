@@ -17,27 +17,36 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class CourseModuleController extends Controller {
-
-    /**
-     * Return Course Module Under a Course Data.
-     *
-     * @param  RegisterRequest  $request
-     * @return JsonResponse
-     */
-
     public function courseModule(int $course_id) {
+        $user = auth()->user();
 
-        $data = Module::where('course_id', $course_id)->get();
-        $course = Course::findOrFail($course_id);
+        $course     = Course::findOrFail($course_id);
+        $allModules = Module::where('course_id', $course_id)->get();
 
-        // Check if the Course Types was found
-        if ($data->isEmpty()) {
+        if ($allModules->isEmpty()) {
             return Helper::jsonResponse(true, 'Course Module not found', 200, []);
         }
 
+        $isPremium = $user->is_subscribed == 1;
+
+        $modulesWithAccess = $allModules->map(function ($module, $index) use ($isPremium) {
+            return [
+                'id'         => (int) $module->id,
+                'course_id'  => (int) $module->course_id,
+                'title'      => (string) $module->title,
+                'content'    => (string) $module->content,
+                'is_exam'    => (int) $module->is_exam,
+                'question'   => (string) $module->question,
+                'mark'       => (int) $module->mark,
+                'file_url'   => (string) $module->file_url,
+                'audio_time' => (string) $module->audio_time,
+                'access'     => (int) $isPremium || $index == 0 ? 'open' : 'locked',
+            ];
+        });
+
         $response = [
             'course_image' => $course->image_url,
-            'modules' => $data,
+            'modules'      => $modulesWithAccess,
         ];
 
         return Helper::jsonResponse(true, 'Course Module retrieved successfully', 200, $response);
@@ -63,7 +72,7 @@ class CourseModuleController extends Controller {
 
         $response = [
             'course_image' => $course->image_url,
-            'module' => $data,
+            'module'       => $data,
         ];
 
         return Helper::jsonResponse(true, 'Course Module retrieved successfully', 200, $response);
@@ -99,7 +108,7 @@ class CourseModuleController extends Controller {
         try {
             $data = Answer::create([
                 'module_id' => $module_id,
-                'user_id' => $user->id,
+                'user_id'   => $user->id,
                 'url'       => $request->url,
                 'answer'    => $request->answer,
             ]);
