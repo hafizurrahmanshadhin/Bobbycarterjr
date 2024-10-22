@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\FirebaseToken;
 use App\Models\Membership;
+use App\Models\UserAffirmation;
 use App\Models\UserResponse;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -96,5 +97,9 @@ class User extends Authenticatable {
 
     public function firebaseTokens(): HasMany {
         return $this->hasMany(FirebaseToken::class);
+    }
+
+    public function userAffirmation(): HasOne {
+        return $this->hasOne(UserAffirmation::class);
     }
 }
