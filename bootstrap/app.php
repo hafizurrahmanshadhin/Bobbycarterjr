@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CheckUserStatus;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -26,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('admin')
                 ->group(base_path('routes/rhishi_backend.php'));
 
-            Route::middleware(['api'])
+            Route::middleware(['api', 'is_active'])
                 ->prefix('api')
                 ->group(base_path('routes/rhishi_api.php'));
         },
@@ -34,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'admin' => AdminMiddleware::class,
+            'is_active' => CheckUserStatus::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
