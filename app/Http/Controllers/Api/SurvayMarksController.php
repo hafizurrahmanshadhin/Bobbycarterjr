@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SurvayMarksController extends Controller
@@ -12,11 +13,11 @@ class SurvayMarksController extends Controller
     /**
      * Return Survay Marks Data.
      *
-     * @param  RegisterRequest  $request
+     * @param  int  $courseTypeId
      * @return JsonResponse
      */
 
-    public function SurvayMarks(int $courseTypeId)
+    public function SurvayMarks(int $courseTypeId) : JsonResponse
     {
         $query = Course::with(['survayQuestions.options', 'survayQuestions.userResponses' => function($query) {
             $query->where('user_id', auth()->user()->id);

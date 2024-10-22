@@ -16,6 +16,8 @@ class Article extends Model {
         'description',
         'mark',
         'image_url',
+        'file_url',
+        'audio_time',
         'status',
     ];
 

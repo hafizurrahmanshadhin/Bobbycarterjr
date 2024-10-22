@@ -36,6 +36,39 @@ class ArticleController extends Controller {
                     $url = asset($data->image_url);
                     return "<img src='$url' width='100'>";
                 })
+                ->addColumn('file_url', function ($data) {
+                    $url = asset($data->file_url);
+
+                    if($data->file_url){
+                        $tag = "<audio src='$url' controls=''></audio>";
+                    } else {
+                        $tag = '';
+                    }
+
+                    return $tag;
+                })
+                ->addColumn('audio_time', function ($data) {
+                    $page_content = $data->audio_time; // Assume this is in seconds
+
+                    if ($page_content === null) {
+                        // If audio_time is null, don't show any time
+                        return null; // Or you can return an empty string or message
+                    }
+
+                    if ($page_content < 60) {
+                        // Less than one minute, show seconds
+                        $formatted_time = floor($page_content) . ' second' . ($page_content > 1 ? 's' : '');
+                    } else {
+                        // More than one minute, calculate minutes
+                        $minutes = floor($page_content / 60);
+
+                        // Format output: only show minutes and omit seconds
+                        $formatted_time = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+                    }
+
+                    // Optionally return the formatted time if needed
+                    return $formatted_time;
+                })
                 ->addColumn('status', function ($data) {
                     $backgroundColor  = $data->status == "active" ? '#4CAF50' : '#ccc';
                     $sliderTranslateX = $data->status == "active" ? '26px' : '2px';
@@ -60,7 +93,7 @@ class ArticleController extends Controller {
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['course_name', 'description', 'image_url', 'status', 'action'])
+                ->rawColumns(['course_name', 'description', 'image_url', 'file_url', 'audio_time', 'status', 'action'])
                 ->make();
         }
         return view('backend.layouts.article.index');
@@ -80,6 +113,8 @@ class ArticleController extends Controller {
             'mark'        => 'required|numeric',
             'image'       => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string',
+            'file' => 'nullable|file|max:20480',
+            'audio_duration' => 'nullable|numeric',
         ]);
 
         try {
@@ -91,12 +126,21 @@ class ArticleController extends Controller {
                 $imagePath = Helper::fileUpload($image, 'Article', $imageName);
             }
 
+            // Handle image upload
+            if ($request->hasFile('file')) {
+                $file                        = $request->file('file');
+                $fileName = time() . '.' . $file->getClientOriginalExtension();
+                $filePath = Helper::fileUpload($file, 'Article/audio', $fileName);
+            }
+
             Article::create([
                 'course_id'   => $request->course_name,
                 'title'       => $request->title,
                 'description' => $request->description,
                 'mark'        => $request->mark,
                 'image_url'   => $imagePath,
+                'file_url'   => $filePath ?? null,
+                'audio_time'   => $request->audio_duration,
             ]);
 
             return to_route('admin.article.index')->with('t-success', 'New Article Created');
@@ -119,6 +163,8 @@ class ArticleController extends Controller {
             'mark'        => 'required|numeric',
             'image'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string',
+            'file' => 'nullable|file|max:20480',
+            'audio_duration' => 'nullable|numeric',
         ]);
 
         try {
@@ -141,15 +187,35 @@ class ArticleController extends Controller {
                 $imagePath = $data->image_url;
             }
 
+            // Handle image upload
+            if ($request->hasFile('file')) {
+
+                if ($data->file_url) {
+                    $previousImagePath = public_path($data->file_url);
+                    if (file_exists($previousImagePath)) {
+                        unlink($previousImagePath);
+                    }
+                }
+
+
+                $file                        = $request->file('file');
+                $fileName = time() . '.' . $file->getClientOriginalExtension();
+                $filePath = Helper::fileUpload($file, 'Article/audio', $fileName);
+            } else {
+                $filePath = $data->file_url;
+            }
+
             $data->update([
                 'course_id'   => $request->course_name,
                 'title'       => $request->title,
                 'mark'        => $request->mark,
                 'description' => $request->description,
                 'image_url'   => $imagePath,
+                'file_url'   => $filePath,
+                'audio_time'   => $request->audio_duration ?? $data->audio_time,
             ]);
 
-            return to_route('admin.article.index')->with('t-success', 'New Article Updated');
+            return to_route('admin.article.index')->with('t-success', 'Article Updated');
         } catch (\Exception $e) {
             return redirect()->back()->with('t-error', $e->getMessage());
         }
@@ -183,6 +249,13 @@ class ArticleController extends Controller {
 
         if ($data->image_url) {
             $previousImagePath = public_path($data->image_url);
+            if (file_exists($previousImagePath)) {
+                unlink($previousImagePath);
+            }
+        }
+
+        if ($data->file_url) {
+            $previousImagePath = public_path($data->file_url);
             if (file_exists($previousImagePath)) {
                 unlink($previousImagePath);
             }

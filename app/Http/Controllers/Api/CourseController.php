@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\UserRecommended;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,11 +15,10 @@ class CourseController extends Controller
     /**
      * Return Courses Data.
      *
-     * @param  RegisterRequest  $request
      * @return JsonResponse
      */
 
-     public function Course() {
+     public function Course() : JsonResponse{
 
         $data = Course::query()
                 ->with('modules:id,course_id')
@@ -46,7 +46,6 @@ class CourseController extends Controller
     /**
      * Return Courses Data.
      *
-     * @param  RegisterRequest  $request
      * @return JsonResponse
      */
 

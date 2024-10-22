@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\CourseType;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CourseTypeController extends Controller
@@ -12,11 +13,10 @@ class CourseTypeController extends Controller
     /**
      * Return Course Type Data.
      *
-     * @param  RegisterRequest  $request
      * @return JsonResponse
      */
 
-     public function CourseTypes() {
+     public function CourseTypes(): JsonResponse {
 
         $data = CourseType::where('status', 'active')->get();
 

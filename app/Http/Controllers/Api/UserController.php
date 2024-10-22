@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -14,11 +15,10 @@ class UserController extends Controller
      /**
      * Return Login User Data.
      *
-     * @param  RegisterRequest  $request
      * @return JsonResponse
      */
 
-    public function userData() {
+    public function userData() : JsonResponse {
         $user = auth()->user();
 
         if (!$user) {

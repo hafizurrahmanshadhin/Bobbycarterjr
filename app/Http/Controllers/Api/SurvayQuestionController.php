@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\SurvayQuestion;
 use App\Models\UserRecommended;
 use App\Models\UserResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -18,11 +19,11 @@ class SurvayQuestionController extends Controller
     /**
      * Return SurvayQuestion Data.
      *
-     * @param  RegisterRequest  $request
+     * @param  int  $course_type_id
      * @return JsonResponse
      */
 
-     public function SurvayQuestion(int $course_type_id) {
+     public function SurvayQuestion(int $course_type_id) : JsonResponse {
 
         // Retrieve active course IDs for the given course type
         $courseIds = Course::where('course_type_id', $course_type_id)
@@ -47,7 +48,7 @@ class SurvayQuestionController extends Controller
     /**
      * Return SurvayQuestion Data.
      *
-     * @param  RegisterRequest  $request
+     * @param  Request  $request
      * @return JsonResponse
      */
 
