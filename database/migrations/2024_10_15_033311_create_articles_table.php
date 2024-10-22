@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->string('title');
             $table->text('description');
             $table->integer('mark')->nullable();
+            $table->string('file_url')->nullable();
+            $table->string('audio_time')->nullable();
 
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();

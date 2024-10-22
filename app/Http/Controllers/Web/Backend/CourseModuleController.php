@@ -96,8 +96,8 @@ class CourseModuleController extends Controller {
             'title'       => 'required|string',
             'description' => $request->input('is_exam') ? 'nullable|string' : 'required|string',
             'question'    => $request->input('is_exam') ? 'required|string' : 'nullable|string',
-            'file' => $request->input('is_exam') ? 'nullable|file|max:20480' : 'required|file|max:20480',
-            'audio_duration' => $request->input('is_exam') ? 'nullable|numeric' : 'required|numeric',
+            'file' => $request->input('is_exam') ? 'nullable|file|max:20480' : 'nullable|file|max:20480',
+            'audio_duration' => $request->input('is_exam') ? 'nullable|numeric' : 'nullable|numeric',
         ];
 
         // Validate the request
@@ -245,6 +245,13 @@ class CourseModuleController extends Controller {
 
     public function destroy(int $id): JsonResponse {
         $data = Module::findOrFail($id)->delete();
+
+        if ($data->file_url) {
+            $previousImagePath = public_path($data->file_url);
+            if (file_exists($previousImagePath)) {
+                unlink($previousImagePath);
+            }
+        }
 
         return response()->json([
             't-success' => true,

@@ -92,7 +92,7 @@
                     <div id="examModule">
                         <div class="form-group mt-3">
                             <div class="p-3 border" style="background: rgba(228,231,236,.35)">
-                                <div class="badge bg-primary">Exam Module</div>
+                                <div class="badge bg-primary">Question Module</div>
                             </div>
                         </div>
                         <div class="form-group mt-3">
