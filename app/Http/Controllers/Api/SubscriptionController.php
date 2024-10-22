@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Subscription;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
 
@@ -13,11 +14,10 @@ class SubscriptionController extends Controller
     /**
      * Return Free Package Data.
      *
-     * @param  RegisterRequest  $request
      * @return JsonResponse
      */
 
-    public function freePackage() {
+    public function freePackage() : JsonResponse {
 
         $data = Subscription::with('details')->where('type', 'free')->first();
 
@@ -32,7 +32,6 @@ class SubscriptionController extends Controller
     /**
      * Return Premium Package Data.
      *
-     * @param  RegisterRequest  $request
      * @return JsonResponse
      */
 

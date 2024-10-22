@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\Backend\CourseModuleController;
 use App\Http\Controllers\Web\Backend\DailyAffirmationController;
 use App\Http\Controllers\Web\Backend\SubscriptionController;
 use App\Http\Controllers\Web\Backend\TaskAnswersController;
+use App\Http\Controllers\Web\Backend\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(SubscriptionController::class)->name('admin.')->group(function () {
@@ -46,4 +47,10 @@ Route::controller(DailyAffirmationController::class)->name('admin.')->group(func
     Route::get('/daily-affirmation', 'index')->name('daily_affirmation.index');
     Route::get('/daily-affirmation/{id}', 'single')->name('daily_affirmation.single');
     Route::post('/daily-affirmation/update', 'update')->name('daily_affirmation.update');
+});
+
+//! Route for SurvayQuestionController
+Route::controller(UserController::class)->name('admin.')->group(function () {
+    Route::get('/users', 'index')->name('user.index');
+    Route::post('/user/status/{id}', 'status')->name('user.status');
 });

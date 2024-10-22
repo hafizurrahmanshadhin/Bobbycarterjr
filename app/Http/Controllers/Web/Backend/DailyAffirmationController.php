@@ -12,12 +12,6 @@ use Illuminate\Support\Facades\Validator;
 
 class DailyAffirmationController extends Controller
 {
-    /**
-     * Index Page Daily Affirmation.
-     *
-     * @param int $id
-     * @return JsonResponse
-    */
 
     public function index() {
         $data = DailyAffirmation::get();

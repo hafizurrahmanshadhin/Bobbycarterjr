@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\Helper;
@@ -27,7 +28,7 @@ class ReminderController extends Controller
      * @return JsonResponse
      */
 
-    public function reminderStore(Request $request)
+    public function reminderStore(Request $request) : JsonResponse
     {
 
         // Validate the request

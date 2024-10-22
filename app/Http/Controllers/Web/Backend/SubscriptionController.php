@@ -11,17 +11,17 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Exception;
+use Illuminate\View\View;
 
 class SubscriptionController extends Controller
 {
     /**
      * Index Page Subscription.
      *
-     * @param int $id
-     * @return JsonResponse
+     * @return View
     */
 
-    public function index() {
+    public function index() : View {
         $data = Subscription::get();
         return view('backend.layouts.subscription.index', compact('data'));
     }
@@ -30,7 +30,7 @@ class SubscriptionController extends Controller
      * Show Edit Subscription Page with Data.
      *
      * @param int $id
-     * @return JsonResponse
+     * @return View
     */
 
     public function edit($id) {
