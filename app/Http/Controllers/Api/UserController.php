@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use URL;
 
 class UserController extends Controller
 {
@@ -152,6 +154,26 @@ class UserController extends Controller
             return Helper::jsonResponse(true, 'User deleted successfully.', 200, []);
         } catch (\Exception $e) {
             return Helper::jsonResponse(false, 'An error occurred during Deleting User.', 500, $e->getMessage());
+        }
+    }
+
+    /**
+     * Generate a unique link for the specified user profile.
+     *
+     * @param int $user_id
+     * @return JsonResponse
+     */
+    public function generateLink(int $user_id): JsonResponse {
+        try {
+            // Fetch the user or fail
+            $user = User::findOrFail($user_id);
+
+            // Generate the URL for the user's profile
+            $link = url('/user/' . $user->id);
+
+            return Helper::jsonResponse(true, 'User profile link generated successfully', 200, ['link' => $link]);
+        } catch (Exception $e) {
+            return Helper::jsonResponse(false, 'An error occurred while generating the user profile link.', 500, ['error' => $e->getMessage()]);
         }
     }
 }
