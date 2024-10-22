@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
 use App\Http\Controllers\Api\FirebaseTokenController;
 use App\Http\Controllers\Api\ReminderController;
+use App\Http\Controllers\Api\UserAffirmationController;
 use Illuminate\Support\Facades\Route;
 
 //! Auth Routes
@@ -37,3 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/firebase/token/get', [FirebaseTokenController::class, 'GetFirebaseToken']);
     Route::post('/firebase/token/delete', [FirebaseTokenController::class, 'DeleteFirebaseToken']);
 });
+
+//! User Affirmation Route
+Route::post('/user/affirmation', [UserAffirmationController::class, 'storeOrUpdateAffirmation'])->middleware('auth:sanctum');
