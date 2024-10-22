@@ -48,23 +48,28 @@ class SocialLoginController extends Controller {
                     $isNewUser = true;
                 }
 
-                Auth::login($user);
-                $token = $user->createToken('auth_token')->plainTextToken;
+                if($user && $user->status == 'active'){
 
-                $responseData = [
-                    'id'    => $user->id,
-                    'name'  => $user->name,
-                    'email' => $user->email,
-                ];
+                    Auth::login($user);
+                    $token = $user->createToken('auth_token')->plainTextToken;
 
-                return response()->json([
-                    'status'     => true,
-                    'message'    => $isNewUser ? 'User registered successfully' : 'User logged in successfully',
-                    'code'       => 200,
-                    'token_type' => 'bearer',
-                    'token'      => $token,
-                    'data'       => $responseData,
-                ]);
+                    $responseData = [
+                        'id'    => $user->id,
+                        'name'  => $user->name,
+                        'email' => $user->email,
+                    ];
+
+                    return response()->json([
+                        'status'     => true,
+                        'message'    => $isNewUser ? 'User registered successfully' : 'User logged in successfully',
+                        'code'       => 200,
+                        'token_type' => 'bearer',
+                        'token'      => $token,
+                        'data'       => $responseData,
+                    ]);
+                } else {
+                    return Helper::jsonResponse(false, 'User is deactivated', 403, []);
+                }
             } else {
                 return Helper::jsonResponse(false, 'Unauthorized', 401);
             }
