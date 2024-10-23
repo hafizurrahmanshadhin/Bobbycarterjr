@@ -2,6 +2,7 @@
 
 use App\Console\Commands\CheckExpiredSubscriptions;
 use App\Console\Commands\SendDailyAffirmations;
+use Illuminate\Support\Facades\Schedule;
 
 Schedule::command(CheckExpiredSubscriptions::class)->daily();
 
