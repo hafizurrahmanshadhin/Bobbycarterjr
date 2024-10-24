@@ -13,3 +13,7 @@ yarn-error.log
 /.idea
 /.vscode
 /public/uploads
+/storage/framework
+/storage/logs
+/bootstrap/cache
+
