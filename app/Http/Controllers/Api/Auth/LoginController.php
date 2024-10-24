@@ -24,6 +24,10 @@ class LoginController extends Controller {
 
             $user = User::where('email', $request->email)->first();
 
+            if ($user === null) {
+                return Helper::jsonResponse(false, 'User Not Found', 404, []);
+            }
+
             if($user->status == 'active'){
                 $request->authenticate();
 

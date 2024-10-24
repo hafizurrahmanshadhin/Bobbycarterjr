@@ -13,7 +13,7 @@
     <link rel="shortcut icon" type="image/x-icon"
         href="{{ isset($systemSetting->favicon) && !empty($systemSetting->favicon) ? asset($systemSetting->favicon) : asset('frontend/logo.png') }}" />
 
-    <title>PoswellRKB</title>
+    <title>Poswell</title>
     <style>
         * {
             margin: 0;
