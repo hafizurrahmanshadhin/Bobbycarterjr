@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Web\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use Illuminate\View\View;
-use Exception;
+use Yajra\DataTables\DataTables;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
     /**
      * Display the list of all course types.
      *
@@ -21,13 +20,13 @@ class UserController extends Controller
      */
     public function index(Request $request): JsonResponse | View {
         if ($request->ajax()) {
-            $data = User::latest()->get();
+            $data = User::where('role', 'user')->latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('name', function ($data) {
                     $first_name = $data->firstName;
-                    $last_name = $data->lastName;
-                    $full_name = $first_name . ' ' . $last_name;
+                    $last_name  = $data->lastName;
+                    $full_name  = $first_name . ' ' . $last_name;
 
                     return $full_name;
                 })
@@ -37,9 +36,9 @@ class UserController extends Controller
                 })
                 ->addColumn('is_subscribed', function ($data) {
                     $is_subscribed = $data->is_subscribed;
-                    if($data->is_subscribed == 1) {
+                    if ($data->is_subscribed == 1) {
                         $tag = "<span class='badge bg-success'>Premium</span>";
-                    }else {
+                    } else {
                         $tag = "<span class='badge bg-danger'>Free</span>";
                     }
 
@@ -64,7 +63,7 @@ class UserController extends Controller
         return view('backend.layouts.users.index');
     }
 
-      /**
+    /**
      * Change the status of the specified User.
      *
      * @param int $id
