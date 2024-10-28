@@ -13,7 +13,6 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
-            $table->unique(['course_id']);
             $table->timestamps();
         });
     }
