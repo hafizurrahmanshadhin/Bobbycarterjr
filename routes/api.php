@@ -21,7 +21,7 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 //! Route For Socialite Login
 Route::post('/social-login', [SocialLoginController::class, 'socialLogin'])->name('social.login');
 
-// Protected Routes
+//! Reminder Routes
 Route::group(['middleware' => ['auth:sanctum', 'is_active']], function () {
     Route::controller(ReminderController::class)->group(function () {
         Route::get('/reminders', 'getAllReminders')->name('reminders.index');
