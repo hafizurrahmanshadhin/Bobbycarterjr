@@ -11,7 +11,6 @@ use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\SurvayMarksController;
 use App\Http\Controllers\Api\SurvayQuestionController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\VoiceController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth:sanctum']], function () {

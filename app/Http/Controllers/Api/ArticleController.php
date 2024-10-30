@@ -12,16 +12,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller {
-
     /**
      * Return Article Under a Course Data.
      *
      * @param  RegisterRequest  $request
      * @return JsonResponse
      */
-
     public function courseArticle(int $course_id) {
-
         $data = Article::where('course_id', $course_id)->where('status', 'active')->get();
 
         // Check if the Course Types was found
@@ -31,12 +28,30 @@ class ArticleController extends Controller {
 
         $course = Course::findOrFail($course_id);
 
+        $articlesWithFormattedTime = $data->map(function ($article) {
+            return [
+                'id'          => (int) $article->id,
+                'course_id'   => (int) $article->course_id,
+                'image_url'   => (string) $article->image_url,
+                'title'       => (string) $article->title,
+                'description' => (string) $article->description,
+                'mark'        => (int) $article->mark,
+                'file_url'    => (string) $article->file_url,
+                'audio_time'  => $this->formatAudioTimeToMinutes($article->audio_time),
+            ];
+        });
+
         $response = [
             'course_image' => $course->image_url,
-            'articles' => $data,
+            'articles'     => $articlesWithFormattedTime,
         ];
 
         return Helper::jsonResponse(true, 'Course Article retrieved successfully', 200, $response);
+    }
+
+    private function formatAudioTimeToMinutes($seconds) {
+        $minutes = floor($seconds / 60);
+        return sprintf('%d', $minutes);
     }
 
     /**
@@ -45,7 +60,6 @@ class ArticleController extends Controller {
      * @param  RegisterRequest  $request
      * @return JsonResponse
      */
-
     public function courseSingleArticle(int $id) {
 
         $user = auth()->user();
@@ -87,7 +101,6 @@ class ArticleController extends Controller {
      * @param  RegisterRequest  $request
      * @return JsonResponse
      */
-
     public function courseDailyReadArticle(int $course_id) {
         $user = Auth()->user();
 
@@ -115,6 +128,7 @@ class ArticleController extends Controller {
                 'image_url'   => $article->image_url,
                 'title'       => $article->title,
                 'description' => $article->description,
+                'audio_time'  => $this->formatAudioTimeToMinutes($article->audio_time),
             ];
         });
 

@@ -39,7 +39,7 @@ class CourseModuleController extends Controller {
                 'question'   => (string) $module->question,
                 'mark'       => (int) $module->mark,
                 'file_url'   => (string) $module->file_url,
-                'audio_time' => (string) $module->audio_time,
+                'audio_time' => $this->formatAudioTime($module->audio_time),
                 'access'     => (int) $isPremium || $index == 0 ? 'open' : 'locked',
             ];
         });
@@ -50,6 +50,12 @@ class CourseModuleController extends Controller {
         ];
 
         return Helper::jsonResponse(true, 'Course Module retrieved successfully', 200, $response);
+    }
+
+    private function formatAudioTime($seconds) {
+        $minutes          = floor($seconds / 60);
+        $remainingSeconds = $seconds % 60;
+        return sprintf('%02d:%02d', $minutes, $remainingSeconds);
     }
 
     /**

@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
-use FFMpeg;
 
 class CourseModuleController extends Controller {
 
@@ -91,12 +90,12 @@ class CourseModuleController extends Controller {
     public function store(Request $request) {
         // Determine validation rules based on the checkbox input
         $rules = [
-            'course_name' => 'required|numeric|exists:courses,id',
-            'mark'        => 'required|numeric',
-            'title'       => 'required|string',
-            'description' => $request->input('is_exam') ? 'nullable|string' : 'required|string',
-            'question'    => $request->input('is_exam') ? 'required|string' : 'nullable|string',
-            'file' => $request->input('is_exam') ? 'nullable|file|max:20480' : 'nullable|file|max:20480',
+            'course_name'    => 'required|numeric|exists:courses,id',
+            'mark'           => 'required|numeric',
+            'title'          => 'required|string',
+            'description'    => $request->input('is_exam') ? 'nullable|string' : 'required|string',
+            'question'       => $request->input('is_exam') ? 'required|string' : 'nullable|string',
+            'file'           => $request->input('is_exam') ? 'nullable|file|max:20480' : 'nullable|file|max:20480',
             'audio_duration' => $request->input('is_exam') ? 'nullable|numeric' : 'nullable|numeric',
         ];
 
@@ -125,12 +124,12 @@ class CourseModuleController extends Controller {
 
                 // Handle image upload
                 if ($request->hasFile('file')) {
-                    $file                        = $request->file('file');
+                    $file     = $request->file('file');
                     $fileName = time() . '.' . $file->getClientOriginalExtension();
                     $filePath = Helper::fileUpload($file, 'Module', $fileName);
 
                     //store Database
-                    $module->file_url = $filePath;
+                    $module->file_url   = $filePath;
                     $module->audio_time = $request->audio_duration;
                 }
             }
@@ -141,7 +140,7 @@ class CourseModuleController extends Controller {
             $module->save();
 
             return response()->json(['status' => 1, 'msg' => 'New Module Created']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['status' => 'error', 'msg' => $e->getMessage()]);
         }
     }
@@ -155,11 +154,11 @@ class CourseModuleController extends Controller {
     public function update(Request $request, $id) {
 
         $rules = [
-            'course_name' => 'required|numeric|exists:courses,id',
-            'title'       => 'required|string',
-            'description' => $request->input('is_exam') ? 'nullable|string' : 'required|string',
-            'question'    => $request->input('is_exam') ? 'required|string' : 'nullable|string',
-            'file' => $request->input('is_exam') ? 'nullable|file|max:20480' : 'nullable|file|max:20480',
+            'course_name'    => 'required|numeric|exists:courses,id',
+            'title'          => 'required|string',
+            'description'    => $request->input('is_exam') ? 'nullable|string' : 'required|string',
+            'question'       => $request->input('is_exam') ? 'required|string' : 'nullable|string',
+            'file'           => $request->input('is_exam') ? 'nullable|file|max:20480' : 'nullable|file|max:20480',
             'audio_duration' => $request->input('is_exam') ? 'nullable|numeric' : 'nullable|numeric',
         ];
 
@@ -199,12 +198,12 @@ class CourseModuleController extends Controller {
                         }
                     }
 
-                    $file                        = $request->file('file');
+                    $file     = $request->file('file');
                     $fileName = time() . '.' . $file->getClientOriginalExtension();
                     $filePath = Helper::fileUpload($file, 'Module', $fileName);
 
                     //store Database
-                    $module->file_url = $filePath;
+                    $module->file_url   = $filePath;
                     $module->audio_time = $request->audio_duration;
                 }
             }
@@ -215,7 +214,7 @@ class CourseModuleController extends Controller {
             $module->save();
 
             return response()->json(['status' => 1, 'msg' => 'New Module Updated']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['status' => 'error', 'msg' => $e->getMessage()]);
         }
     }
