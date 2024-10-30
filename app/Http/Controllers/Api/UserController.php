@@ -107,7 +107,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->error([], $validator->errors()->first(), 422);
+            return Helper::jsonResponse(false, 'Validation Failed', 422, $validator->errors()->first());
         }
 
         try {
@@ -115,12 +115,12 @@ class UserController extends Controller
             $user = auth()->user();
 
             if (!$user) {
-                return $this->error([], "User not authenticated", 401);
+                return Helper::jsonResponse(false, 'User not authenticated', 401);
             }
 
             // Check if the current password is correct
             if (!Hash::check($request->current_password, $user->password)) {
-                return $this->error([], 'Current password is incorrect', 403);
+                return Helper::jsonResponse(false, 'Current password is incorrect', 422);
             }
 
             // Update the user's password
@@ -128,10 +128,10 @@ class UserController extends Controller
             $user->save(); // Save the changes
 
             // Return a success response
-            return $this->success($user, 'Password changed successfully', 200);
+            return Helper::jsonResponse(true, 'Password changed successfully.', 200, $user);
         } catch (\Exception $e) {
             // Handle any exceptions and return an error response
-            return $this->error([], $e->getMessage(), 500);
+            return Helper::jsonResponse(true, 'An error occurred during Deleting User.', 500, $e->getMessage());
         }
      }
 
