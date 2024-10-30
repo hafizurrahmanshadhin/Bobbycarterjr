@@ -153,6 +153,8 @@ class JournalController extends Controller {
                 $image     = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $imagePath = Helper::fileUpload($image, 'Journal', $imageName);
+            }else {
+                $imagePath = $journal->image_url;
             }
 
             // Create the journal entry
