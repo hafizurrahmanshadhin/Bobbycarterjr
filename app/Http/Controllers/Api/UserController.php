@@ -97,31 +97,41 @@ class UserController extends Controller
 
      public function updatePassword(Request $request) {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email',
+            'current_password' => ['required', 'string'],
             'password' => [
                 'required',
                 'string',
                 'min:8',
-                'confirmed'
+                'confirmed',
             ],
-        ], [
-            'password.min' => 'The password must be at least 8 characters long.',
         ]);
 
         if ($validator->fails()) {
-            return Helper::jsonResponse(false, 'Validation Failed', 422, $validator->errors()->first());
+            return $this->error([], $validator->errors()->first(), 422);
         }
 
         try {
-            // Retrieve the user by email
-            $user = User::where('email', $request->input('email'))->first();
+            // Get the authenticated user
+            $user = auth()->user();
 
-            $user->password = Hash::make($request->input('password'));
-            $user->save();
+            if (!$user) {
+                return $this->error([], "User not authenticated", 401);
+            }
 
-            return Helper::jsonResponse(true, 'Password Reset successfully.', 200, $user);
+            // Check if the current password is correct
+            if (!Hash::check($request->current_password, $user->password)) {
+                return $this->error([], 'Current password is incorrect', 403);
+            }
+
+            // Update the user's password
+            $user->password = Hash::make($request->password); // Hash the new password
+            $user->save(); // Save the changes
+
+            // Return a success response
+            return $this->success($user, 'Password changed successfully', 200);
         } catch (\Exception $e) {
-            return Helper::jsonResponse(false, 'An error occurred during updating data.', 500, $e->getMessage());
+            // Handle any exceptions and return an error response
+            return $this->error([], $e->getMessage(), 500);
         }
      }
 
