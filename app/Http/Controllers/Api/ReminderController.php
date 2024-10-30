@@ -1,31 +1,24 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Models\FirebaseToken;
 use App\Models\Reminder;
+use App\Notifications\ReminderNotification;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification as FirebaseNotification;
+use Log;
 
 class ReminderController extends Controller {
-    /**
-     * Store Reminder Data.
-     *
-     * This method handles the validation and storage of a new reminder entry.
-     * It first validates the incoming request data, then attempts to create a
-     * new reminder for the authenticated user. If the creation is successful,
-     * the reminder data is returned in a structured JSON response.
-     * In case of validation failure or other errors, appropriate error messages
-     * are returned.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
-     */
     public function reminderStore(Request $request): JsonResponse {
         $validator = Validator::make($request->all(), [
             'headline'      => 'required|string|max:255',
@@ -47,7 +40,15 @@ class ReminderController extends Controller {
                 'reminder_time' => $request->reminder_time,
             ]);
 
-            // Format the reminder time using Carbon
+            //! Schedule the notification
+            $reminderDateTime = Carbon::parse($request->reminder_date . ' ' . $request->reminder_time);
+            $delay            = $reminderDateTime->diffInSeconds(Carbon::now());
+
+            Notification::send(Auth::user(), (new ReminderNotification($request->headline, $request->description))->delay($delay));
+
+            //* Send push notification
+            $this->sendPushNotification(Auth::user()->id, $request->headline, $request->description);
+
             $formattedTime = Carbon::parse($reminder->reminder_time)->format('h:i A');
 
             $reminderData = [
@@ -65,16 +66,29 @@ class ReminderController extends Controller {
         }
     }
 
-    /**
-     * Fetching Single Reminder Data.
-     *
-     * @param  int  $id
-     * @return JsonResponse
-     */
+    private function sendPushNotification($userId, $headline, $description) {
+        try {
+            $factory   = (new Factory)->withServiceAccount(storage_path('app/firebase-auth.json'));
+            $messaging = $factory->createMessaging();
+
+            $tokens = FirebaseToken::where('user_id', $userId)->pluck('token')->toArray();
+
+            if (empty($tokens)) {
+                return;
+            }
+
+            $notification = FirebaseNotification::create($headline, $description);
+            $message      = CloudMessage::new ()->withNotification($notification);
+
+            $messaging->sendMulticast($message, $tokens);
+        } catch (Exception $e) {
+            Log::error("Failed to send push notification to user ID: $userId. Error: {$e->getMessage()}");
+        }
+    }
+
     public function SingleReminder(int $id) {
         $data = Reminder::findOrFail($id);
 
-        // Check if the article was found
         if ($data === null) {
             return Helper::jsonResponse(false, 'Course Reminder not found', 404, []);
         }
@@ -82,21 +96,9 @@ class ReminderController extends Controller {
         return Helper::jsonResponse(true, 'Course Reminder retrieved successfully', 200, $data);
     }
 
-    /**
-     * Retrieve All Reminders for Authenticated User.
-     *
-     * This method fetches all reminders associated with the currently authenticated user.
-     * It checks the reminders based on the user's ID and returns them in a structured
-     * JSON response. If no reminders are found for the user, an empty array is returned
-     * with a "Reminder not found" message. Otherwise, the list of reminders is returned
-     * with a success message.
-     *
-     * @return JsonResponse
-     */
     public function getAllReminders() {
         $reminder = Reminder::where('user_id', auth()->id())->get();
 
-        // Check if the Course Types was found
         if ($reminder->isEmpty()) {
             return Helper::jsonResponse(true, 'Reminder not found', 200, []);
         }
@@ -104,28 +106,13 @@ class ReminderController extends Controller {
         return Helper::jsonResponse(true, 'Reminder retrieved successfully', 200, $reminder);
     }
 
-    /**
-     * Deleting a specific Reminder.
-     *
-     * @param  int  $id
-     * @return JsonResponse
-     */
     public function reminderDelete(int $id) {
-        // dd($id);
         $data = Reminder::findOrFail($id);
-
         $data->delete();
 
         return Helper::jsonResponse(true, 'Reminder Deleted', 200, []);
     }
 
-    /**
-     * Updating a specific Reminder.
-     *
-     * @param  Request  $request
-     * @param  int  $id
-     * @return JsonResponse
-     */
     public function reminderUpdate(Request $request, int $id) {
         $validator = Validator::make($request->all(), [
             'headline'      => 'required|string|max:255',
@@ -139,7 +126,6 @@ class ReminderController extends Controller {
         }
 
         try {
-
             $reminder = Reminder::findOrFail($id);
 
             $data = $reminder->update([
@@ -149,9 +135,9 @@ class ReminderController extends Controller {
                 'reminder_time' => $request->reminder_time,
             ]);
 
-            return Helper::jsonResponse(true, 'reminder Updated', 200, $data);
+            return Helper::jsonResponse(true, 'Reminder Updated', 200, $data);
         } catch (Exception $e) {
-            return Helper::jsonResponse(false, 'An error occurred while creating the reminder.', 500, $e->getMessage());
+            return Helper::jsonResponse(false, 'An error occurred while updating the reminder.', 500, $e->getMessage());
         }
     }
 }
