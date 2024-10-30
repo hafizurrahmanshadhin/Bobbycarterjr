@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Models\Reminder;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use App\Helpers\Helper;
-use App\Models\Reminder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
-class ReminderController extends Controller
-{
-
+class ReminderController extends Controller {
     /**
      * Store Reminder Data.
      *
@@ -27,14 +26,10 @@ class ReminderController extends Controller
      * @param  Request  $request
      * @return JsonResponse
      */
-
-    public function reminderStore(Request $request) : JsonResponse
-    {
-
-        // Validate the request
+    public function reminderStore(Request $request): JsonResponse {
         $validator = Validator::make($request->all(), [
-            'headline' => 'required|string|max:255',
-            'description' => 'required|string',
+            'headline'      => 'required|string|max:255',
+            'description'   => 'required|string',
             'reminder_date' => 'required|date',
             'reminder_time' => 'required',
         ]);
@@ -44,12 +39,10 @@ class ReminderController extends Controller
         }
 
         try {
-
-            // Create the reminder entry
             $reminder = Reminder::create([
-                'user_id' => Auth::user()->id,
-                'headline' => $request->headline,
-                'description' => $request->description,
+                'user_id'       => Auth::user()->id,
+                'headline'      => $request->headline,
+                'description'   => $request->description,
                 'reminder_date' => $request->reminder_date,
                 'reminder_time' => $request->reminder_time,
             ]);
@@ -58,21 +51,19 @@ class ReminderController extends Controller
             $formattedTime = Carbon::parse($reminder->reminder_time)->format('h:i A');
 
             $reminderData = [
-                'id' => $reminder->id,
-                'user_id' => $reminder->user_id,
-                'headline' => $reminder->headline,
-                'description' => $reminder->description,
+                'id'            => $reminder->id,
+                'user_id'       => $reminder->user_id,
+                'headline'      => $reminder->headline,
+                'description'   => $reminder->description,
                 'reminder_date' => $reminder->reminder_date,
                 'reminder_time' => $formattedTime,
             ];
 
-
             return Helper::jsonResponse(true, 'Reminder Created Successfully.', 200, $reminderData);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return Helper::jsonResponse(false, 'An error occurred while creating the reminder.', 500, $e->getMessage());
         }
     }
-
 
     /**
      * Fetching Single Reminder Data.
@@ -80,9 +71,7 @@ class ReminderController extends Controller
      * @param  int  $id
      * @return JsonResponse
      */
-    public function SingleReminder(int $id)
-    {
-
+    public function SingleReminder(int $id) {
         $data = Reminder::findOrFail($id);
 
         // Check if the article was found
@@ -104,10 +93,7 @@ class ReminderController extends Controller
      *
      * @return JsonResponse
      */
-
-    public function getAllReminders()
-    {
-
+    public function getAllReminders() {
         $reminder = Reminder::where('user_id', auth()->id())->get();
 
         // Check if the Course Types was found
@@ -124,9 +110,7 @@ class ReminderController extends Controller
      * @param  int  $id
      * @return JsonResponse
      */
-    public function reminderDelete(int $id)
-    {
-
+    public function reminderDelete(int $id) {
         // dd($id);
         $data = Reminder::findOrFail($id);
 
@@ -142,14 +126,10 @@ class ReminderController extends Controller
      * @param  int  $id
      * @return JsonResponse
      */
-
-    public function reminderUpdate(Request $request, int $id)
-    {
-
-        // Validate the request
+    public function reminderUpdate(Request $request, int $id) {
         $validator = Validator::make($request->all(), [
-            'headline' => 'required|string|max:255',
-            'description' => 'required|string',
+            'headline'      => 'required|string|max:255',
+            'description'   => 'required|string',
             'reminder_date' => 'required|date',
             'reminder_time' => 'required',
         ]);
@@ -162,17 +142,15 @@ class ReminderController extends Controller
 
             $reminder = Reminder::findOrFail($id);
 
-
-            // Create the reminder entry
             $data = $reminder->update([
-                'headline' => $request->headline,
-                'description' => $request->description,
+                'headline'      => $request->headline,
+                'description'   => $request->description,
                 'reminder_date' => $request->reminder_date,
                 'reminder_time' => $request->reminder_time,
             ]);
 
             return Helper::jsonResponse(true, 'reminder Updated', 200, $data);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return Helper::jsonResponse(false, 'An error occurred while creating the reminder.', 500, $e->getMessage());
         }
     }
