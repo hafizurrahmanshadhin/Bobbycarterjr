@@ -13,7 +13,6 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('article_id')->constrained()->onDelete('cascade');
-            $table->unique(['article_id']);
             $table->integer('mark')->nullable();
             $table->timestamps();
         });
