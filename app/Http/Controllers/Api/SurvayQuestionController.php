@@ -4,18 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
-use App\Models\Answer;
 use App\Models\Course;
 use App\Models\SurvayQuestion;
 use App\Models\UserRecommended;
 use App\Models\UserResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
-class SurvayQuestionController extends Controller
-{
+class SurvayQuestionController extends Controller {
     /**
      * Return SurvayQuestion Data.
      *
@@ -23,12 +21,12 @@ class SurvayQuestionController extends Controller
      * @return JsonResponse
      */
 
-     public function SurvayQuestion(int $course_type_id) : JsonResponse {
+    public function SurvayQuestion(int $course_type_id): JsonResponse {
 
         // Retrieve active course IDs for the given course type
         $courseIds = Course::where('course_type_id', $course_type_id)
-        ->where('status', 'active')
-        ->pluck('id');
+            ->where('status', 'active')
+            ->pluck('id');
 
         // Get active survey questions for those course IDs
         $data = SurvayQuestion::query()
@@ -55,13 +53,13 @@ class SurvayQuestionController extends Controller
     public function SurvayQuestionAnswer_store(Request $request, $courseTypeId) {
 
         $validator = Validator::make($request->all(), [
-            'answers' => 'required|array|min:1',
+            'answers'               => 'required|array|min:1',
             'answers.*.question_id' => 'required|integer|exists:survay_questions,id',
-            'answers.*.answer_id' => 'required|integer|exists:options,id',
+            'answers.*.answer_id'   => 'required|integer|exists:options,id',
         ], [
-            'answers.required' => 'The answers field is required.',
+            'answers.required'               => 'The answers field is required.',
             'answers.*.question_id.required' => 'The question field is required.',
-            'answers.*.answer_id.required' => 'The answer field is required.',
+            'answers.*.answer_id.required'   => 'The answer field is required.',
         ]);
 
         if ($validator->fails()) {
@@ -77,9 +75,9 @@ class SurvayQuestionController extends Controller
             // Loop through each answer pair and store them
             foreach ($request->answers as $answer) {
                 $userResponses[] = UserResponse::create([
-                    'user_id' => auth()->user()->id,
+                    'user_id'            => auth()->user()->id,
                     'survay_question_id' => $answer['question_id'],
-                    'option_id' => $answer['answer_id'],
+                    'option_id'          => $answer['answer_id'],
                 ]);
             }
 
@@ -90,11 +88,11 @@ class SurvayQuestionController extends Controller
 
             $lowestCourseMark = [];
 
-            foreach($lowestMarkCourses as $item) {
+            foreach ($lowestMarkCourses as $item) {
 
                 $lowestCourseMark[] = UserRecommended::create([
-                    'user_id' => auth()->id(),
-                    'course_id' => $item['course_id']
+                    'user_id'   => auth()->id(),
+                    'course_id' => $item['course_id'],
                 ]);
             }
 
@@ -107,7 +105,10 @@ class SurvayQuestionController extends Controller
     }
 
     private function calculateCourseMarks(int $courseTypeId) {
-        $query = Course::with(['survayQuestions.options', 'survayQuestions.userResponses' => function($query) {
+        $reverseScoredQuestions = [1, 2, 3, 8, 9, 11, 12, 13, 17, 18]; // IDs for questions needing reverse scoring
+        $maxScalePoint          = 5;
+
+        $query = Course::with(['survayQuestions.options', 'survayQuestions.userResponses' => function ($query) {
             $query->where('user_id', auth()->user()->id);
         }]);
 
@@ -117,21 +118,29 @@ class SurvayQuestionController extends Controller
 
         $courses = $query->get();
 
-        $coursesWithMarks = $courses->map(function ($course) {
-            $correctAnswers = $course->survayQuestions->flatMap(function ($question) {
-                return $question->userResponses->map(function ($response) {
-                    return $response->option->is_correct;
+        $coursesWithMarks = $courses->map(function ($course) use ($reverseScoredQuestions, $maxScalePoint) {
+            $totalMarks = $course->survayQuestions->sum(function ($question) use ($reverseScoredQuestions, $maxScalePoint) {
+                return $question->userResponses->sum(function ($response) use ($question, $reverseScoredQuestions, $maxScalePoint) {
+                    // Assuming 'option->id' is mapped to the answer value, with 1 = strongly agree, 5 = strongly disagree
+                    $answerValue = $response->option->id;
+
+                    // Apply reverse scoring if the question is in the reverseScoredQuestions array
+                    if (in_array($question->id, $reverseScoredQuestions)) {
+                        $answerValue = ($maxScalePoint + 1) - $answerValue; // Reverse scoring formula
+                    }
+
+                    return $answerValue;
                 });
-            })->filter()->count();
+            });
 
             return [
                 'course_name' => $course->name,
-                'mark' => $correctAnswers,
-                'course_id' => $course->id
+                'mark'        => $totalMarks,
+                'course_id'   => $course->id,
             ];
-
         });
 
         return $coursesWithMarks;
     }
+
 }

@@ -249,6 +249,9 @@
                     });
             }
 
+
+            //${option.is_correct ? '<span class="badge bg-success">Correct</span>' : ''} // this line is after <span>${option.options}</span> this line
+
             // Function to view survey question details
             window.viewQuestion = function(id) {
                 axios.get("{{ route('survay-questions.view', ':id') }}".replace(':id', id))
@@ -264,7 +267,7 @@
                                 let optionItem = `
                                     <li class="list-group-item">
                                         <span>${option.options}</span>
-                                        ${option.is_correct ? '<span class="badge bg-success">Correct</span>' : ''}
+
                                     </li>`;
                                 viewOptionsContainer.insertAdjacentHTML('beforeend', optionItem);
                             });
