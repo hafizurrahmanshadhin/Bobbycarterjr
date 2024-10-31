@@ -41,18 +41,25 @@ class SurvayQuestionController extends Controller {
 
                     return $status;
                 })
+            // ->addColumn('action', function ($data) {
+            //     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+            //                 <a href="#" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" onclick="editQuestion(' . $data->id . ')">
+            //                     <i class="fe fe-edit"></i>
+            //                 </a>
+
+            //                 <a href="#" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal" onclick="viewQuestion(' . $data->id . ')">
+            //                     <i class="fe fe-eye"></i>
+            //                 </a>
+
+            //                 <a href="#" type="button" onclick="showDeleteConfirm(' . $data->id . ')" class="btn btn-danger fs-14 text-white delete-icn" title="Delete">
+            //                     <i class="fe fe-trash"></i>
+            //                 </a>
+            //             </div>';
+            // })
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                <a href="#" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal" onclick="editQuestion(' . $data->id . ')">
-                                    <i class="fe fe-edit"></i>
-                                </a>
-
                                 <a href="#" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal" onclick="viewQuestion(' . $data->id . ')">
                                     <i class="fe fe-eye"></i>
-                                </a>
-
-                                <a href="#" type="button" onclick="showDeleteConfirm(' . $data->id . ')" class="btn btn-danger fs-14 text-white delete-icn" title="Delete">
-                                    <i class="fe fe-trash"></i>
                                 </a>
                             </div>';
                 })
@@ -83,34 +90,34 @@ class SurvayQuestionController extends Controller {
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse {
-        try {
-            $validated = $request->validate([
-                'course_id'            => 'required|exists:courses,id',
-                'questions'            => 'required|string|max:255',
-                'options'              => 'required|array',
-                'options.*.option'     => 'required|string|max:255',
-                'options.*.is_correct' => 'required|boolean',
-            ]);
+    // public function store(Request $request): JsonResponse {
+    //     try {
+    //         $validated = $request->validate([
+    //             'course_id'            => 'required|exists:courses,id',
+    //             'questions'            => 'required|string|max:255',
+    //             'options'              => 'required|array',
+    //             'options.*.option'     => 'required|string|max:255',
+    //             'options.*.is_correct' => 'required|boolean',
+    //         ]);
 
-            $question = SurvayQuestion::create([
-                'course_id' => $validated['course_id'],
-                'questions' => $validated['questions'],
-            ]);
+    //         $question = SurvayQuestion::create([
+    //             'course_id' => $validated['course_id'],
+    //             'questions' => $validated['questions'],
+    //         ]);
 
-            foreach ($validated['options'] as $option) {
-                Option::create([
-                    'survay_question_id' => $question->id,
-                    'options'            => $option['option'],
-                    'is_correct'         => $option['is_correct'],
-                ]);
-            }
+    //         foreach ($validated['options'] as $option) {
+    //             Option::create([
+    //                 'survay_question_id' => $question->id,
+    //                 'options'            => $option['option'],
+    //                 'is_correct'         => $option['is_correct'],
+    //             ]);
+    //         }
 
-            return response()->json(['success' => true, 'message' => 'Survey question created successfully']);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-        }
-    }
+    //         return response()->json(['success' => true, 'message' => 'Survey question created successfully']);
+    //     } catch (Exception $e) {
+    //         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    //     }
+    // }
 
     /**
      * Get all courses for dropdown selection.
@@ -132,14 +139,14 @@ class SurvayQuestionController extends Controller {
      * @param int $id
      * @return JsonResponse
      */
-    public function edit(int $id): JsonResponse {
-        try {
-            $question = SurvayQuestion::with(['course', 'options'])->findOrFail($id);
-            return response()->json(['success' => true, 'data' => $question]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-        }
-    }
+    // public function edit(int $id): JsonResponse {
+    //     try {
+    //         $question = SurvayQuestion::with(['course', 'options'])->findOrFail($id);
+    //         return response()->json(['success' => true, 'data' => $question]);
+    //     } catch (Exception $e) {
+    //         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    //     }
+    // }
 
     /**
      * Update the specified survey question in storage.
@@ -148,39 +155,39 @@ class SurvayQuestionController extends Controller {
      * @param int $id
      * @return JsonResponse
      */
-    public function update(Request $request, int $id): JsonResponse {
-        try {
-            $validated = $request->validate([
-                'course_id'            => 'required|exists:courses,id',
-                'questions'            => 'required|string|max:255',
-                'options'              => 'required|array',
-                'options.*.option'     => 'required|string|max:255',
-                'options.*.is_correct' => 'required|boolean',
-            ]);
+    // public function update(Request $request, int $id): JsonResponse {
+    //     try {
+    //         $validated = $request->validate([
+    //             'course_id'            => 'required|exists:courses,id',
+    //             'questions'            => 'required|string|max:255',
+    //             'options'              => 'required|array',
+    //             'options.*.option'     => 'required|string|max:255',
+    //             'options.*.is_correct' => 'required|boolean',
+    //         ]);
 
-            $question = SurvayQuestion::findOrFail($id);
-            $question->update([
-                'course_id' => $validated['course_id'],
-                'questions' => $validated['questions'],
-            ]);
+    //         $question = SurvayQuestion::findOrFail($id);
+    //         $question->update([
+    //             'course_id' => $validated['course_id'],
+    //             'questions' => $validated['questions'],
+    //         ]);
 
-            //! Delete existing options
-            $question->options()->delete();
+    //         //! Delete existing options
+    //         $question->options()->delete();
 
-            //* Create new options
-            foreach ($validated['options'] as $option) {
-                Option::create([
-                    'survay_question_id' => $question->id,
-                    'options'            => $option['option'],
-                    'is_correct'         => $option['is_correct'],
-                ]);
-            }
+    //         //* Create new options
+    //         foreach ($validated['options'] as $option) {
+    //             Option::create([
+    //                 'survay_question_id' => $question->id,
+    //                 'options'            => $option['option'],
+    //                 'is_correct'         => $option['is_correct'],
+    //             ]);
+    //         }
 
-            return response()->json(['success' => true, 'message' => 'Survey question updated successfully']);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-        }
-    }
+    //         return response()->json(['success' => true, 'message' => 'Survey question updated successfully']);
+    //     } catch (Exception $e) {
+    //         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    //     }
+    // }
 
     /**
      * Remove the specified survey question from storage.
@@ -188,19 +195,19 @@ class SurvayQuestionController extends Controller {
      * @param int $id
      * @return JsonResponse
      */
-    public function destroy(int $id): JsonResponse {
-        try {
-            $question = SurvayQuestion::find($id);
-            if ($question) {
-                $question->delete();
-                return response()->json(['success' => true, 'message' => 'Survey question deleted successfully']);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Survey question not found'], 404);
-            }
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-        }
-    }
+    // public function destroy(int $id): JsonResponse {
+    //     try {
+    //         $question = SurvayQuestion::find($id);
+    //         if ($question) {
+    //             $question->delete();
+    //             return response()->json(['success' => true, 'message' => 'Survey question deleted successfully']);
+    //         } else {
+    //             return response()->json(['success' => false, 'message' => 'Survey question not found'], 404);
+    //         }
+    //     } catch (Exception $e) {
+    //         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    //     }
+    // }
 
     /**
      * Change the status of the specified survey question.
