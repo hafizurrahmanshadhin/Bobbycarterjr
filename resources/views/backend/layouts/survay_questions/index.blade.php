@@ -36,12 +36,12 @@
     <div class="row row-sm">
         <div class="col-lg-12">
             <div class="card">
-                <div class="card-header border-bottom"
+                {{-- <div class="card-header border-bottom"
                     style="margin-bottom: 0; display: flex; justify-content: space-between;">
                     <h3 class="card-title">Survey Question List</h3>
                     <a class="btn btn-primary" data-bs-target="#createModal" data-bs-toggle="modal"
                         href="javascript:void(0)" onclick="showCreateModal()">Add New</a>
-                </div>
+                </div> --}}
 
                 <div class="card-body">
                     <div class="table-responsive">
