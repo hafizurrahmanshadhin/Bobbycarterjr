@@ -69,6 +69,26 @@ class UserSeeder extends Seeder {
                 'updated_at'        => '2024-10-21 05:15:44',
                 'deleted_at'        => null,
             ],
+            [
+                'id'                => 3,
+                'is_subscribed'     => 1,
+                'firstName'         => 'Premium',
+                'lastName'          => 'Premium',
+                'email'             => 'premium@premium.com',
+                'email_verified_at' => null,
+                'password'          => Hash::make('12345678'),
+                'avatar'            => null,
+                'address'           => null,
+                'google_id'         => null,
+                'facebook_id'       => null,
+                'otp_verified_at'   => null,
+                'role'              => 'user',
+                'status'            => 'active',
+                'remember_token'    => null,
+                'created_at'        => '2024-10-21 05:15:44',
+                'updated_at'        => '2024-10-21 05:15:44',
+                'deleted_at'        => null,
+            ],
         ]);
     }
 }
