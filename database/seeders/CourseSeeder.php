@@ -15,7 +15,7 @@ class CourseSeeder extends Seeder {
             [
                 'id'             => 1,
                 'course_type_id' => 1,
-                'name'           => 'Autonomy',
+                'name'           => 'The Autonomy',
                 'image_url'      => 'backend/course_image/11.jpg',
                 'status'         => 'active',
                 'created_at'     => Carbon::parse('2024-10-10 23:02:15'),
@@ -25,7 +25,7 @@ class CourseSeeder extends Seeder {
             [
                 'id'             => 2,
                 'course_type_id' => 1,
-                'name'           => 'Self Acceptance',
+                'name'           => 'The Environmental Mastery',
                 'image_url'      => 'backend/course_image/12.jpg',
                 'status'         => 'active',
                 'created_at'     => Carbon::parse('2024-10-10 23:02:31'),
@@ -35,7 +35,7 @@ class CourseSeeder extends Seeder {
             [
                 'id'             => 3,
                 'course_type_id' => 1,
-                'name'           => 'Environmental Mastery',
+                'name'           => 'The Personal Growth',
                 'image_url'      => 'backend/course_image/13.jpg',
                 'status'         => 'active',
                 'created_at'     => Carbon::parse('2024-10-10 23:02:43'),
@@ -45,7 +45,7 @@ class CourseSeeder extends Seeder {
             [
                 'id'             => 4,
                 'course_type_id' => 1,
-                'name'           => 'Positive Relationship',
+                'name'           => 'The Positive Relations with Others',
                 'image_url'      => 'backend/course_image/14.jpg',
                 'status'         => 'active',
                 'created_at'     => Carbon::parse('2024-10-10 23:02:52'),
@@ -55,7 +55,7 @@ class CourseSeeder extends Seeder {
             [
                 'id'             => 5,
                 'course_type_id' => 1,
-                'name'           => 'Personal Growth',
+                'name'           => 'The Purpose in Life',
                 'image_url'      => 'backend/course_image/11.jpg',
                 'status'         => 'active',
                 'created_at'     => Carbon::parse('2024-10-10 23:03:01'),
@@ -65,7 +65,7 @@ class CourseSeeder extends Seeder {
             [
                 'id'             => 6,
                 'course_type_id' => 1,
-                'name'           => 'Purpose in Life',
+                'name'           => 'The Self-Acceptance',
                 'image_url'      => 'backend/course_image/13.jpg',
                 'status'         => 'active',
                 'created_at'     => Carbon::parse('2024-10-10 23:03:11'),
