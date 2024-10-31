@@ -2,83 +2,177 @@
 
 namespace Database\Seeders;
 
-use App\Models\SurvayQuestion;
-use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
-class SurvayQuestionSeeder extends Seeder
-{
+class SurvayQuestionSeeder extends Seeder {
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {
-        // Example data to seed with specific created_at timestamps
-        $questions = [
+    public function run(): void {
+        DB::table('survay_questions')->insert([
             [
-                'course_id' => 1, // Ensure this course_id exists in the courses table
-                'questions' => 'What did you like most about this course?',
-                'status'    => 'active',
-                'created_at' => Carbon::now()->subDays(10), // 10 days ago
+                'id'         => 1,
+                'course_id'  => 6,
+                'questions'  => 'I like most parts of my personality.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:25:17',
+                'updated_at' => '2024-10-31 02:25:17',
+                'deleted_at' => null,
             ],
             [
-                'course_id' => 1,
-                'questions' => 'What could be improved in this course?',
-                'status'    => 'active',
-                'created_at' => Carbon::now()->subDays(9), // 9 days ago
+                'id'         => 2,
+                'course_id'  => 6,
+                'questions'  => 'When I look at the story of my life, I am pleased with how things have turned out so far.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:26:31',
+                'updated_at' => '2024-10-31 02:26:31',
+                'deleted_at' => null,
             ],
             [
-                'course_id' => 1,
-                'questions' => 'How would you rate the instructor’s teaching?',
-                'status'    => 'active',
-                'created_at' => Carbon::now()->subDays(8), // 8 days ago
+                'id'         => 3,
+                'course_id'  => 5,
+                'questions'  => 'Some people wander aimlessly through life, but I am not one of them.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:27:39',
+                'updated_at' => '2024-10-31 02:27:39',
+                'deleted_at' => null,
             ],
             [
-                'course_id' => 2, // Ensure this course_id exists in the courses table
-                'questions' => 'How would you rate the course materials?',
-                'status'    => 'active',
-                'created_at' => Carbon::now()->subDays(7), // 7 days ago
+                'id'         => 4,
+                'course_id'  => 2,
+                'questions'  => 'The demands of everyday life often get me down.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:28:37',
+                'updated_at' => '2024-10-31 02:28:37',
+                'deleted_at' => null,
             ],
             [
-                'course_id' => 2,
-                'questions' => 'Would you recommend this course to others?',
-                'status'    => 'active',
-                'created_at' => Carbon::now()->subDays(6), // 6 days ago
+                'id'         => 5,
+                'course_id'  => 6,
+                'questions'  => 'In many ways I feel disappointed about my achievements in life.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:29:54',
+                'updated_at' => '2024-10-31 02:29:54',
+                'deleted_at' => null,
             ],
             [
-                'course_id' => 2,
-                'questions' => 'Was the course duration adequate?',
-                'status'    => 'active',
-                'created_at' => Carbon::now()->subDays(5), // 5 days ago
+                'id'         => 6,
+                'course_id'  => 4,
+                'questions'  => 'Maintaining close relationships has been difficult and frustrating for me.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:31:45',
+                'updated_at' => '2024-10-31 02:31:45',
+                'deleted_at' => null,
             ],
             [
-                'course_id' => 3, // Ensure this course_id exists in the courses table
-                'questions' => 'What additional topics would you like covered?',
-                'status'    => 'active',
-                'created_at' => Carbon::now()->subDays(4), // 4 days ago
+                'id'         => 7,
+                'course_id'  => 5,
+                'questions'  => 'I live life one day at a time and don\'t really think about the future.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:33:06',
+                'updated_at' => '2024-10-31 02:33:06',
+                'deleted_at' => null,
             ],
             [
-                'course_id' => 3,
-                'questions' => 'How helpful were the assignments?',
-                'status'    => 'active',
-                'created_at' => Carbon::now()->subDays(3), // 3 days ago
+                'id'         => 8,
+                'course_id'  => 2,
+                'questions'  => 'In general, I feel I am in charge of the situation in which I live.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:33:58',
+                'updated_at' => '2024-10-31 02:33:58',
+                'deleted_at' => null,
             ],
             [
-                'course_id' => 3,
-                'questions' => 'Did you find the course engaging?',
-                'status'    => 'active',
-                'created_at' => Carbon::now()->subDays(2), // 2 days ago
+                'id'         => 9,
+                'course_id'  => 2,
+                'questions'  => 'I am good at managing the responsibilities of daily life.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:35:01',
+                'updated_at' => '2024-10-31 02:35:01',
+                'deleted_at' => null,
             ],
             [
-                'course_id' => 1,
-                'questions' => 'Any other feedback you would like to provide?',
-                'status'    => 'active',
-                'created_at' => Carbon::now()->subDays(1), // 1 day ago
+                'id'         => 10,
+                'course_id'  => 5,
+                'questions'  => 'I sometimes feel as if I\'ve done all there is to do in life.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:36:14',
+                'updated_at' => '2024-10-31 02:36:14',
+                'deleted_at' => null,
             ],
-        ];
-
-        // Insert data into the survay_questions table
-        SurvayQuestion::insert($questions);
+            [
+                'id'         => 11,
+                'course_id'  => 3,
+                'questions'  => 'For me, life has been a continuous process of learning, changing, and growth.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:37:05',
+                'updated_at' => '2024-10-31 02:37:05',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 12,
+                'course_id'  => 3,
+                'questions'  => 'I think it is important to have new experiences that challenge how I think about myself and the world.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:37:58',
+                'updated_at' => '2024-10-31 02:37:58',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 13,
+                'course_id'  => 4,
+                'questions'  => 'People would describe me as a giving person, willing to share my time with others.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:41:00',
+                'updated_at' => '2024-10-31 02:41:00',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 14,
+                'course_id'  => 3,
+                'questions'  => 'I gave up trying to make big improvements or changes in my life a long time ago',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:45:34',
+                'updated_at' => '2024-10-31 02:45:34',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 15,
+                'course_id'  => 1,
+                'questions'  => 'I tend to be influenced by people with strong opinions',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:46:24',
+                'updated_at' => '2024-10-31 02:46:24',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 16,
+                'course_id'  => 4,
+                'questions'  => 'I have not experienced many warm and trusting relationships with others.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:47:15',
+                'updated_at' => '2024-10-31 02:47:15',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 17,
+                'course_id'  => 1,
+                'questions'  => 'I have confidence in my own opinions, even if they are different from the way most other people think.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:48:03',
+                'updated_at' => '2024-10-31 02:48:03',
+                'deleted_at' => null,
+            ],
+            [
+                'id'         => 18,
+                'course_id'  => 1,
+                'questions'  => 'I judge myself by what I think is important, not by the values of what others think is important.',
+                'status'     => 'active',
+                'created_at' => '2024-10-31 02:48:47',
+                'updated_at' => '2024-10-31 02:48:47',
+                'deleted_at' => null,
+            ],
+        ]);
     }
 }
