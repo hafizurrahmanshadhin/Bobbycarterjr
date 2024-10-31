@@ -70,7 +70,7 @@ class UserSeeder extends Seeder {
                 'deleted_at'        => null,
             ],
             [
-                'id'                => 3,
+                'id'                => 4,
                 'is_subscribed'     => 1,
                 'firstName'         => 'Premium',
                 'lastName'          => 'Premium',
