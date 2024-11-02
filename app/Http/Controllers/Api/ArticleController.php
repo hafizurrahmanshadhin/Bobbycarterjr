@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Article;
+use App\Models\Bookmark;
 use App\Models\Course;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,28 +20,46 @@ class ArticleController extends Controller {
      * @return JsonResponse
      */
     public function courseArticle(int $course_id) {
-        $data = Article::where('course_id', $course_id)->where('status', 'active')->get();
+        $user = auth()->user();
 
-        // Check if the Course Types was found
+        // Retrieve all active articles for the specified course
+        $data = Article::where('course_id', $course_id)
+            ->where('status', 'active')
+            ->get();
+
+        // Check if any articles were found
         if ($data->isEmpty()) {
             return Helper::jsonResponse(true, 'Course Article not found', 200, []);
         }
 
+        // Fetch the course
         $course = Course::findOrFail($course_id);
 
-        $articlesWithFormattedTime = $data->map(function ($article) {
+        // Map through the articles and set `is_bookmarked` based on user bookmarks
+        $articlesWithFormattedTime = $data->map(function ($article) use ($user) {
+            $isBookmarked = false;
+
+            // Check if user is authenticated and if the article is bookmarked by the user
+            if ($user) {
+                $isBookmarked = Bookmark::where('user_id', $user->id)
+                    ->where('article_id', $article->id)
+                    ->exists();
+            }
+
             return [
-                'id'          => (int) $article->id,
-                'course_id'   => (int) $article->course_id,
-                'image_url'   => (string) $article->image_url,
-                'title'       => (string) $article->title,
-                'description' => (string) $article->description,
-                'mark'        => (int) $article->mark,
-                'file_url'    => (string) $article->file_url,
-                'audio_time'  => $this->formatAudioTimeToMinutes($article->audio_time),
+                'id'            => (int) $article->id,
+                'course_id'     => (int) $article->course_id,
+                'image_url'     => (string) $article->image_url,
+                'title'         => (string) $article->title,
+                'description'   => (string) $article->description,
+                'mark'          => (int) $article->mark,
+                'file_url'      => (string) $article->file_url,
+                'audio_time'    => $this->formatAudioTimeToMinutes($article->audio_time),
+                'is_bookmarked' => $isBookmarked,
             ];
         });
 
+        // Prepare the response
         $response = [
             'course_image' => $course->image_url,
             'articles'     => $articlesWithFormattedTime,
