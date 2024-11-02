@@ -80,7 +80,6 @@ class ArticleController extends Controller {
      * @return JsonResponse
      */
     public function courseSingleArticle(int $id) {
-
         $user = auth()->user();
 
         // Ensure the user is authenticated
@@ -97,13 +96,14 @@ class ArticleController extends Controller {
         }
 
         // Check if the current user has bookmarked this article
-        $data->is_bookmarked = $data->bookmarkedBy->contains($id);
+        $isBookmarked = Bookmark::where('user_id', $user->id)
+            ->where('article_id', $id)
+            ->exists();
 
-        // Optionally, unset the bookmarkBy relation if you don't need it
-        unset($data->bookmarkedBy);
+        // Add is_bookmarked dynamically to the article response
+        $data->is_bookmarked = $isBookmarked;
 
         // Check if the article is already attached to the user
-
         $isAttached = $user->articles()->where('article_id', $id)->exists();
 
         if (!$isAttached) {
