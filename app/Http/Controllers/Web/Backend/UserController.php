@@ -44,6 +44,12 @@ class UserController extends Controller {
 
                     return $tag;
                 })
+
+                ->addColumn('created_at', function ($data) {
+                    $created_at = $data->created_at;
+                    return $created_at;
+                })
+
                 ->addColumn('status', function ($data) {
                     $backgroundColor  = $data->status == "active" ? '#4CAF50' : '#ccc';
                     $sliderTranslateX = $data->status == "active" ? '26px' : '2px';
@@ -57,7 +63,7 @@ class UserController extends Controller {
 
                     return $status;
                 })
-                ->rawColumns(['name', 'is_subscribed', 'image', 'status'])
+                ->rawColumns(['name', 'is_subscribed', 'image', 'status','created_at'])
                 ->make();
         }
         return view('backend.layouts.users.index');
