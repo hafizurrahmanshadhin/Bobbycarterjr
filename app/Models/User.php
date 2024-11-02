@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\FirebaseToken;
 use App\Models\Membership;
 use App\Models\UserAffirmation;
