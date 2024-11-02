@@ -6,6 +6,7 @@ use App\Models\DailyAffirmation;
 use App\Models\FirebaseToken;
 use App\Models\UserAffirmation;
 use App\Notifications\DailyAffirmationNotification;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +20,7 @@ class SendDailyAffirmations extends Command {
      *
      * @var string
      */
-    protected $signature = 'send:daily-affirmations {time}';
+    protected $signature = 'send:daily-affirmations';
 
     /**
      * The console command description.
@@ -29,35 +30,33 @@ class SendDailyAffirmations extends Command {
     protected $description = 'Send daily affirmations to users based on their preferences';
 
     /**
-     * Create a new command instance.
-     */
-    public function __construct() {
-        parent::__construct();
-    }
-
-    /**
      ** Execute the console command.
      *
-     * Retrieves the latest daily affirmation and sends notifications to users
-     * who have set the specified notification time. Notifications are sent as
-     * both in-app and push notifications.
+     * This method retrieves users who have a notification time matching the
+     * current time and sends them a daily affirmation notification.
      *
      * @return void
      */
     public function handle(): void {
-        $time = $this->argument('time');
+        $currentTime = Carbon::now()->format('H:i');
+        Log::info("Checking notifications for time: $currentTime");
 
         //! Retrieve the latest daily affirmation message
         $affirmation = DailyAffirmation::latest()->first();
         if (!$affirmation) {
-            Log::warning('No daily affirmation found.');
+            // Log::warning('No daily affirmation found.');
             return;
         }
 
         //* Fetch users who have set their notification time to the specified time
         $users = UserAffirmation::with('user')
-            ->where('notification_time', $time)
+            ->where('notification_time', $currentTime)
             ->get();
+
+        if ($users->isEmpty()) {
+            // Log::info("No users found with notification time: $currentTime");
+            return;
+        }
 
         foreach ($users as $userAffirmation) {
             $user = $userAffirmation->user;
@@ -66,10 +65,12 @@ class SendDailyAffirmations extends Command {
                 $notification = new DailyAffirmationNotification($affirmation->notification);
                 $user->notify($notification);
 
-                Log::info("Daily affirmation sent to user ID: {$user->id}");
+                // Log::info("Daily affirmation sent to user ID: {$user->id}");
 
                 //! Send push notification
                 $this->sendPushNotification($user->id, $notification->toPushNotification($user));
+            } else {
+                // Log::info("User not found for UserAffirmation ID: {$userAffirmation->id}");
             }
         }
 
