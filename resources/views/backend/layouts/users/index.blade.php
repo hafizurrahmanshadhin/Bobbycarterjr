@@ -49,8 +49,10 @@
                                     <th class="wd-15p border-bottom-0">#</th>
                                     <th class="wd-15p border-bottom-0">Name</th>
                                     <th class="wd-15p border-bottom-0">Image</th>
+                                    <th class="wd-15p border-bottom-0">Email</th>
                                     <th class="wd-15p border-bottom-0">Address</th>
                                     <th class="wd-15p border-bottom-0">Subscription Status</th>
+                                    <th class="wd-15p border-bottom-0">Joining Date</th>
                                     <th class="wd-15p border-bottom-0">Status</th>
                                 </tr>
                             </thead>
@@ -120,6 +122,12 @@
                         searchable: true
                     },
                     {
+                        data: 'email',
+                        name: 'email',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
                         data: 'address',
                         name: 'address',
                         orderable: true,
@@ -128,6 +136,12 @@
                     {
                         data: 'is_subscribed',
                         name: 'is_subscribed',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at',
                         orderable: true,
                         searchable: true
                     },

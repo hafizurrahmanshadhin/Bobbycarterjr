@@ -309,5 +309,36 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-lg-6 col-sm-12 col-md-6 col-xl-3">
+            <div class="card overflow-hidden">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h3 class="mb-2 fw-semibold">{{ $total_user }}</h3>
+                            <p class="text-muted fs-13 mb-0">Total User</p>
+                        </div>
+                        <div class="col col-auto top-icn dash">
+                            <div class="counter-icon bg-warning dash ms-auto box-shadow-warning">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="100"
+                                    height="100"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    >
+                                    <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4z"></path>
+                                    <path d="M4 20c0-4 4-7 8-7s8 3 8 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
