@@ -20,22 +20,22 @@ class UserAffirmationController extends Controller {
     public function storeOrUpdateAffirmation(Request $request): JsonResponse {
         try {
             $validatedData = $request->validate([
-                'notifications_count' => 'required|in:1,2,3',
+                'notification_time' => 'required|date_format:H:i',
             ]);
 
             $user            = Auth::user();
             $userAffirmation = UserAffirmation::where('user_id', $user->id)->first();
 
+            $data = [
+                'notification_time' => $validatedData['notification_time'],
+            ];
+
+            //? If user affirmation exists, update it, otherwise create a new record
             if ($userAffirmation) {
-                $userAffirmation->update([
-                    'notifications_count' => $validatedData['notifications_count'],
-                ]);
+                $userAffirmation->update($data);
                 return Helper::jsonResponse(true, 'Affirmation updated successfully!', 200, $userAffirmation);
             } else {
-                $userAffirmation = UserAffirmation::create([
-                    'user_id'             => $user->id,
-                    'notifications_count' => $validatedData['notifications_count'],
-                ]);
+                $userAffirmation = UserAffirmation::create(array_merge(['user_id' => $user->id], $data));
                 return Helper::jsonResponse(true, 'Affirmation created successfully!', 200, $userAffirmation);
             }
         } catch (Exception $e) {
