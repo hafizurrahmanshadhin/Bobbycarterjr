@@ -13,7 +13,7 @@ class UserAffirmation extends Model {
 
     protected $fillable = [
         'user_id',
-        'notifications_count',
+        'notification_time',
     ];
 
     protected $hidden = [
@@ -24,8 +24,7 @@ class UserAffirmation extends Model {
 
     protected function casts(): array {
         return [
-            'user_id'             => 'integer',
-            'notifications_count' => 'integer',
+            'user_id' => 'integer',
         ];
     }
 
