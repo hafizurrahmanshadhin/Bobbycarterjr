@@ -16,24 +16,31 @@
         </div>
     </div>
     {{-- PAGE-HEADER --}}
-
+    {{-- {{ dd($data) }} --}}
     <div class="row row-sm">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header border-bottom"
                     style="margin-bottom: 0; display: flex; justify-content: space-between;">
+                        <div class="form-group">
+                            <label for="options">Select Course</label>
+                            <select id="options" class="form-control">
+                                @foreach ($course  as $filterCourse)
+                                    <option value="{{ $filterCourse->id }}">{{ $filterCourse->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     <h3 class="card-title">Course Type List</h3>
+                    
                     <a class="btn btn-primary" href="{{ route('admin.course.module.create') }}">Add New</a>
                 </div>
-
-
                 <div class="card-body">
                     <div class="table-responsive export-table">
                         <table class="table table-bordered dataTables_wrapper dt-bootstrap5 no-footer" id="datatable">
                             <thead>
                                 <tr>
                                     <th class="wd-15p border-bottom-0">#</th>
-                                    <th class="wd-15p border-bottom-0">Course Name</th>
+                                    {{-- <th class="wd-15p border-bottom-0">Course Name</th> --}}
                                     <th class="wd-15p border-bottom-0">Title</th>
                                     <th class="wd-15p border-bottom-0">Duration</th>
                                     <th class="wd-15p border-bottom-0">Module</th>
@@ -154,12 +161,12 @@
                             orderable: false,
                             searchable: false
                         },
-                        {
-                            data: 'course_name',
-                            name: 'course_name',
-                            orderable: true,
-                            searchable: true
-                        },
+                        // {
+                        //     data: 'course_name',
+                        //     name: 'course_name',
+                        //     orderable: true,
+                        //     searchable: true
+                        // },
                         {
                             data: 'title',
                             name: 'title',
@@ -345,5 +352,23 @@
                     toastr.error('An error occurred while loading survey question data.');
                 })
         }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#options').change(function() {
+                var courseId = $(this).val();
+                if (courseId) {
+                    $.ajax({
+                        url: '/admin/course/modules', 
+                        type: 'GET',
+                        data: { id: courseId },
+                    });
+                    // $('#datatable').DataTable().ajax.reload();
+                } else {
+                    $('#courseDetails').empty(); 
+                }
+            });
+        });
     </script>
 @endpush

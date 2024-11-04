@@ -2,27 +2,29 @@
 
 namespace App\Http\Controllers\Web\Backend;
 
-use App\Helpers\Helper;
-use App\Http\Controllers\Controller;
+use Exception;
 use App\Models\Course;
 use App\Models\Module;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Helpers\Helper;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class CourseModuleController extends Controller {
 
     public function index(Request $request): JsonResponse | View {
+        
+        $course = Course::where('status', 'active')->get();
         if ($request->ajax()) {
-            $data = Module::latest()->get();
+            $data = ($request->input('id') != null ? Module::where('course_id',$request->input('id'))->latest()->get() : Module::latest()->get());
+            // dd($data);
+            // dd($request->input('id'));
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('course_name', function ($data) {
-                    return $data->course->name;
-                })
                 ->addColumn('audio_time', function ($data) {
                     $page_content = $data->audio_time; // Assume this is in seconds
 
@@ -75,11 +77,13 @@ class CourseModuleController extends Controller {
                                     <i class="fe fe-trash"></i>
                                 </a>
                             </div>';
+                            
                 })
-                ->rawColumns(['course_name', 'audio_time', 'status', 'module', 'action'])
+                ->rawColumns([ 'audio_time', 'status', 'module', 'action'])
                 ->make();
+                
         }
-        return view('backend.layouts.module.index');
+        return view('backend.layouts.module.index',compact('course'));
     }
 
     public function create() {
