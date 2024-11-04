@@ -101,4 +101,8 @@ class User extends Authenticatable {
     public function userAffirmation(): HasOne {
         return $this->hasOne(UserAffirmation::class);
     }
+
+    public function getFullNameAttribute() {
+        return trim($this->firstName . ' ' . $this->lastName);
+    }
 }
