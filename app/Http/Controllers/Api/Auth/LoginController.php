@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Events\UserStatusUpdated;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
@@ -28,11 +29,18 @@ class LoginController extends Controller {
                 return Helper::jsonResponse(false, 'User Not Found', 404, []);
             }
 
-            if($user->status == 'active'){
+            if ($user->status == 'active') {
                 $request->authenticate();
 
                 //* Get the authenticated user
                 $user = Auth::user();
+
+                //* Update is_online status to true
+                $user->is_online = true;
+                $user->save();
+
+                //* Dispatch the UserStatusUpdated event
+                event(new UserStatusUpdated($user));
 
                 //* Generate token
                 $token = $user->createToken('auth_token')->plainTextToken;
@@ -49,7 +57,6 @@ class LoginController extends Controller {
             } else {
                 return Helper::jsonResponse(false, 'User is deactivated', 403, []);
             }
-
 
         } catch (Exception $e) {
             return Helper::jsonResponse(false, 'An error occurred during login.', 500, [
