@@ -9,10 +9,10 @@ class MessageResource extends JsonResource {
     /**
      * Transform the resource into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
-    public function toArray(Request $request): array {
+    public function toArray($request): array {
         return [
             'id'          => $this->id,
             'sender_id'   => $this->sender_id,
@@ -23,6 +23,11 @@ class MessageResource extends JsonResource {
                 'name'   => $this->sender->fullName,
                 'avatar' => $this->sender->avatar,
             ],
+            'attachment'  => $this->attachment_path ? [
+                'url'  => url($this->attachment_path),
+                'name' => $this->attachment_name,
+                'type' => $this->attachment_type,
+            ] : null,
             'created_at'  => $this->created_at,
         ];
     }
