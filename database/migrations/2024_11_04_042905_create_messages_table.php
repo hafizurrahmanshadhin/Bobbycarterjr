@@ -22,7 +22,11 @@ return new class extends Migration {
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
 
-            $table->text('text');
+            $table->text('text')->nullable();
+
+            $table->string('attachment_path')->nullable();
+            $table->string('attachment_name')->nullable();
+            $table->string('attachment_type')->nullable();
 
             $table->enum('status', ['active', 'inactive'])->default('active');
 
