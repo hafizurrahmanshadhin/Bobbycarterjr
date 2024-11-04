@@ -26,6 +26,7 @@ return new class extends Migration {
 
             $table->enum('role', ['admin', 'user'])->default('user')->nullable(false);
             $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->boolean('is_online')->default(false);
 
             $table->rememberToken();
             $table->timestamp('created_at')->useCurrent();
