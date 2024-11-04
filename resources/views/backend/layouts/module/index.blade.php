@@ -22,17 +22,19 @@
             <div class="card">
                 <div class="card-header border-bottom"
                     style="margin-bottom: 0; display: flex; justify-content: space-between;">
-                        <div class="form-group">
-                            <label for="options">Select Course</label>
-                            <select id="options" class="form-control">
-                                @foreach ($course  as $filterCourse)
-                                    <option value="{{ $filterCourse->id }}">{{ $filterCourse->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    <h3 class="card-title">Course Type List</h3>
-                    
-                    <a class="btn btn-primary" href="{{ route('admin.course.module.create') }}">Add New</a>
+                    <div>
+                        <label for="options">
+                            <b>Select Course</b>
+                        </label>
+                        <select id="options" class="form-select form-select-lg" style="border: 1px solid #8fbd56">
+                            @foreach ($course as $filterCourse)
+                                <option value="{{ $filterCourse->id }}">{{ $filterCourse->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <h3 class="mb-0">Course Modules</h3>
+
+                    <a class="btn btn-primary btn-lg" href="{{ route('admin.course.module.create') }}">Add New</a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive export-table">
@@ -40,7 +42,6 @@
                             <thead>
                                 <tr>
                                     <th class="wd-15p border-bottom-0">#</th>
-                                    {{-- <th class="wd-15p border-bottom-0">Course Name</th> --}}
                                     <th class="wd-15p border-bottom-0">Title</th>
                                     <th class="wd-15p border-bottom-0">Duration</th>
                                     <th class="wd-15p border-bottom-0">Module</th>
@@ -127,7 +128,7 @@
             });
 
             if (!$.fn.DataTable.isDataTable('#datatable')) {
-                $('#datatable').DataTable({
+                var dTable = $('#datatable').DataTable({
                     order: [],
                     lengthMenu: [
                         [10, 25, 50, 100, -1],
@@ -161,12 +162,6 @@
                             orderable: false,
                             searchable: false
                         },
-                        // {
-                        //     data: 'course_name',
-                        //     name: 'course_name',
-                        //     orderable: true,
-                        //     searchable: true
-                        // },
                         {
                             data: 'title',
                             name: 'title',
@@ -206,10 +201,17 @@
                     ],
                 });
 
-                dTable.buttons().container().appendTo('#file_exports');
-                new DataTable('#example', {
-                    responsive: true
+                $('#options').change(function() {
+                    var courseId = $(this).val();
+                    if (courseId) {
+                        // Update the DataTable's AJAX source and reload data
+                        dTable.ajax.url("{{ route('admin.course.module.index') }}?id=" + courseId).load();
+                    }
                 });
+                var courseId = $('#options').val();
+                if (courseId) {
+                    dTable.ajax.url("{{ route('admin.course.module.index') }}?id=" + courseId).load();
+                }
             }
         });
 
@@ -352,23 +354,5 @@
                     toastr.error('An error occurred while loading survey question data.');
                 })
         }
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $('#options').change(function() {
-                var courseId = $(this).val();
-                if (courseId) {
-                    $.ajax({
-                        url: '/admin/course/modules', 
-                        type: 'GET',
-                        data: { id: courseId },
-                    });
-                    // $('#datatable').DataTable().ajax.reload();
-                } else {
-                    $('#courseDetails').empty(); 
-                }
-            });
-        });
     </script>
 @endpush

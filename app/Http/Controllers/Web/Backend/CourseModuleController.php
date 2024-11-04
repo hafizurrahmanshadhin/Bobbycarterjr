@@ -17,19 +17,17 @@ use Illuminate\Support\Facades\Validator;
 class CourseModuleController extends Controller {
 
     public function index(Request $request): JsonResponse | View {
-        
+
         $course = Course::where('status', 'active')->get();
         if ($request->ajax()) {
-            $data = ($request->input('id') != null ? Module::where('course_id',$request->input('id'))->latest()->get() : Module::latest()->get());
-            // dd($data);
-            // dd($request->input('id'));
+            $data = Module::where('course_id',$request->input('id'))->latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('audio_time', function ($data) {
-                    $page_content = $data->audio_time; // Assume this is in seconds
+                    $page_content = $data->audio_time;
 
                     if ($page_content === null) {
-                        // If audio_time is null, don't show any time
+
                         return null; // Or you can return an empty string or message
                     }
 
@@ -77,11 +75,11 @@ class CourseModuleController extends Controller {
                                     <i class="fe fe-trash"></i>
                                 </a>
                             </div>';
-                            
+
                 })
-                ->rawColumns([ 'audio_time', 'status', 'module', 'action'])
+                ->rawColumns(['audio_time', 'status', 'module', 'action'])
                 ->make();
-                
+
         }
         return view('backend.layouts.module.index',compact('course'));
     }
