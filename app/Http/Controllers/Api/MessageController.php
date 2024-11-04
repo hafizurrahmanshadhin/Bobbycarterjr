@@ -64,26 +64,56 @@ class MessageController extends Controller {
     public function SendMessage(User $user, Request $request): JsonResponse {
         try {
             $validatedData = $request->validate([
-                'message' => 'required',
+                'message'    => 'nullable|string',
+                'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,mp3,mov,avi,doc,docx,pdf,xls,xlsx,txt|max:102400',
             ], [
-                'message.required' => 'The message field is required.',
+                'attachment.mimes' => 'Only images, videos, audios and documents are allowed.',
+                'attachment.max'   => 'The attachment must not be greater than 10MB.',
             ]);
+
+            $attachmentPath = null;
+            $attachmentName = null;
+            $attachmentType = null;
+
+            //? Handle file upload if present
+            if ($request->hasFile('attachment')) {
+                $file = $request->file('attachment');
+
+                //* Determine the attachment type
+                $mimeType = $file->getMimeType();
+                if (str_starts_with($mimeType, 'image/')) {
+                    $attachmentType = 'image';
+                } elseif (str_starts_with($mimeType, 'video/')) {
+                    $attachmentType = 'video';
+                } elseif (str_starts_with($mimeType, 'audio/')) {
+                    $attachmentType = 'audio';
+                } else {
+                    $attachmentType = 'document';
+                }
+
+                //! Use the Helper::fileUpload method
+                $attachmentPath = Helper::fileUpload($file, 'attachments');
+
+                //* Store the original name of the file
+                $attachmentName = $file->getClientOriginalName();
+            }
 
             $message = Message::create([
-                'sender_id'   => $request->user()->id,
-                'receiver_id' => $user->id,
-                'text'        => $validatedData['message'],
+                'sender_id'       => $request->user()->id,
+                'receiver_id'     => $user->id,
+                'text'            => $validatedData['message'] ?? null,
+                'attachment_path' => $attachmentPath,
+                'attachment_name' => $attachmentName,
+                'attachment_type' => $attachmentType,
             ]);
 
-            //* Load the sender's information
-            $message->load('sender:id,firstName,lastName,avatar');
-
+            //* Broadcast the message
             broadcast(new MessageSent($message))->toOthers();
 
             return Helper::jsonResponse(true, 'Message sent successfully', 200, new MessageResource($message));
         } catch (Exception $e) {
             Log::error('Error sending message: ' . $e->getMessage(), ['exception' => $e]);
-            return Helper::jsonResponse(false, 'An error occurred while sending the message: ' . $e->getMessage(), 500);
+            return Helper::jsonResponse(false, 'An error occurred while sending the message.', 500);
         }
     }
 
