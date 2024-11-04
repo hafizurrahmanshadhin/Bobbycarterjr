@@ -68,7 +68,7 @@ class ReminderController extends Controller {
 
     private function sendPushNotification($userId, $headline, $description) {
         try {
-            $factory   = (new Factory)->withServiceAccount(storage_path('app/firebase-auth.json'));
+            $factory   = (new Factory)->withServiceAccount(storage_path('app/firebase_push_Nofifications.json'));
             $messaging = $factory->createMessaging();
 
             $tokens = FirebaseToken::where('user_id', $userId)->pluck('token')->toArray();
