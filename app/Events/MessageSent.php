@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Http\Resources\MessageResource;
 use App\Models\Message;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -12,21 +13,23 @@ use Illuminate\Queue\SerializesModels;
 class MessageSent implements ShouldBroadcastNow {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public Message $message;
+    public $message;
 
     public function __construct(Message $message) {
-        $this->message = $message;
+        //* Load necessary relationships
+        $message->load('sender:id,firstName,lastName,avatar');
+        $this->message = new MessageResource($message);
     }
 
     /**
-     *! Determine the channels the event should broadcast on.
+     * Determine the channels the event should broadcast on.
      *
-     * @return array The list of channels where this event will be broadcasted.
+     * @return array
      */
     public function broadcastOn(): array {
-        //* Broadcasts to a private channel specific to the receiver of the message
         return [
             new PrivateChannel("chat.{$this->message->receiver_id}"),
+            new PrivateChannel("chat.{$this->message->sender_id}"),
         ];
     }
 }
