@@ -21,6 +21,9 @@ class Message extends Model {
         'sender_id',
         'receiver_id',
         'text',
+        'attachment_path',
+        'attachment_name',
+        'attachment_type',
         'status',
     ];
 
