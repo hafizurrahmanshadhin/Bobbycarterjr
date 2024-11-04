@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
 use App\Http\Controllers\Api\FirebaseTokenController;
+use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\ReminderController;
 use App\Http\Controllers\Api\UserAffirmationController;
 use Illuminate\Support\Facades\Route;
@@ -41,3 +42,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 //! User Affirmation Route
 Route::post('/user/affirmation', [UserAffirmationController::class, 'storeOrUpdateAffirmation'])->middleware('auth:sanctum');
+
+//! Message Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/messages/{user}', [MessageController::class, 'GetMessages']);
+    Route::post('/messages/{user}', [MessageController::class, 'SendMessage']);
+    Route::get('/users-with-last-message', [MessageController::class, 'GetUsersWithLastMessage']);
+});
