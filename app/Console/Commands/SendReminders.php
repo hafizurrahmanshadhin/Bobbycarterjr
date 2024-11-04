@@ -44,7 +44,7 @@ class SendReminders extends Command {
         try {
             Log::info("Attempting to send push notification to user ID: $userId");
 
-            $factory   = (new Factory)->withServiceAccount(storage_path('app/firebase-auth.json'));
+            $factory   = (new Factory)->withServiceAccount(storage_path('app/firebase_push_Nofifications.json'));
             $messaging = $factory->createMessaging();
 
             $tokens = FirebaseToken::where('user_id', $userId)->pluck('token')->toArray();
