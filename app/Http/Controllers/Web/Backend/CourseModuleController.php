@@ -2,32 +2,32 @@
 
 namespace App\Http\Controllers\Web\Backend;
 
-use App\Helpers\Helper;
-use App\Http\Controllers\Controller;
+use Exception;
 use App\Models\Course;
 use App\Models\Module;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Helpers\Helper;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class CourseModuleController extends Controller {
 
     public function index(Request $request): JsonResponse | View {
+
+        $course = Course::where('status', 'active')->get();
         if ($request->ajax()) {
-            $data = Module::latest()->get();
+            $data = Module::where('course_id',$request->input('id'))->latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('course_name', function ($data) {
-                    return $data->course->name;
-                })
                 ->addColumn('audio_time', function ($data) {
-                    $page_content = $data->audio_time; // Assume this is in seconds
+                    $page_content = $data->audio_time;
 
                     if ($page_content === null) {
-                        // If audio_time is null, don't show any time
+
                         return null; // Or you can return an empty string or message
                     }
 
@@ -75,11 +75,21 @@ class CourseModuleController extends Controller {
                                     <i class="fe fe-trash"></i>
                                 </a>
                             </div>';
+
                 })
-                ->rawColumns(['course_name', 'audio_time', 'status', 'module', 'action'])
+                ->rawColumns(['audio_time', 'status', 'module', 'action'])
+                ->setRowId(function ($data) {
+                    return $data->id;
+                })
+                ->setRowAttr([
+                    'order_id' => function($data) {
+                        return $data->order_id;
+                    },
+                ])
                 ->make();
+
         }
-        return view('backend.layouts.module.index');
+        return view('backend.layouts.module.index',compact('course'));
     }
 
     public function create() {
@@ -270,6 +280,26 @@ class CourseModuleController extends Controller {
             return response()->json(['success' => true, 'data' => $data]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
+    public function sort(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required|integer|exists:courses,id',
+            'ids' => 'required|array'
+        ]);
+
+        if (!$validator->passes()) {
+            return response()->json(['status' => 0, 'error' => $validator->errors()->toArray()]);
+        } else {
+
+            foreach ($request->ids as $key => $id) {
+                $course_module = Module::where('course_id', $request->course_id)->where('id', $id)->update([
+                    'order_id' => $key,
+                ]);
+            }
         }
     }
 }

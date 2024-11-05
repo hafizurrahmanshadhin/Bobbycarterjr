@@ -24,6 +24,8 @@ Route::controller(CourseModuleController::class)->name('admin.')->group(function
     Route::post('/course/module/status/{id}', 'status')->name('course.module.status');
     Route::post('/course/module/destroy/{id}', 'destroy')->name('course.module.destroy');
     Route::get('/course/module/single/{id}', 'single')->name('course.module.single');
+
+    Route::post('/course/modules/sort', 'sort')->name('course.module.sort');
 });
 
 Route::controller(ArticleController::class)->name('admin.')->group(function () {

@@ -71,6 +71,8 @@
 {{-- SweetAlert2 JS --}}
 <script src="{{ asset('backend/js/sweetalert2@11.js') }}"></script>
 
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+
 {{-- toastr start --}}
 <script>
     $(document).ready(function() {

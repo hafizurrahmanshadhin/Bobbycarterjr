@@ -16,24 +16,32 @@
         </div>
     </div>
     {{-- PAGE-HEADER --}}
-
+    {{-- {{ dd($data) }} --}}
     <div class="row row-sm">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header border-bottom"
                     style="margin-bottom: 0; display: flex; justify-content: space-between;">
-                    <h3 class="card-title">Course Type List</h3>
-                    <a class="btn btn-primary" href="{{ route('admin.course.module.create') }}">Add New</a>
+                    <div>
+                        <label for="options">
+                            <b>Select Course</b>
+                        </label>
+                        <select id="options" class="form-select form-select-lg" style="border: 1px solid #8fbd56">
+                            @foreach ($course as $filterCourse)
+                                <option value="{{ $filterCourse->id }}">{{ $filterCourse->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <h3 class="mb-0">Course Modules</h3>
+
+                    <a class="btn btn-primary btn-lg" href="{{ route('admin.course.module.create') }}">Add New</a>
                 </div>
-
-
                 <div class="card-body">
                     <div class="table-responsive export-table">
                         <table class="table table-bordered dataTables_wrapper dt-bootstrap5 no-footer" id="datatable">
                             <thead>
                                 <tr>
                                     <th class="wd-15p border-bottom-0">#</th>
-                                    <th class="wd-15p border-bottom-0">Course Name</th>
                                     <th class="wd-15p border-bottom-0">Title</th>
                                     <th class="wd-15p border-bottom-0">Duration</th>
                                     <th class="wd-15p border-bottom-0">Module</th>
@@ -42,7 +50,7 @@
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="sortable">
                                 {{-- dynamic data --}}
                             </tbody>
                         </table>
@@ -120,15 +128,13 @@
             });
 
             if (!$.fn.DataTable.isDataTable('#datatable')) {
-                $('#datatable').DataTable({
+                var dTable = $('#datatable').DataTable({
                     order: [],
-                    lengthMenu: [
-                        [10, 25, 50, 100, -1],
-                        [10, 25, 50, 100, "All"]
-                    ],
+                    lengthMenu: false,
                     processing: true,
                     responsive: true,
                     serverSide: true,
+                    paging: false,
 
                     language: {
                         processing: `<div class="text-center">
@@ -155,33 +161,27 @@
                             searchable: false
                         },
                         {
-                            data: 'course_name',
-                            name: 'course_name',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
                             data: 'title',
                             name: 'title',
-                            orderable: true,
+                            orderable: false,
                             searchable: true
                         },
                         {
                             data: 'audio_time',
                             name: 'audio_time',
-                            orderable: true,
+                            orderable: false,
                             searchable: true
                         },
                         {
                             data: 'module',
                             name: 'module',
-                            orderable: true,
+                            orderable: false,
                             searchable: true
                         },
                         {
                             data: 'mark',
                             name: 'mark',
-                            orderable: true,
+                            orderable: false,
                             searchable: true
                         },
                         {
@@ -199,10 +199,17 @@
                     ],
                 });
 
-                dTable.buttons().container().appendTo('#file_exports');
-                new DataTable('#example', {
-                    responsive: true
+                $('#options').change(function() {
+                    var courseId = $(this).val();
+                    if (courseId) {
+                        // Update the DataTable's AJAX source and reload data
+                        dTable.ajax.url("{{ route('admin.course.module.index') }}?id=" + courseId).load();
+                    }
                 });
+                var courseId = $('#options').val();
+                if (courseId) {
+                    dTable.ajax.url("{{ route('admin.course.module.index') }}?id=" + courseId).load();
+                }
             }
         });
 
@@ -346,4 +353,74 @@
                 })
         }
     </script>
+
+    <script>
+        $(document).ready(function() {
+            var $modules = $('#sortable');
+
+            $modules.sortable({
+                connectWith: '#sortable', // Make sure your other lists have this too, if needed
+                items: 'tr', // You are sorting rows, so target tr elements
+                stop: function(event, ui) {
+                    var $target = $(event.target);
+                    var $parent = $(ui.item).parent();
+
+                    // Send the request after sorting
+                    sendModuleSortableRequest($parent);
+
+                    // Handle empty message visibility when no items exist after sorting
+                    if ($target.data('id') !== $parent.data('id')) {
+                        if ($target.find('tr').length) {
+                            sendModuleSortableRequest($target);
+                        } else {
+                            $target.find('.empty-message').show();
+                        }
+                    }
+                }
+            });
+
+            $('table, #sortable').disableSelection();
+        });
+
+        function sendModuleSortableRequest($category) {
+
+            var items = $category.sortable('toArray', {
+                attribute: 'id'
+            }).filter(item => item !== "");
+
+            var orders = items.map((item, index) => index + 1);
+
+            var idOrderMap = items.reduce((acc, id, index) => {
+                acc[id] = orders[index];
+                return acc;
+            }, {});
+
+            console.log(items, orders, idOrderMap);
+
+
+            var data = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                ids: idOrderMap,
+                course_id: $('#options').val()
+            };
+
+            // Perform the AJAX request to update the sorting on the server
+            $.ajax({
+                url: "{{ route('admin.course.module.sort') }}", // Update this if needed
+                type: "POST",
+                data: data,
+                success: function(response) {
+                    console.log('Successfully updated the sort order!');
+                },
+                error: function(xhr, status, error) {
+                    toastr.error('An error occurred while updating the data.');
+                    console.error('AJAX Error:', error);
+                }
+            });
+        }
+    </script>
+    {{-- if ($category.find('tr.meal').length) {
+        $category.find('.empty-message').hide();
+    }
+    $category.find('.category-name').text($category.find('tr:first td').text()); --}}
 @endpush

@@ -16,6 +16,7 @@ class ModuleSeeder extends Seeder
         Module::insert([
             [
                 'course_id' => 1,
+                'order_id' => 1,
                 'title' => 'Introduction to Programming',
                 'content' => 'This module introduces the basics of programming.',
                 'is_exam' => false,
@@ -29,6 +30,7 @@ class ModuleSeeder extends Seeder
             ],
             [
                 'course_id' => 1,
+                'order_id' => 2,
                 'title' => 'Advanced Programming Techniques',
                 'content' => 'This module covers advanced programming techniques.',
                 'is_exam' => false,
@@ -42,6 +44,7 @@ class ModuleSeeder extends Seeder
             ],
             [
                 'course_id' => 1,
+                'order_id' => 3,
                 'title' => 'Advanced Programming',
                 'content' => 'This module covers advanced programming techniques.',
                 'is_exam' => false,
@@ -55,6 +58,7 @@ class ModuleSeeder extends Seeder
             ],
             [
                 'course_id' => 1,
+                'order_id' => 4,
                 'title' => 'Advanced Techniques',
                 'content' => 'This module covers advanced programming techniques.',
                 'is_exam' => false,
@@ -68,6 +72,7 @@ class ModuleSeeder extends Seeder
             ],
             [
                 'course_id' => 1,
+                'order_id' => 5,
                 'title' => 'Database Management',
                 'content' => null,
                 'is_exam' => true,
@@ -81,6 +86,7 @@ class ModuleSeeder extends Seeder
             ],
             [
                 'course_id' => 1,
+                'order_id' => 6,
                 'title' => 'Database Management',
                 'content' => null,
                 'is_exam' => true,
@@ -94,6 +100,7 @@ class ModuleSeeder extends Seeder
             ],
             [
                 'course_id' => 1,
+                'order_id' => 7,
                 'title' => 'Database Management',
                 'content' => null,
                 'is_exam' => true,
@@ -107,6 +114,7 @@ class ModuleSeeder extends Seeder
             ],
             [
                 'course_id' => 3,
+                'order_id' => 1,
                 'title' => 'Web Development Basics',
                 'content' => 'An introduction to HTML, CSS, and JavaScript.',
                 'is_exam' => false,
@@ -120,6 +128,7 @@ class ModuleSeeder extends Seeder
             ],
             [
                 'course_id' => 4,
+                'order_id' => 1,
                 'title' => 'Web Development Basics 2',
                 'content' => 'An introduction to HTML, CSS, and JavaScript. 2',
                 'is_exam' => false,
@@ -133,6 +142,7 @@ class ModuleSeeder extends Seeder
             ],
             [
                 'course_id' => 4,
+                'order_id' => 2,
                 'title' => 'Web Development Basics 3',
                 'content' => 'An introduction to HTML, CSS, and JavaScript. 3',
                 'is_exam' => false,
@@ -146,6 +156,7 @@ class ModuleSeeder extends Seeder
             ],
             [
                 'course_id' => 5,
+                'order_id' => 1,
                 'title' => 'Lorem Basics 4',
                 'content' => 'Lorem introduction to HTML, CSS, and JavaScript. 4',
                 'is_exam' => false,

@@ -25,6 +25,8 @@ return new class extends Migration {
             $table->string('file_url')->nullable();
             $table->string('audio_time')->nullable();
 
+            $table->integer('order_id')->nullable();
+
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
