@@ -138,6 +138,22 @@
         text-decoration: none;
         text-align: left;
     }
+
+    .side-menu__item.active svg {
+        color: #93c259 !important;
+    }
+
+    .side-menu__item.active svg path {
+        fill: #93c259;
+    }
+
+    .side-menu__item:hover svg {
+        color: #93c259 !important;
+    }
+
+    .side-menu__item:hover svg path {
+        fill: #93c259;
+    }
 </style>
 {{-- toastr end --}}
 

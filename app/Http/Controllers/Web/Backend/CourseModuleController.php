@@ -20,7 +20,7 @@ class CourseModuleController extends Controller {
 
         $course = Course::where('status', 'active')->get();
         if ($request->ajax()) {
-            $data = Module::where('course_id',$request->input('id'))->latest()->get();
+            $data = Module::where('course_id', $request->input('id'))->orderBy('order_id', 'asc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('audio_time', function ($data) {
@@ -117,6 +117,7 @@ class CourseModuleController extends Controller {
         }
 
         try {
+            $top_orderModule = Module::where('course_id', $request->course_name)->max('order_id') + 1;
             $module = new Module();
 
             $module->course_id = $request->course_name;
@@ -145,6 +146,7 @@ class CourseModuleController extends Controller {
             }
 
             $module->is_exam = $request->input('is_exam') ? true : false; // Explicitly set to true/false
+            $module->order_id = $top_orderModule;
             $module->mark    = $request->input('mark');
 
             $module->save();
@@ -253,7 +255,7 @@ class CourseModuleController extends Controller {
     }
 
     public function destroy(int $id): JsonResponse {
-        $data = Module::findOrFail($id)->delete();
+        $data = Module::findOrFail($id);
 
         if ($data->file_url) {
             $previousImagePath = public_path($data->file_url);
@@ -261,6 +263,7 @@ class CourseModuleController extends Controller {
                 unlink($previousImagePath);
             }
         }
+        $data->delete();
 
         return response()->json([
             't-success' => true,
@@ -282,7 +285,6 @@ class CourseModuleController extends Controller {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
-
 
     public function sort(Request $request) {
 

@@ -385,13 +385,14 @@
         function sendModuleSortableRequest($category) {
 
             var items = $category.sortable('toArray', {
-                attribute: 'id'
-            }).filter(item => item !== "");
+                    attribute: 'id'
+                })
+                .filter(item => item !== "");
 
             var orders = items.map((item, index) => index + 1);
 
-            var idOrderMap = items.reduce((acc, id, index) => {
-                acc[id] = orders[index];
+            var idOrderMap = orders.reduce((acc, id, index) => {
+                acc[id] = items[index];
                 return acc;
             }, {});
 
@@ -410,6 +411,7 @@
                 type: "POST",
                 data: data,
                 success: function(response) {
+                    $('#datatable').DataTable().ajax.reload();
                     console.log('Successfully updated the sort order!');
                 },
                 error: function(xhr, status, error) {
