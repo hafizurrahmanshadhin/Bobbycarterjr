@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Events\UserStatusUpdated;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use Exception;
@@ -16,8 +17,17 @@ class LogoutController extends Controller {
      */
     public function Logout(): JsonResponse {
         try {
+            $user = Auth::user();
+
             //! Revoke the token that was used to authenticate the current request
-            Auth::user()->currentAccessToken()->delete();
+            $user->currentAccessToken()->delete();
+
+            //* Update is_online status to false
+            $user->is_online = false;
+            $user->save();
+
+            //* Dispatch the UserStatusUpdated event
+            event(new UserStatusUpdated($user));
 
             return Helper::jsonResponse(true, 'User logged out successfully.', 200);
         } catch (Exception $e) {

@@ -50,7 +50,8 @@ return [
              *
              */
 
-            'credentials' => env('FIREBASE_CREDENTIALS', env('GOOGLE_APPLICATION_CREDENTIALS')),
+            // 'credentials' => env('FIREBASE_CREDENTIALS', env('GOOGLE_APPLICATION_CREDENTIALS')),
+            'credentials'         => storage_path('app/firebase_push_Nofifications.json'),
 
             /*
              * ------------------------------------------------------------------------

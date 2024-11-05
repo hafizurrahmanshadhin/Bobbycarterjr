@@ -190,3 +190,4 @@
 {{-- summetnote end --}}
 
 @stack('scripts')
+@vite(['resources/js/app.js'])

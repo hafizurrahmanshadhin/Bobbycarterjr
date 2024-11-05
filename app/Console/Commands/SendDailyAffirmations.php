@@ -93,7 +93,7 @@ class SendDailyAffirmations extends Command {
             Log::info("Attempting to send push notification to user ID: $userId");
 
             //! Initialize Firebase factory and messaging service
-            $factory   = (new Factory)->withServiceAccount(storage_path('app/firebase-auth.json'));
+            $factory   = (new Factory)->withServiceAccount(storage_path('app/firebase_push_Nofifications.json'));
             $messaging = $factory->createMessaging();
 
             //* Retrieve user's Firebase tokens
