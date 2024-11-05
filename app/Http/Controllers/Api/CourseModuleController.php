@@ -21,7 +21,7 @@ class CourseModuleController extends Controller {
         $user = auth()->user();
 
         $course     = Course::findOrFail($course_id);
-        $allModules = Module::where('course_id', $course_id)->get();
+        $allModules = Module::where('course_id', $course_id)->orderBy('order_id', 'asc')->get();
 
         if ($allModules->isEmpty()) {
             return Helper::jsonResponse(true, 'Course Module not found', 200, []);
