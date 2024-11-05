@@ -16,6 +16,7 @@ class Module extends Model {
     protected $fillable = [
         'course_id',
         'content',
+        'order_id',
         'status',
     ];
 
@@ -24,11 +25,13 @@ class Module extends Model {
         'updated_at',
         'deleted_at',
         'status',
+        'order_id',
     ];
 
     protected function casts(): array {
         return [
             'course_id' => 'integer',
+            'order_id' => 'integer',
             'content'   => 'string',
             'status'    => 'string',
         ];

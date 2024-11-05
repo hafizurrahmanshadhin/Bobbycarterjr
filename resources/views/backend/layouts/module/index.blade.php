@@ -50,7 +50,7 @@
                                     <th class="wd-15p border-bottom-0">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="sortable">
                                 {{-- dynamic data --}}
                             </tbody>
                         </table>
@@ -130,13 +130,11 @@
             if (!$.fn.DataTable.isDataTable('#datatable')) {
                 var dTable = $('#datatable').DataTable({
                     order: [],
-                    lengthMenu: [
-                        [10, 25, 50, 100, -1],
-                        [10, 25, 50, 100, "All"]
-                    ],
+                    lengthMenu: false,
                     processing: true,
                     responsive: true,
                     serverSide: true,
+                    paging: false,
 
                     language: {
                         processing: `<div class="text-center">
@@ -165,25 +163,25 @@
                         {
                             data: 'title',
                             name: 'title',
-                            orderable: true,
+                            orderable: false,
                             searchable: true
                         },
                         {
                             data: 'audio_time',
                             name: 'audio_time',
-                            orderable: true,
+                            orderable: false,
                             searchable: true
                         },
                         {
                             data: 'module',
                             name: 'module',
-                            orderable: true,
+                            orderable: false,
                             searchable: true
                         },
                         {
                             data: 'mark',
                             name: 'mark',
-                            orderable: true,
+                            orderable: false,
                             searchable: true
                         },
                         {
@@ -355,4 +353,74 @@
                 })
         }
     </script>
+
+    <script>
+        $(document).ready(function() {
+            var $modules = $('#sortable');
+
+            $modules.sortable({
+                connectWith: '#sortable', // Make sure your other lists have this too, if needed
+                items: 'tr', // You are sorting rows, so target tr elements
+                stop: function(event, ui) {
+                    var $target = $(event.target);
+                    var $parent = $(ui.item).parent();
+
+                    // Send the request after sorting
+                    sendModuleSortableRequest($parent);
+
+                    // Handle empty message visibility when no items exist after sorting
+                    if ($target.data('id') !== $parent.data('id')) {
+                        if ($target.find('tr').length) {
+                            sendModuleSortableRequest($target);
+                        } else {
+                            $target.find('.empty-message').show();
+                        }
+                    }
+                }
+            });
+
+            $('table, #sortable').disableSelection();
+        });
+
+        function sendModuleSortableRequest($category) {
+
+            var items = $category.sortable('toArray', {
+                attribute: 'id'
+            }).filter(item => item !== "");
+
+            var orders = items.map((item, index) => index + 1);
+
+            var idOrderMap = items.reduce((acc, id, index) => {
+                acc[id] = orders[index];
+                return acc;
+            }, {});
+
+            console.log(items, orders, idOrderMap);
+
+
+            var data = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                ids: idOrderMap,
+                course_id: $('#options').val()
+            };
+
+            // Perform the AJAX request to update the sorting on the server
+            $.ajax({
+                url: "{{ route('admin.course.module.sort') }}", // Update this if needed
+                type: "POST",
+                data: data,
+                success: function(response) {
+                    console.log('Successfully updated the sort order!');
+                },
+                error: function(xhr, status, error) {
+                    toastr.error('An error occurred while updating the data.');
+                    console.error('AJAX Error:', error);
+                }
+            });
+        }
+    </script>
+    {{-- if ($category.find('tr.meal').length) {
+        $category.find('.empty-message').hide();
+    }
+    $category.find('.category-name').text($category.find('tr:first td').text()); --}}
 @endpush

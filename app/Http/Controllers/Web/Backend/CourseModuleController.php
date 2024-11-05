@@ -78,6 +78,14 @@ class CourseModuleController extends Controller {
 
                 })
                 ->rawColumns(['audio_time', 'status', 'module', 'action'])
+                ->setRowId(function ($data) {
+                    return $data->id;
+                })
+                ->setRowAttr([
+                    'order_id' => function($data) {
+                        return $data->order_id;
+                    },
+                ])
                 ->make();
 
         }
@@ -272,6 +280,26 @@ class CourseModuleController extends Controller {
             return response()->json(['success' => true, 'data' => $data]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
+    public function sort(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required|integer|exists:courses,id',
+            'ids' => 'required|array'
+        ]);
+
+        if (!$validator->passes()) {
+            return response()->json(['status' => 0, 'error' => $validator->errors()->toArray()]);
+        } else {
+
+            foreach ($request->ids as $key => $id) {
+                $course_module = Module::where('course_id', $request->course_id)->where('id', $id)->update([
+                    'order_id' => $key,
+                ]);
+            }
         }
     }
 }
