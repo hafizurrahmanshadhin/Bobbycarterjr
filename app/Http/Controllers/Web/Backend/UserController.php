@@ -47,7 +47,9 @@ class UserController extends Controller {
 
                 ->addColumn('created_at', function ($data) {
                     $created_at = $data->created_at;
-                    return $created_at;
+                    $human_date = $data->created_at->diffForHumans();
+                    $full_date = "$created_at ($human_date)";
+                    return $full_date;
                 })
 
                 ->addColumn('status', function ($data) {
