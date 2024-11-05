@@ -199,4 +199,15 @@
             });
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+            Echo.private('chat.' + 2).listen('MessageSent', (e) => {
+                console.log('Message Sender:', e.message);
+            })
+            Echo.private('chat.' + 1).listen('MessageSent', (e) => {
+                console.log('Message Receiver:', e.message);
+            })
+        });
+    </script>
 @endpush
