@@ -200,7 +200,7 @@
         });
     </script>
 
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             Echo.private('chat.' + 2).listen('MessageSent', (e) => {
                 console.log('Message Sender:', e.message);
@@ -209,5 +209,5 @@
                 console.log('Message Receiver:', e.message);
             })
         });
-    </script>
+    </script> --}}
 @endpush
