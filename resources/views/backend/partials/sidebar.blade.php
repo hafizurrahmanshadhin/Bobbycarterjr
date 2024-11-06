@@ -203,7 +203,7 @@
                                     fill="#000000" opacity="1" data-original="#000000"></path>
                             </g>
                         </svg>
-                        <span class="side-menu__label">Survay Questions</span>
+                        <span class="side-menu__label">Survey Questions</span>
                     </a>
                 </li>
 
