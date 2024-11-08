@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\SurvayQuestion;
 use App\Models\UserRecommended;
 use App\Models\UserResponse;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,9 +21,7 @@ class SurvayQuestionController extends Controller {
      * @param  int  $course_type_id
      * @return JsonResponse
      */
-
     public function SurvayQuestion(int $course_type_id): JsonResponse {
-
         // Retrieve active course IDs for the given course type
         $courseIds = Course::where('course_type_id', $course_type_id)
             ->where('status', 'active')
@@ -47,11 +46,10 @@ class SurvayQuestionController extends Controller {
      * Return SurvayQuestion Data.
      *
      * @param  Request  $request
+     * @param  int  $courseTypeId
      * @return JsonResponse
      */
-
-    public function SurvayQuestionAnswer_store(Request $request, $courseTypeId) {
-
+    public function SurvayQuestionAnswer_store(Request $request, int $courseTypeId): JsonResponse {
         $validator = Validator::make($request->all(), [
             'answers'               => 'required|array|min:1',
             'answers.*.question_id' => 'required|integer|exists:survay_questions,id',
@@ -69,7 +67,6 @@ class SurvayQuestionController extends Controller {
         DB::beginTransaction();
 
         try {
-
             $userResponses = [];
 
             // Loop through each answer pair and store them
@@ -89,7 +86,6 @@ class SurvayQuestionController extends Controller {
             $lowestCourseMark = [];
 
             foreach ($lowestMarkCourses as $item) {
-
                 $lowestCourseMark[] = UserRecommended::create([
                     'user_id'   => auth()->id(),
                     'course_id' => $item['course_id'],
@@ -98,17 +94,18 @@ class SurvayQuestionController extends Controller {
 
             DB::commit();
             return Helper::jsonResponse(true, 'Answers stored successfully', 200, $userResponses);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return Helper::jsonResponse(false, 'An error occurred while processing your request.', 500, $e->getMessage());
         }
     }
 
     private function calculateCourseMarks(int $courseTypeId) {
-        $reverseScoredQuestions = [1, 2, 3, 8, 9, 11, 12, 13, 17, 18]; // IDs for questions needing reverse scoring
-        $maxScalePoint          = 5;
+        $reverseScoredQuestions = [1, 2, 3, 8, 9, 11, 12, 13, 17, 18];
+        $normalScoredQuestions  = [4, 5, 6, 7, 10, 14, 15, 16];
+        $totalScalePoints       = 5;
 
-        $query = Course::with(['survayQuestions.options', 'survayQuestions.userResponses' => function ($query) {
+        $query = Course::with(['survayQuestions.userResponses' => function ($query) {
             $query->where('user_id', auth()->user()->id);
         }]);
 
@@ -118,29 +115,39 @@ class SurvayQuestionController extends Controller {
 
         $courses = $query->get();
 
-        $coursesWithMarks = $courses->map(function ($course) use ($reverseScoredQuestions, $maxScalePoint) {
-            $totalMarks = $course->survayQuestions->sum(function ($question) use ($reverseScoredQuestions, $maxScalePoint) {
-                return $question->userResponses->sum(function ($response) use ($question, $reverseScoredQuestions, $maxScalePoint) {
-                    // Assuming 'option->id' is mapped to the answer value, with 1 = strongly agree, 5 = strongly disagree
-                    $answerValue = $response->option->id;
+        $mapOptionIdToValue = function ($optionId) {
+            return ($optionId % 5) + 1;
+        };
 
-                    // Apply reverse scoring if the question is in the reverseScoredQuestions array
-                    if (in_array($question->id, $reverseScoredQuestions)) {
-                        $answerValue = ($maxScalePoint + 1) - $answerValue; // Reverse scoring formula
+        $coursesWithMarks = $courses->map(function ($course) use ($reverseScoredQuestions, $normalScoredQuestions, $totalScalePoints, $mapOptionIdToValue) {
+            $totalScore = 0;
+
+            foreach ($course->survayQuestions as $question) {
+                $questionId   = $question->id;
+                $userResponse = $question->userResponses->first();
+
+                if ($userResponse && $userResponse->option_id) {
+                    $responseValue = $mapOptionIdToValue($userResponse->option_id);
+
+                    if (in_array($questionId, $reverseScoredQuestions)) {
+                        $score = ($totalScalePoints + 1) - $responseValue;
+                    } elseif (in_array($questionId, $normalScoredQuestions)) {
+                        $score = $responseValue;
+                    } else {
+                        $score = 0;
                     }
 
-                    return $answerValue;
-                });
-            });
+                    $totalScore += $score;
+                }
+            }
 
             return [
                 'course_name' => $course->name,
-                'mark'        => $totalMarks,
+                'mark'        => $totalScore,
                 'course_id'   => $course->id,
             ];
         });
 
         return $coursesWithMarks;
     }
-
 }
