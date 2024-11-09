@@ -36,7 +36,6 @@
                                     <th class="wd-15p border-bottom-0">Course Name</th>
                                     <th class="wd-15p border-bottom-0">Image</th>
                                     <th class="wd-15p border-bottom-0">Title</th>
-                                    <th class="wd-15p border-bottom-0">Description</th>
                                     <th class="wd-15p border-bottom-0">Mark</th>
                                     <th class="wd-15p border-bottom-0">Audio</th>
                                     <th class="wd-15p border-bottom-0">Duration</th>
@@ -114,12 +113,6 @@
                         {
                             data: 'title',
                             name: 'title',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'description',
-                            name: 'description',
                             orderable: true,
                             searchable: true
                         },
