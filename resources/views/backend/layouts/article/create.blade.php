@@ -49,8 +49,8 @@
                                     @enderror
                                 </div>
                                 <div>
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea name="description" rows="8" id="description"
+                                    <label for="summernote" class="form-label">Description</label>
+                                    <textarea name="description" rows="8" id="summernote"
                                         class="form-control @error('description') is-invalid @enderror" placeholder="Enter Description">{{ old('description') }}</textarea>
                                     @error('description')
                                         <span class="text-danger">{{ $message }}</span>
