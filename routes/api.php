@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\FirebaseTokenController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\ReminderController;
 use App\Http\Controllers\Api\UserAffirmationController;
+use App\Http\Controllers\Api\VoiceController;
 use Illuminate\Support\Facades\Route;
 
 //! Auth Routes
@@ -48,4 +49,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/messages/{user}', [MessageController::class, 'GetMessages']);
     Route::post('/messages/{user}', [MessageController::class, 'SendMessage']);
     Route::get('/users-with-last-message', [MessageController::class, 'GetUsersWithLastMessage']);
+});
+
+
+Route::controller(VoiceController::class)->group(function () {
+    Route::get('rrr/{text}', 'rrr');
 });
