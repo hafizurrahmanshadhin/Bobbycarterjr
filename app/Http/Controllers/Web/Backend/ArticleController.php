@@ -29,7 +29,7 @@ class ArticleController extends Controller {
                 })
                 ->addColumn('title', function ($data) {
                     $page_content       = $data->title;
-                    $short_page_content = strlen($page_content) > 70 ? substr($page_content, 0, 70) . '...' : $page_content;
+                    $short_page_content = strlen($page_content) > 40 ? substr($page_content, 0, 40) . '...' : $page_content;
                     return '<p>' . $short_page_content . ' </p>';
                 })
                 ->addColumn('image_url', function ($data) {
