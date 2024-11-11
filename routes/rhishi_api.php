@@ -13,12 +13,12 @@ use App\Http\Controllers\Api\SurvayQuestionController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::controller(SubscriptionController::class)->group(function () {
+    Route::get('/package/free', 'freePackage');
+    Route::get('/package/premium', 'premiumPackage');
+});
 
-    Route::controller(SubscriptionController::class)->group(function () {
-        Route::get('/package/free', 'freePackage');
-        Route::get('/package/premium', 'premiumPackage');
-    });
+Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::controller(UserController::class)->group(function () {
         Route::get('/user/data', 'userData');
