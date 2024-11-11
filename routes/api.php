@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ReminderController;
 use App\Http\Controllers\Api\UserAffirmationController;
 use App\Http\Controllers\Api\VoiceController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\SubscriptionController;
 
 //! Auth Routes
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
@@ -22,6 +23,11 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 
 //! Route For Socialite Login
 Route::post('/social-login', [SocialLoginController::class, 'socialLogin'])->name('social.login');
+
+Route::controller(SubscriptionController::class)->group(function () {
+    Route::get('/package/free', 'freePackage');
+    Route::get('/package/premium', 'premiumPackage');
+});
 
 //! Reminder Routes
 Route::group(['middleware' => ['auth:sanctum', 'is_active']], function () {

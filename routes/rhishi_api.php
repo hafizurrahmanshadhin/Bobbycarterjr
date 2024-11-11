@@ -7,16 +7,10 @@ use App\Http\Controllers\Api\CourseModuleController;
 use App\Http\Controllers\Api\CourseTypeController;
 use App\Http\Controllers\Api\JournalController;
 use App\Http\Controllers\Api\StatisticsController;
-use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\SurvayMarksController;
 use App\Http\Controllers\Api\SurvayQuestionController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
-
-Route::controller(SubscriptionController::class)->group(function () {
-    Route::get('/package/free', 'freePackage');
-    Route::get('/package/premium', 'premiumPackage');
-});
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
