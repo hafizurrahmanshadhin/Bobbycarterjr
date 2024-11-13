@@ -43,7 +43,7 @@ class UserController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,gif|max:5120',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'nullable|string',
+            'email' => 'required|email|unique:users,email,' . ($request->user() ? $request->user()->id : 'NULL'),
         ]);
 
         if ($validator->fails()){
