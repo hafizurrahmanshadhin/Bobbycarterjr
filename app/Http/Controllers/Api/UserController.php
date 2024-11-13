@@ -43,7 +43,7 @@ class UserController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,gif|max:5120',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'address' => 'nullable|string',
+            'email' => 'nullable|string',
         ]);
 
         if ($validator->fails()){
@@ -76,7 +76,7 @@ class UserController extends Controller
 
             $user->firstName = $request->first_name;
             $user->lastName = $request->last_name;
-            $user->address = $request->address;
+            $user->email = $request->email;
             $user->avatar = $imageName;
 
             $user->save();
