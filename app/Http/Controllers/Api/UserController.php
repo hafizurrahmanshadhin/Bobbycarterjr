@@ -55,7 +55,7 @@ class UserController extends Controller
             $user = User::findOrFail($id);
 
             // If user is not found, return an error response
-            if ($user->id === auth()->id()) {
+            if ($user->id !== auth()->id()) {
                 return Helper::jsonResponse(false, 'This User not authenticated.', 401, []);
             }
 
