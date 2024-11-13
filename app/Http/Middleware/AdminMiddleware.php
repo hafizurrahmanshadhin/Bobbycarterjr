@@ -15,11 +15,11 @@ class AdminMiddleware {
      * @param Closure $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next): Response {
+    public function handle(Request $request, Closure $next) {
         if (Auth::check() && Auth::user()->role === 'admin') {
             return $next($request);
         }
 
-        return redirect()->route('user.dashboard');
+        return abort(401);
     }
 }
