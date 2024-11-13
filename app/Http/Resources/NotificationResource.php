@@ -2,6 +2,7 @@
 namespace App\Http\Resources;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,13 +25,24 @@ class NotificationResource extends JsonResource {
             $userAvatar = $this->notifiable->avatar;
         }
 
+        $createdAt = Carbon::parse($this->created_at);
+        if ($createdAt->isToday()) {
+            $notificationDay = 'today';
+        } elseif ($createdAt->isYesterday()) {
+            $notificationDay = 'yesterday';
+        } else {
+            $daysAgo         = (int) $createdAt->diffInDays(Carbon::now());
+            $notificationDay = "$daysAgo days ago";
+        }
+
         return [
-            'id'          => $this->id,
-            'user_name'   => $userName,
-            'user_avatar' => $userAvatar,
-            'created_at'  => $this->created_at,
-            'read_at'     => $this->read_at,
-            'data'        => $formattedData,
+            'id'               => $this->id,
+            'user_name'        => $userName,
+            'user_avatar'      => $userAvatar,
+            'created_at'       => $this->created_at,
+            'read_at'          => $this->read_at,
+            'data'             => $formattedData,
+            'notification_day' => $notificationDay,
         ];
     }
 }
