@@ -7,11 +7,12 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
 use App\Http\Controllers\Api\FirebaseTokenController;
 use App\Http\Controllers\Api\MessageController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ReminderController;
+use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\UserAffirmationController;
 use App\Http\Controllers\Api\VoiceController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\SubscriptionController;
 
 //! Auth Routes
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
@@ -50,13 +51,18 @@ Route::middleware('auth:sanctum')->group(function () {
 //! User Affirmation Route
 Route::post('/user/affirmation', [UserAffirmationController::class, 'storeOrUpdateAffirmation'])->middleware('auth:sanctum');
 
+//! Notification Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'GetNotifications']);
+    Route::post('/notifications/read', [NotificationController::class, 'MarkAsRead']);
+});
+
 //! Message Routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/messages/{user}', [MessageController::class, 'GetMessages']);
     Route::post('/messages/{user}', [MessageController::class, 'SendMessage']);
     Route::get('/users-with-last-message', [MessageController::class, 'GetUsersWithLastMessage']);
 });
-
 
 Route::controller(VoiceController::class)->group(function () {
     Route::get('rrr/{text}', 'rrr');
