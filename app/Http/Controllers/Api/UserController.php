@@ -56,7 +56,7 @@ class UserController extends Controller
 
             // If user is not found, return an error response
             if ($user->id !== auth()->id()) {
-                return Helper::jsonResponse(false, 'This User not authenticated.', 401, []);
+                return Helper::jsonResponse(false, 'Unauthorized Access!', 404);
             }
 
             if ($request->hasFile('avatar')) {
