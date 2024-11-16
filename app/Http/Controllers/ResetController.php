@@ -13,7 +13,7 @@ class ResetController extends Controller {
      * @return JsonResponse
      */
     public function RunMigrations(): JsonResponse {
-        Artisan::call('migrate:fresh --seed');
+        // Artisan::call('migrate:fresh --seed');
         Artisan::call('optimize:clear');
 
         return Helper::jsonResponse(true, 'Migrations have been Refreshed, Seeded, and Cache Cleared!', 200);
