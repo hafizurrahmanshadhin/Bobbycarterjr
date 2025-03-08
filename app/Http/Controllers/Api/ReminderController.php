@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ReminderResource;
 use App\Models\FirebaseToken;
 use App\Models\Reminder;
 use App\Notifications\ReminderNotification;
@@ -103,7 +104,7 @@ class ReminderController extends Controller {
             return Helper::jsonResponse(true, 'Reminder not found', 200, []);
         }
 
-        return Helper::jsonResponse(true, 'Reminder retrieved successfully', 200, $reminder);
+        return Helper::jsonResponse(true, 'Reminder retrieved successfully', 200, ReminderResource::collection($reminder));
     }
 
     public function reminderDelete(int $id) {

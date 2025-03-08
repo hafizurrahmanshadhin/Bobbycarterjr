@@ -1,6 +1,5 @@
 /.phpunit.cache
 /node_modules
-/public/build
 /public/hot
 /vendor
 .env
@@ -16,4 +15,3 @@ yarn-error.log
 /storage/framework
 /storage/logs
 /bootstrap/cache
-

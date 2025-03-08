@@ -6,9 +6,11 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\CourseType;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
@@ -89,9 +91,56 @@ class CourseController extends Controller {
 
             $course->save();
 
+            // Prepare the notification data for the new course.
+            $notificationData = [
+                'title' => 'New Course Available!',
+                'body'  => 'A new course "' . $course->name . '" has been created. Check it out now!',
+            ];
+
+            // Retrieve all users that are subscribed.
+            $users = User::where('role', 'user')->get();
+
+            // Loop through each user and send the push notification.
+            foreach ($users as $user) {
+                $this->sendPushNotification($user->id, $notificationData);
+            }
+
             return response()->json(['success' => true, 'message' => 'Course created successfully']);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    protected function sendPushNotification($userId, $notificationData) {
+        try {
+            Log::info("Attempting to send push notification to user ID: $userId for new course");
+
+            $factory   = (new \Kreait\Firebase\Factory)->withServiceAccount(storage_path('app/firebase_push_Nofifications.json'));
+            $messaging = $factory->createMessaging();
+
+            // Retrieve Firebase tokens for the user.
+            $tokens = \App\Models\FirebaseToken::where('user_id', $userId)->pluck('token')->toArray();
+
+            if (empty($tokens)) {
+                Log::info("No active Firebase tokens found for user ID: $userId");
+                return;
+            }
+
+            Log::info("Firebase tokens for user ID: $userId", ['tokens' => $tokens]);
+
+            $notification = \Kreait\Firebase\Messaging\Notification::create($notificationData['title'], $notificationData['body']);
+            $message      = \Kreait\Firebase\Messaging\CloudMessage::new ()->withNotification($notification);
+
+            Log::info("Notification payload for user ID: $userId", [
+                'title' => $notificationData['title'],
+                'body'  => $notificationData['body'],
+            ]);
+
+            $messaging->sendMulticast($message, $tokens);
+
+            Log::info("Push notification sent successfully to user ID: $userId");
+        } catch (Exception $e) {
+            Log::error("Failed to send push notification to user ID: $userId. Error: {$e->getMessage()}");
         }
     }
 
