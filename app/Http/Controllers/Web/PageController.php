@@ -12,7 +12,7 @@ class PageController extends Controller
     {
         $dynamicPage = DynamicPage::query()
             ->where('status', 'active')
-            ->where('id', 1)
+            ->where('id', 2)
             ->firstOrFail();
         return view('frontend.page', compact('dynamicPage'));
     }
@@ -21,7 +21,7 @@ class PageController extends Controller
     {
         $dynamicPage = DynamicPage::query()
             ->where('status', 'active')
-            ->where('id', 2)
+            ->where('id', 1)
             ->firstOrFail();
         return view('frontend.page', compact('dynamicPage'));
     }
