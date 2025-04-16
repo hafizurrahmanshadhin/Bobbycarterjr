@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-    public function termsAndConditions()
+    public function appTerms()
     {
         $dynamicPage = DynamicPage::query()
             ->where('status', 'active')
