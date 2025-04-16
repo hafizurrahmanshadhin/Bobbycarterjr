@@ -13,7 +13,8 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
-class DynamicPageController extends Controller {
+class DynamicPageController extends Controller
+{
     /**
      * Display a listing of dynamic page content.
      *
@@ -21,7 +22,8 @@ class DynamicPageController extends Controller {
      * @return View|JsonResponse
      * @throws Exception
      */
-    public function index(Request $request): View | JsonResponse {
+    public function index(Request $request): View | JsonResponse
+    {
         if ($request->ajax()) {
             $data = DynamicPage::latest()->get();
             return DataTables::of($data)
@@ -48,12 +50,8 @@ class DynamicPageController extends Controller {
 
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                <a href="' . route('settings.dynamic_page.edit', ['id' => $data->id]) . '" type="button" class="btn btn-primary fs-14 text-white edit-icn" title="Edit">
+                                <a href="' . route('settings.dynamic_page.edit', ['id' => $data->id]) . '" type="button" class="text-white btn btn-primary fs-14 edit-icn" title="Edit">
                                     <i class="fe fe-edit"></i>
-                                </a>
-
-                                <a href="#" type="button" onclick="showDeleteConfirm(' . $data->id . ')" class="btn btn-danger fs-14 text-white delete-icn" title="Delete">
-                                    <i class="fe fe-trash"></i>
                                 </a>
                             </div>';
                 })
@@ -68,7 +66,8 @@ class DynamicPageController extends Controller {
      *
      * @return View
      */
-    public function create(): View {
+    public function create(): View
+    {
         return view('backend.layouts.settings.dynamic_page.create');
     }
 
@@ -78,7 +77,8 @@ class DynamicPageController extends Controller {
      * @param Request $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse {
+    public function store(Request $request): RedirectResponse
+    {
         try {
             $validator = Validator::make($request->all(), [
                 'page_title'   => 'required|string|max:100',
@@ -107,7 +107,8 @@ class DynamicPageController extends Controller {
      * @param int $id
      * @return View
      */
-    public function edit(int $id): View {
+    public function edit(int $id): View
+    {
         $data = DynamicPage::find($id);
         return view('backend.layouts.settings.dynamic_page.edit', compact('data'));
     }
@@ -119,7 +120,8 @@ class DynamicPageController extends Controller {
      * @param int $id
      * @return RedirectResponse
      */
-    public function update(Request $request, int $id): RedirectResponse {
+    public function update(Request $request, int $id): RedirectResponse
+    {
         try {
             $validator = Validator::make($request->all(), [
                 'page_title'   => 'required|string|max:100',
@@ -137,7 +139,6 @@ class DynamicPageController extends Controller {
             $data->update();
 
             return redirect()->route('settings.dynamic_page.index')->with('t-success', 'Dynamic Page Updated Successfully.');
-
         } catch (Exception) {
             return redirect()->route('settings.dynamic_page.index')->with('t-success', 'Dynamic Page failed to update');
         }
@@ -149,7 +150,8 @@ class DynamicPageController extends Controller {
      * @param int $id
      * @return JsonResponse
      */
-    public function status(int $id): JsonResponse {
+    public function status(int $id): JsonResponse
+    {
         $data = DynamicPage::findOrFail($id);
         if ($data->status == 'active') {
             $data->status = 'inactive';
@@ -178,7 +180,8 @@ class DynamicPageController extends Controller {
      * @param int $id
      * @return JsonResponse
      */
-    public function destroy(int $id): JsonResponse {
+    public function destroy(int $id): JsonResponse
+    {
         try {
             $data = DynamicPage::findOrFail($id);
             $data->delete();

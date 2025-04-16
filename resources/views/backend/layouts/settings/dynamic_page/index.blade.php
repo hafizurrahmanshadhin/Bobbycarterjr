@@ -21,11 +21,11 @@
     <div class="row row-sm">
         <div class="col-lg-12">
             <div class="card">
-                <div class="card-header border-bottom"
+                {{-- <div class="card-header border-bottom"
                     style="margin-bottom: 0; display: flex; justify-content: space-between;">
                     <h3 class="card-title">Dynamic Page Table</h3>
                     <a href="{{ route('settings.dynamic_page.create') }}" class="btn btn-primary">Add New Page</a>
-                </div>
+                </div> --}}
 
                 <div class="card-body">
                     <div class="table-responsive">
