@@ -54,10 +54,44 @@
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
+        .login-btn,
+        .dashboard-btn,
+        .delete-account-btn {
+            position: absolute;
+            padding: 0.8em 2em;
+            font-size: 1.2em;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
         .login-btn:hover,
         .dashboard-btn:hover {
             background-color: rgba(0, 0, 0, 0.9);
             transform: scale(1.05);
+        }
+
+        .login-btn:hover,
+        .dashboard-btn:hover,
+        .delete-account-btn:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+            transform: scale(1.05);
+        }
+
+        .dashboard-btn {
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .delete-account-btn {
+            bottom: 20px;
+            left: 200px;
+            background-color: rgba(192, 57, 43, 0.8);
+            /* red-ish tone */
         }
 
         @media (max-width: 600px) {
@@ -69,6 +103,25 @@
                 bottom: 10px;
                 left: 10px;
             }
+
+            .dashboard-btn {
+                bottom: 10px;
+                left: 10px;
+            }
+
+            .delete-account-btn {
+                bottom: 10px;
+                left: 160px;
+                font-size: 1em;
+                padding: 0.6em 1.5em;
+            }
+
+            .login-btn {
+                bottom: 10px;
+                left: 10px;
+                font-size: 1em;
+                padding: 0.6em 1.5em;
+            }
         }
     </style>
 </head>
@@ -78,6 +131,9 @@
         @auth
             <a href="{{ route('dashboard') }}" class="dashboard-btn">
                 Dashboard
+            </a>
+            <a href="{{ route('delete.account.page') }}" class="delete-account-btn">
+                Delete Account
             </a>
         @else
             <a href="{{ route('login') }}" class="login-btn">
