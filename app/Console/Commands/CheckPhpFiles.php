@@ -2,17 +2,14 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
 
-class CheckPhpFiles extends Command
-{
-    protected $signature = 'check:phpfiles';
+class CheckPhpFiles extends Command {
+    protected $signature   = 'check:phpfiles';
     protected $description = 'Check for leading spaces or blank lines before <?php in PHP files (excluding Blade views)';
 
-    public function handle()
-    {
-        $finder = new Finder();
+    public function handle() {
+        $finder    = new Finder();
         $hasErrors = false;
 
         // Find all PHP files in the project
@@ -22,7 +19,7 @@ class CheckPhpFiles extends Command
             ->exclude(['vendor', 'storage', 'bootstrap/cache']);
 
         foreach ($finder as $file) {
-            $path = $file->getRealPath();
+            $path     = $file->getRealPath();
             $contents = file_get_contents($path);
 
             // Skip files that don't start with <?php
@@ -31,7 +28,7 @@ class CheckPhpFiles extends Command
             }
 
             // Check for any content before <?php
-            $firstPhpTag = strpos($contents, '<?php');
+            $firstPhpTag  = strpos($contents, '<?php');
             $beforePhpTag = substr($contents, 0, $firstPhpTag);
 
             if (strlen($beforePhpTag) > 0) {

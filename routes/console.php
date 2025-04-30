@@ -10,7 +10,6 @@ Schedule::command(CheckExpiredSubscriptions::class)->daily();
 Schedule::command(SendReminders::class)->everyMinute();
 Schedule::command('send:daily-affirmations')->everyMinute();
 
-
 // whitespace check
 Artisan::command('check:whitespace', function () {
     $this->call(CheckPhpFiles::class);
