@@ -18,6 +18,7 @@ class RegisterResource extends JsonResource {
             'firstName' => $this->firstName,
             'lastName'  => $this->lastName,
             'email'     => $this->email,
+            'is_free'   => now()->lessThan($this->free_until),
         ];
     }
 }

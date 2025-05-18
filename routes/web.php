@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 //! Route for Reset Database and Optimize Clear
 Route::get('/reset', [ResetController::class, 'RunMigrations'])->name('reset');
+Route::get('/migrate', [ResetController::class, 'RunMigrate'])->name('migrate');
 
 //! Route for Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('welcome');

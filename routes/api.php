@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ReminderController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\UserAffirmationController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VoiceController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,8 @@ Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:sa
 Route::post('/send-otp', [PasswordResetController::class, 'sendOtpToEmail'])->name('send.otp');
 Route::post('/verify-otp', [PasswordResetController::class, 'verifyOtp'])->name('verify.otp');
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('reset.password');
+
+Route::post('/user/free-status', [UserController::class, 'updateFreeStatus'])->middleware('auth:sanctum');
 
 //! Route For Socialite Login
 Route::post('/social-login', [SocialLoginController::class, 'socialLogin'])->name('social.login');

@@ -8,19 +8,18 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use URL;
 
-class UserController extends Controller
-{
-     /**
+class UserController extends Controller {
+    /**
      * Return Login User Data.
      *
      * @return JsonResponse
      */
 
-    public function userData() : JsonResponse {
+    public function userData(): JsonResponse {
         $user = auth()->user();
 
         if (!$user) {
@@ -40,13 +39,13 @@ class UserController extends Controller
     public function userUpdate(Request $request, int $id) {
 
         $validator = Validator::make($request->all(), [
-            'avatar' => 'nullable|image|mimes:jpeg,png,gif|max:5120',
+            'avatar'     => 'nullable|image|mimes:jpeg,png,gif|max:5120',
             'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . ($request->user() ? $request->user()->id : 'NULL'),
+            'last_name'  => 'required|string|max:255',
+            'email'      => 'required|email|unique:users,email,' . ($request->user() ? $request->user()->id : 'NULL'),
         ]);
 
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return Helper::jsonResponse(false, 'Validation Failed', 422, $validator->errors()->first());
         }
 
@@ -68,16 +67,16 @@ class UserController extends Controller
                     }
                 }
 
-                $image                        = $request->file('avatar');
-                $imageName                    = Helper::fileUpload($image, 'User/Avatar', $image->getClientOriginalName());
+                $image     = $request->file('avatar');
+                $imageName = Helper::fileUpload($image, 'User/Avatar', $image->getClientOriginalName());
             } else {
                 $imageName = $user->avatar;
             }
 
             $user->firstName = $request->first_name;
-            $user->lastName = $request->last_name;
-            $user->email = $request->email;
-            $user->avatar = $imageName;
+            $user->lastName  = $request->last_name;
+            $user->email     = $request->email;
+            $user->avatar    = $imageName;
 
             $user->save();
 
@@ -87,7 +86,6 @@ class UserController extends Controller
         }
     }
 
-
     /**
      * Password Reset to the user.
      *
@@ -95,10 +93,10 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-     public function updatePassword(Request $request) {
+    public function updatePassword(Request $request) {
         $validator = Validator::make($request->all(), [
             'current_password' => ['required', 'string'],
-            'password' => [
+            'password'         => [
                 'required',
                 'string',
                 'min:8',
@@ -133,7 +131,7 @@ class UserController extends Controller
             // Handle any exceptions and return an error response
             return Helper::jsonResponse(true, 'An error occurred during Deleting User.', 500, $e->getMessage());
         }
-     }
+    }
 
     /**
      * Delete the authenticated user's account
@@ -185,5 +183,21 @@ class UserController extends Controller
         } catch (Exception $e) {
             return Helper::jsonResponse(false, 'An error occurred while generating the user profile link.', 500, ['error' => $e->getMessage()]);
         }
+    }
+
+    public function updateFreeStatus(Request $request): JsonResponse {
+        $user   = auth()->user();
+        $isFree = $request->boolean('is_free');
+
+        // If `is_free` is true => indefinite (null). If false => set in the past.
+        $user->update([
+            'free_until' => $isFree ? null : now()->subMinute(),
+        ]);
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Free status updated.',
+            'is_free' => ($user->free_until === null || now()->lessThan($user->free_until)),
+        ]);
     }
 }

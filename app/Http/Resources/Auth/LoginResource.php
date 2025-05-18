@@ -18,6 +18,7 @@ class LoginResource extends JsonResource {
             'firstName' => $this->firstName,
             'lastName'  => $this->lastName,
             'email'     => $this->email,
+            'is_free'   => ($this->free_until === null || now()->lessThan($this->free_until)),
         ];
     }
 }

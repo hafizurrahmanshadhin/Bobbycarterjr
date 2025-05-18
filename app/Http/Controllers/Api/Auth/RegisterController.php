@@ -33,10 +33,11 @@ class RegisterController extends Controller {
             } else {
                 // If the user does not exist, create a new user record
                 $existingUser = User::create([
-                    'firstName' => $request->input('firstName'),
-                    'lastName'  => $request->input('lastName'),
-                    'email'     => $request->input('email'),
-                    'password'  => Hash::make($request->input('password')),
+                    'firstName'  => $request->input('firstName'),
+                    'lastName'   => $request->input('lastName'),
+                    'email'      => $request->input('email'),
+                    'password'   => Hash::make($request->input('password')),
+                    'free_until' => now()->addDays(7),
                 ]);
             }
 
