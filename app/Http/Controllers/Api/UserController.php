@@ -20,13 +20,25 @@ class UserController extends Controller {
      */
 
     public function userData(): JsonResponse {
+        // $user = auth()->user();
+
+        // if (!$user) {
+        //     return Helper::jsonResponse(true, 'User not authenticated', 200, []);
+        // }
+
+        // return Helper::jsonResponse(true, 'User data fetched successfully', 200, $user);
+
         $user = auth()->user();
 
         if (!$user) {
             return Helper::jsonResponse(true, 'User not authenticated', 200, []);
         }
 
-        return Helper::jsonResponse(true, 'User data fetched successfully', 200, $user);
+        // Convert user to array, then add “is_free”
+        $userData            = $user->toArray();
+        $userData['is_free'] = ($user->free_until === null || now()->lessThan($user->free_until));
+
+        return Helper::jsonResponse(true, 'User data fetched successfully', 200, $userData);
     }
 
     /**
