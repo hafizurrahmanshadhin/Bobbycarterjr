@@ -15,6 +15,6 @@ Artisan::command('check:whitespace', function () {
     $this->call(CheckPhpFiles::class);
 });
 
-Schedule::call(function () {
-    logger()->info('test it');
-})->everySecond();
+// Schedule::call(function () {
+//     logger()->info('test it');
+// })->everySecond();
