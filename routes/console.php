@@ -14,3 +14,7 @@ Schedule::command('send:daily-affirmations')->everyMinute();
 Artisan::command('check:whitespace', function () {
     $this->call(CheckPhpFiles::class);
 });
+
+Schedule::call(function () {
+    logger()->info('test it');
+})->everySecond();
