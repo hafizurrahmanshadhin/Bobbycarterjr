@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\SurvayQuestionController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum', 'restrict_guest']], function () {
 
     Route::controller(UserController::class)->group(function () {
         Route::get('/user/data', 'userData');

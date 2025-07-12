@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CheckUserStatus;
+use App\Http\Middleware\RestrictGuestAccessMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -44,8 +45,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'admin' => AdminMiddleware::class,
-            'is_active' => CheckUserStatus::class,
+            'admin'          => AdminMiddleware::class,
+            'is_active'      => CheckUserStatus::class,
+            'restrict_guest' => RestrictGuestAccessMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

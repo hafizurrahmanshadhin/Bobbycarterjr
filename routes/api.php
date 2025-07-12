@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\GuestController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Api\VoiceController;
 use Illuminate\Support\Facades\Route;
 
 //! Auth Routes
+Route::post('/guest', [GuestController::class, 'createGuest'])->name('guest.create');
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:sanctum')->name('logout');

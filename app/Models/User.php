@@ -105,4 +105,13 @@ class User extends Authenticatable {
     public function getFullNameAttribute() {
         return trim($this->firstName . ' ' . $this->lastName);
     }
+
+    /**
+     * Check if user is a guest
+     *
+     * @return bool
+     */
+    public function isGuest(): bool {
+        return $this->role === 'guest';
+    }
 }
