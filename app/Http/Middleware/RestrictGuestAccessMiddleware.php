@@ -21,6 +21,7 @@ class RestrictGuestAccessMiddleware {
                 'course/types',
                 'courses',
                 'recommend/course',
+                'user/data',
             ];
 
             $currentPath = $request->path();

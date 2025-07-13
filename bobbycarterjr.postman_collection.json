@@ -4,18 +4,46 @@
 		"name": "bobbycarterjr",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "32086283",
-		"_collection_link": "https://shadhinworkspace.postman.co/workspace/bobbycarterjr~d5c777f1-d7fa-4111-ad95-4a0c3bf1af57/collection/32086283-c78b274f-9419-49bc-9c94-5a6a5b6a5e1b?action=share&source=collection_link&creator=32086283"
+		"_collection_link": "https://www.postman.com/shadhinworkspace/workspace/bobbycarterjr/collection/32086283-c78b274f-9419-49bc-9c94-5a6a5b6a5e1b?action=share&source=collection_link&creator=32086283"
 	},
 	"item": [
 		{
 			"name": "Auth",
 			"item": [
 				{
-					"name": "Register",
+					"name": "Guest",
 					"request": {
 						"auth": {
 							"type": "noauth"
 						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/guest",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"guest"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
 						"method": "POST",
 						"header": [
 							{
@@ -88,9 +116,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -105,8 +130,7 @@
 								{
 									"key": "email",
 									"value": "user@user.com",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "email",
@@ -128,7 +152,8 @@
 								{
 									"key": "email",
 									"value": "rhishi@gmail.com",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -180,9 +205,6 @@
 				{
 					"name": "send_otp",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -216,9 +238,6 @@
 				{
 					"name": "verify-otp",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -257,9 +276,6 @@
 				{
 					"name": "reset-password",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -303,9 +319,6 @@
 				{
 					"name": "social-login",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -1170,7 +1183,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "TIkFrInPP1K31nQ1Er8fBu9RC1nR0oEi7Zau73716cf94d12",
+									"value": "{{vault:authorization-secret}}",
 									"type": "string"
 								}
 							]
@@ -1224,7 +1237,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "TIkFrInPP1K31nQ1Er8fBu9RC1nR0oEi7Zau73716cf94d12",
+									"value": "{{vault:authorization-secret}}",
 									"type": "string"
 								}
 							]
@@ -1258,7 +1271,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "TIkFrInPP1K31nQ1Er8fBu9RC1nR0oEi7Zau73716cf94d12",
+									"value": "{{vault:authorization-secret}}",
 									"type": "string"
 								}
 							]
@@ -1316,7 +1329,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "TIkFrInPP1K31nQ1Er8fBu9RC1nR0oEi7Zau73716cf94d12",
+									"value": "{{vault:authorization-secret}}",
 									"type": "string"
 								}
 							]
@@ -1708,7 +1721,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "wQltv4PE3aZoJkMVRIZKcxFJXW6gA1uDHWA8Ujaw3948588e",
+											"value": "{{vault:authorization-secret}}",
 											"type": "string"
 										}
 									]
@@ -1743,7 +1756,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "sbhBEv4ATmgQUwobQ88cSPThNpDldfNInR7DOIyM71817f72",
+											"value": "{{vault:authorization-secret}}",
 											"type": "string"
 										}
 									]
@@ -1930,7 +1943,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "Eu51OfeBFBdjVuFfLD162luT3p6dtgbc5kfZyJw93fdc23a0",
+											"value": "{{vault:authorization-secret}}",
 											"type": "string"
 										}
 									]
@@ -2187,7 +2200,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "o4J99AJkqbAjD7ttoXTuXjJoxjJ6Nxfj9XVhE6JW1e3834bc",
+									"value": "{{vault:authorization-secret}}",
 									"type": "string"
 								}
 							]
@@ -2221,7 +2234,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "o4J99AJkqbAjD7ttoXTuXjJoxjJ6Nxfj9XVhE6JW1e3834bc",
+									"value": "{{vault:authorization-secret}}",
 									"type": "string"
 								}
 							]
@@ -2638,30 +2651,25 @@
 		{
 			"key": "token",
 			"value": "4|W89r6slbRWjAsAtkugosbDnTPv9FTOe3xuHMVbCm435d7cca",
-			"type": "string",
 			"disabled": true
 		},
 		{
 			"key": "token",
 			"value": "4|zLM2AV3a0MJOBuAeVKMqFwQCQbuxbxk577W0Xb2qd6d915c7",
-			"type": "string",
 			"disabled": true
 		},
 		{
 			"key": "baseUrl",
-			"value": "http://127.0.0.1:8000/api",
-			"type": "string"
+			"value": "http://127.0.0.1:8000/api"
 		},
 		{
 			"key": "baseUrl",
 			"value": "http://127.0.0.1:5050/api",
-			"type": "string",
 			"disabled": true
 		},
 		{
 			"key": "baseUrl",
 			"value": "https://poswell.app/api",
-			"type": "string",
 			"disabled": true
 		}
 	]
